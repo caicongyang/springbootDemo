@@ -1,0 +1,25 @@
+server:
+    port: 8080
+    context-path: 
+
+logging:
+     level:
+          tk.mybatis: DEBUG
+          
+spring:
+    datasource:
+        url: jdbc:mysql://localhost:3306/mvc
+        username: root
+        password: root
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: com.mysql.jdbc.Driver
+    mvc:
+        view:
+            prefix: /templates/
+            suffix: .ftl
+    freemarker:
+        cache: false
+        templateEncoding: UTF-8
+        contentType: text/html
+
+swagger-ui: true
