@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Spring Boot web程序主入口
- * @author Administrator
+ * @author caicongyang
  *
  */
 @Configuration//配置控制  
