@@ -59,7 +59,7 @@ public class StudentController {
 	}
 
 	@ApiOperation(value = "根据id查询学生", notes = "根据id查询学生信息")
-	@RequestMapping(value = "/update", method = RequestMethod.GET)
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public @ResponseBody Integer setStudentById(@ApiParam("学生id") @RequestParam("id") Integer id,
 			@ApiParam("学生年龄") @RequestParam("age") String age) {
 		Student stu = new Student();
