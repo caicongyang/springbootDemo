@@ -20,17 +20,16 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * 
  * @author Administrator
- *
  */
 @Configuration
 @EnableTransactionManagement
 public class MyBatisConfig implements TransactionManagementConfigurer {
-	@Autowired
-    DataSource dataSource;
-	
-	@Bean(name = "sqlSessionFactory")
+
+    @Autowired
+    private DataSource dataSource;
+
+    @Bean(name = "sqlSessionFactory")
     public SqlSessionFactory sqlSessionFactoryBean() {
         SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
         bean.setDataSource(dataSource);
@@ -58,10 +57,9 @@ public class MyBatisConfig implements TransactionManagementConfigurer {
             throw new RuntimeException(e);
         }
     }
-	
-	
-	
-	@Bean
+
+
+    @Bean
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
