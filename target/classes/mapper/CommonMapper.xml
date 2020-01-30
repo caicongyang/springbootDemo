@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.caicongyang.mapper.CommonMapper">
+
+    <!--为保证查询的字段值有序（存入与取出顺序一致）所以用LinkedHashMap-->
+    <select id="queryBySql" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        select s0.stock_code,s0.lastDayCompare as last_day_compare ,s1.mean_ratio as mean_ratio from (
+
+        SELECT t0.stock_code, t0.volume/t1.volume as lastDayCompare from (
+        SELECT stock_code,volume,`close`,`open`,`high`,`low` from T_Stock where trading_day = '2020-01-23' ) as t0 LEFT
+        JOIN
+        (SELECT stock_code,volume from T_Stock where trading_day = '2020-01-22' ) as t1 on t0.stock_code = t1.stock_code
+        where t0.volume/t1.volume > 2 and t0.`close` >= t0.`open` and t0.`close` >= t0.`high` ) s0 JOIN (
+
+        SELECT
+        t0.volume / (t1.mean) AS mean_ratio,
+        t0.stock_code
+        FROM
+        T_Stock AS t0
+        LEFT JOIN (
+        SELECT
+        SUM(volume)/5 AS mean,
+        stock_code
+        FROM
+        T_Stock
+        WHERE
+        trading_day IN ( SELECT trading_day FROM ( SELECT trading_day FROM T_Stock where stock_code = '000001.XSHE'
+        ORDER BY trading_day DESC LIMIT 5 ) AS t )
+        GROUP BY stock_code
+        ) t1 ON t0.stock_code = t1.stock_code
+        WHERE
+        t0.trading_day = '2020-01-23' and t1.mean
+        != 0
+        AND t0.volume / t1.mean > 2 ) s1 on s0.stock_code = s1.stock_code
+    </select>
+
+</mapper>
+

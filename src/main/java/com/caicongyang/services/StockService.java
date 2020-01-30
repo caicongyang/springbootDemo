@@ -1,5 +1,8 @@
 package com.caicongyang.services;
 
+import java.util.List;
+import java.util.Map;
+
 public interface StockService {
 
     /**
@@ -14,7 +17,7 @@ public interface StockService {
      * b. 2：15根据当天成交量  捕捉异常股票数据
      * *
      */
-    void catchAbnormalStockData();
+    List<Map<String, Object>> catchAbnormalStockData();
 
 
     /**
