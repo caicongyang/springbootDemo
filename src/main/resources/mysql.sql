@@ -2,7 +2,7 @@ CREATE SCHEMA `test` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin ;
 
 
 
-CREATE TABLE `test`.`student` (
+CREATE TABLE `stock`.`student` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `age` INT NOT NULL,

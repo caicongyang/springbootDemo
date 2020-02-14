@@ -12,28 +12,21 @@ public class Function {
     public static void main(String[] args) {
 
         Properties props = new Properties();
-        props.put("python.home", "/usr/local/bin/python3");
-        props.put("python.console.encoding", "UTF-8"); // Used to prevent: console: Failed to install '': java.nio.charset.UnsupportedCharsetException: cp0.
-        props.put("python.security.respectJavaAccessibility", "false"); //don't respect java accessibility, so that we can access protected members on subclasses
-        props.put("python.import.site","false");
         Properties preprops = System.getProperties();
         PythonInterpreter.initialize(preprops, props, new String[0]);
         PythonInterpreter interpreter = new PythonInterpreter();
 
 
         PySystemState sys = Py.getSystemState();
-        sys.path.add("/Users/caicongyang/PycharmProjects/financial-engineering/venv/lib/python3.7/site-packages/numpy");
         sys.path.add("/Users/caicongyang/PycharmProjects/financial-engineering/program/python/com/caicongyang/financial/engineering/stock_select_strategy");
         sys.path.add("/Users/caicongyang/PycharmProjects/financial-engineering");
-        sys.path.add("/usr/local/Cellar/python/3.7.3/Frameworks/Python.framework/Versions/3.7/lib/python37.zip");
-        sys.path.add("/usr/local/Cellar/python/3.7.3/Frameworks/Python.framework/Versions/3.7/lib/python3.7");
-        sys.path.add("/usr/local/Cellar/python/3.7.3/Frameworks/Python.framework/Versions/3.7/lib/python3.7/lib-dynload");
-        sys.path.add("/Users/caicongyang/PycharmProjects/financial-engineering/venv/lib/python3.7/site-packages");
-        sys.path.add("/Users/caicongyang/PycharmProjects/financial-engineering/venv/lib/python3.7/site-packages/setuptools-40.8.0-py3.7.egg");
-        sys.path.add("/Users/caicongyang/PycharmProjects/financial-engineering/venv/lib/python3.7/site-packages/pip-19.0.3-py3.7.egg");
+        sys.path.add("/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python37.zip");
+        sys.path.add("/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7");
+        sys.path.add("/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7/lib-dynload");
+        sys.path.add("/usr/local/lib/python3.7/site-packages");
 
 
-
+    //['/Users/caicongyang/PycharmProjects/financial-engineering/program/python/com/caicongyang/financial/engineering/stock_select_strategy', '/Users/caicongyang/PycharmProjects/financial-engineering', '/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python37.zip', '/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7', '/usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/python3.7/lib-dynload', '/usr/local/lib/python3.7/site-packages']
 
 
 
