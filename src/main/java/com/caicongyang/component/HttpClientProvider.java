@@ -42,9 +42,12 @@ public class HttpClientProvider {
         int timeout = 5 * 1000;
         poolingHttpClientConnectionManager.setMaxTotal(300);
         poolingHttpClientConnectionManager.setDefaultMaxPerRoute(30);
-        poolingHttpClientConnectionManager.setValidateAfterInactivity(5000); //多久校验一次链接的有效性
-        poolingHttpClientConnectionManager.closeExpiredConnections();// 关闭过期链接
-        poolingHttpClientConnectionManager.closeIdleConnections(3, TimeUnit.MINUTES);  //3分钟关闭空闲链接
+        //多久校验一次链接的有效性
+        poolingHttpClientConnectionManager.setValidateAfterInactivity(5000);
+        // 关闭过期链接
+        poolingHttpClientConnectionManager.closeExpiredConnections();
+        //3分钟关闭空闲链接
+        poolingHttpClientConnectionManager.closeIdleConnections(3, TimeUnit.MINUTES);
 
 
         RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout)
