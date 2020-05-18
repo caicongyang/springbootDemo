@@ -1,12 +1,19 @@
 package com.caicongyang.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
  * @author caicongyang
  * @version $Id: JsonUtils.java, v 0.1 2015年7月17日 上午11:19:30 caicongyang Exp $
  */
-public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
+public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
+
+
+    private static final String  DAY_PATTERN ="yyyy-MM-dd";
+
+    private static final String  DAY_TIME_PATTERN ="yyyy-MM-dd HH:mm:ss";
 
     /**
      * 1天的毫秒数
@@ -61,5 +68,19 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static int getMinOffset(Date dt1, Date dt2) {
         long diff = dt2.getTime() - dt1.getTime();
         return (int) (diff / MIN);
+    }
+
+
+    public static Date formateDayPattern2Date(String dateString) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(DAY_PATTERN);
+        Date date = sdf.parse(dateString);
+        return date;
+    }
+
+
+    public static Date formateDayTimePattern2Date(String dateString) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat(DAY_TIME_PATTERN);
+        Date date = sdf.parse(dateString);
+        return date;
     }
 }

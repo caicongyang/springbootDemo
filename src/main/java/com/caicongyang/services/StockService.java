@@ -1,5 +1,6 @@
 package com.caicongyang.services;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +18,7 @@ public interface StockService {
      * b. 2：15根据当天成交量  捕捉异常股票数据
      * *
      */
-    List<Map<String, Object>> catchAbnormalStockData();
+    List<Map<String, Object>> catchTransactionStockData(String currentDate) throws ParseException;
 
 
     /**

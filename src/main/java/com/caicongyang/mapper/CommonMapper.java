@@ -15,7 +15,10 @@ import java.util.Map;
 public interface CommonMapper {
 
 
-    List<Map<String, Object>> queryBySql(HashMap map);
+    List<Map<String, Object>> queryTransactionStock(HashMap map);
+
+
+    String queryPreTradingDate();
 
 }
 
