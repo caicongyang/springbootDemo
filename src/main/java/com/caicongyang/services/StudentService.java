@@ -2,13 +2,13 @@ package com.caicongyang.services;
 
 import java.util.List;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.caicongyang.domain.Student;
 
-public interface StudentService {
+public interface StudentService extends IService<Student> {
 
-	List<Student> queryAll(Student stu);
 
-	Student getStudentById(Integer id);
-	
-	Integer setStudentById(Student stu); 
+    Student getStudentById(Integer id);
+
+    Integer setStudentById(Student stu);
 }

@@ -1,30 +1,27 @@
 package com.caicongyang.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
 
-public class Student extends BaseDomain implements Serializable {
+@Data
+@TableName("student")
+public class Student implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 7322378264763045290L;
-	private String name;
-	private String age;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 7322378264763045290L;
 
-	public String getName() {
-		return name;
-	}
+    @TableId(type = IdType.AUTO)
+    private Integer id;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private String name;
 
-	public String getAge() {
-		return age;
-	}
+    private String age;
 
-	public void setAge(String age) {
-		this.age = age;
-	}
 
 }

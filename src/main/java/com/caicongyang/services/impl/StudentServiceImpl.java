@@ -1,37 +1,28 @@
 package com.caicongyang.services.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caicongyang.domain.Student;
 import com.caicongyang.mapper.StudentMapper;
 import com.caicongyang.services.StudentService;
-import com.github.pagehelper.PageHelper;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 @Service("studentService")
-public class StudentServiceImpl implements StudentService {
+public class StudentServiceImpl extends ServiceImpl<StudentMapper, Student> implements StudentService {
 
-	@Autowired
-	StudentMapper studentMapper;
+    @Resource
+    private StudentMapper studentMapper;
 
-	@Override
-	public List<Student> queryAll(Student stu) {
-		if (stu.getPage() != null && stu.getRows() != null) {
-			PageHelper.startPage(stu.getPage(), stu.getRows(), "id");
-		}
-		return studentMapper.selectAll();
-	}
 
-	@Override
-	public Student getStudentById(Integer id) {
-		return studentMapper.selectByPrimaryKey(id);
-	}
+    @Override
+    public Student getStudentById(Integer id) {
+        return studentMapper.selectById(id);
+    }
 
-	@Override
-	public Integer setStudentById(Student stu) {
-		return studentMapper.updateByPrimaryKeySelective(stu);
-	}
+    @Override
+    public Integer setStudentById(Student stu) {
+        return studentMapper.updateById(stu);
+    }
 
 }

@@ -1,6 +1,8 @@
 package com.caicongyang.mapper;
 
 
+import org.apache.ibatis.annotations.Mapper;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.Map;
  * @email 80730305@yonghui.cn
  * @date 2018-12-17 22:15:03
  */
+@Mapper
 public interface CommonMapper {
 
 

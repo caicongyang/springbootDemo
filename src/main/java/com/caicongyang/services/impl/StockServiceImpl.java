@@ -4,15 +4,11 @@ import com.caicongyang.mail.MailService;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.services.StockService;
 import com.caicongyang.utils.JsonUtils;
-import com.caicongyang.utils.TomDateUtils;
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
