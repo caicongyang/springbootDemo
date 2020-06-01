@@ -24,7 +24,7 @@ public class ScheduleTask {
     /**
      * 每天17点执行一次
      */
-    @Scheduled(cron = "0 0 17 * * ?")
+    @Scheduled(cron = "0 0 18 * * ?")
     public void task() throws Exception {
         logger.info("执行任务开始....");
         if (stockService.TradeFlag()) {
