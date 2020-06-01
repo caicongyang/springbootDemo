@@ -27,4 +27,11 @@ $RECYCLE.BIN/
 /.project
 
 *.iml
-eshelloword-spring-boot-starter.iml
+
+/.idea
+/.settings
+*.iml
+*/target
+.DS_Store
+.classpath
+.project
