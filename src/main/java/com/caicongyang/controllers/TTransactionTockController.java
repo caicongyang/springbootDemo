@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author caicongyang
- * @since 2020-05-31
+ * @since 2020-06-03
  */
 @RestController
-@RequestMapping("/t-transaction-stock")
-public class TTransactionStockController {
+@RequestMapping("/t-transaction-tock")
+public class TTransactionTockController {
 
 }
