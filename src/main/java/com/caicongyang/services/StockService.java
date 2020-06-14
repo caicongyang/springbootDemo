@@ -18,7 +18,7 @@ public interface StockService {
      * b. 2：15根据当天成交量  捕捉异常股票数据
      * *
      */
-    List<Map<String, Object>> catchTransactionStockData(String currentDate) throws ParseException;
+    List<Map<String, Object>> catchTransactionStockData(String currentDate) throws Exception;
 
 
     /**

@@ -51,8 +51,8 @@
 
 
     <!--获取倒数第二个交易日-->
-    <select id="queryPreTradingDate" resultType="java.lang.String">
-      SELECT trading_day FROM ( SELECT trading_day FROM T_Stock WHERE stock_code = '000001.XSHE' ORDER BY trading_day DESC limit  1,1 ) AS t
+    <select id="queryPreTradingDate" resultType="java.lang.String" parameterType="java.lang.String">
+      SELECT trading_day FROM ( SELECT trading_day FROM T_Stock WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>   #{currentDate} ORDER BY trading_day DESC limit  1,1 ) AS t
     </select>
 
 </mapper>

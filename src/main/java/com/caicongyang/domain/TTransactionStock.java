@@ -3,6 +3,8 @@ package com.caicongyang.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDate;
 import java.io.Serializable;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -36,7 +38,7 @@ public class TTransactionStock implements Serializable {
 
     private String conceptList;
 
-    private LocalDate tradingDay;
+    private String tradingDay;
 
 
 }

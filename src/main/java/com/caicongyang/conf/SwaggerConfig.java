@@ -1,5 +1,6 @@
 package com.caicongyang.conf;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -21,9 +22,12 @@ import java.io.IOException;
 public class SwaggerConfig {
 
 
+    @Value("${swagger.enable:true}")
+    private boolean swaggerEnableFlag;
+
     @Bean
     public Docket createRestApi() throws IOException {
-        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select().apis(RequestHandlerSelectors.basePackage("com.caicongyang.controllers")).paths(PathSelectors.any()).build();
+        return new Docket(DocumentationType.SWAGGER_2).enable(swaggerEnableFlag).apiInfo(apiInfo()).select().apis(RequestHandlerSelectors.basePackage("com.caicongyang.controllers")).paths(PathSelectors.any()).build();
     }
 
     private ApiInfo apiInfo() throws IOException {

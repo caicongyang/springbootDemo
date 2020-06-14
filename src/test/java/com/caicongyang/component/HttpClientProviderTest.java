@@ -41,16 +41,21 @@ public class HttpClientProviderTest extends BaseApplicationTest {
 //        }
         Map<String, String> params = new HashMap<>();
         params.put("method", "get_industry");
-        params.put("token", "5b6a9ba2b2f272b721667f2c0fcd0dbc2118779a");
-        params.put("code", "000002.XSHG");
-        params.put("date", "2020-01-02");
+        params.put("token", "5b6a9ba2b2f272b721667f2c0ecf08bf7b200d9c");
+        params.put("code", "000011.XSHE");
+        params.put("date", "2020-06-12");
 
         String s = JsonUtils.jsonFromObject(params);
-        System.out.printf(s);
+        System.out.println(s);
 
         String result = provider.doPostWithApplicationJson(apiUrl, params);
+        System.out.println(result);
+
+        System.out.println("------------------");
         List<String> strings = Arrays.asList(result.split("\n"));
-        System.out.println(strings.get(0));
+        List<String>  resultList =  strings.subList(1,strings.size());
+
+        System.out.println(JsonUtils.jsonFromObject(resultList));
 
     }
 

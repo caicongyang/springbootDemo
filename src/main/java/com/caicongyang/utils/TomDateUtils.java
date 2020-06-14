@@ -2,6 +2,8 @@ package com.caicongyang.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -11,9 +13,9 @@ import java.util.Date;
 public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
 
 
-    private static final String  DAY_PATTERN ="yyyy-MM-dd";
+    private static final String DAY_PATTERN = "yyyy-MM-dd";
 
-    private static final String  DAY_TIME_PATTERN ="yyyy-MM-dd HH:mm:ss";
+    private static final String DAY_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * 1天的毫秒数
@@ -83,4 +85,23 @@ public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
         Date date = sdf.parse(dateString);
         return date;
     }
+
+    /**
+     * 返回字符串
+     *
+     * @return
+     */
+    public static String getDayPatternCurrentDay() {
+        SimpleDateFormat sdf = new SimpleDateFormat(DAY_PATTERN);
+        return sdf.format(new Date());
+    }
+
+
+    public static LocalDate date2LocalDate(Date date) {
+        if(null == date) {
+            return null;
+        }
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
 }

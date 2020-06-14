@@ -3,6 +3,7 @@ package com.caicongyang.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public interface CommonMapper {
     List<Map<String, Object>> queryTransactionStock(HashMap map);
 
 
-    String queryPreTradingDate();
+    String queryPreTradingDate(String currentDate);
 
 }
 
