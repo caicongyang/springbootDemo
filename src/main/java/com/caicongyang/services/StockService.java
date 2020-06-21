@@ -1,5 +1,7 @@
 package com.caicongyang.services;
 
+import com.caicongyang.domain.TTransactionStock;
+
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +21,14 @@ public interface StockService {
      * *
      */
     List<Map<String, Object>> catchTransactionStockData(String currentDate) throws Exception;
+
+
+
+    /**
+     * 获取当天的异动股票数据
+     * *
+     */
+    List<TTransactionStock> getTransactionStockData(String currentDate) throws Exception;
 
 
     /**

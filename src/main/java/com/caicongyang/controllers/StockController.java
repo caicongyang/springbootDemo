@@ -1,6 +1,7 @@
 package com.caicongyang.controllers;
 
 import com.caicongyang.common.Result;
+import com.caicongyang.domain.TTransactionStock;
 import com.caicongyang.services.StockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -44,4 +45,23 @@ public class StockController {
             return Result.fail(e);
         }
     }
+
+
+    @GetMapping("/getTransactionStockData")
+    @ApiOperation(value = "查询当天的股票异动数据", notes = "查询当天的股票异动数据")
+    public @ResponseBody
+    Result<List<TTransactionStock>> getTransactionStockData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
+
+        List<TTransactionStock> result = null;
+        try {
+            result = stockService.getTransactionStockData(currentDate);
+            return Result.ok(result);
+        } catch (ParseException e) {
+            logger.error("查询当天的股票异动数据失败", e);
+            e.printStackTrace();
+            return Result.fail(e);
+        }
+    }
+
+
 }

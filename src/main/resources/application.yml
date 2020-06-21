@@ -9,14 +9,7 @@ spring:
     password: 24777365ccyCCY!
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.jdbc.Driver
-  mvc:
-    view:
-      prefix: /templates/
-      suffix: .ftl
-  freemarker:
-    cache: false
-    templateEncoding: UTF-8
-    contentType: text/html
+
 
   mail:
     host: smtp.qq.com

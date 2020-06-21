@@ -41,7 +41,7 @@ public class HttpClientProviderTest extends BaseApplicationTest {
 //        }
         Map<String, String> params = new HashMap<>();
         params.put("method", "get_industry");
-        params.put("token", "5b6a9ba2b2f272b721667f2c0ecf08bf7b200d9c");
+        params.put("token", "5b6a9ba2b2f272b721667f2c0ecf0eb9d722d45d");
         params.put("code", "000011.XSHE");
         params.put("date", "2020-06-12");
 
@@ -52,10 +52,17 @@ public class HttpClientProviderTest extends BaseApplicationTest {
         System.out.println(result);
 
         System.out.println("------------------");
-        List<String> strings = Arrays.asList(result.split("\n"));
-        List<String>  resultList =  strings.subList(1,strings.size());
+        List<String> resultList = Arrays.asList(result.split("\n"));
 
-        System.out.println(JsonUtils.jsonFromObject(resultList));
+
+        System.out.println("------------------");
+
+        for (String industry : resultList) {
+            if (industry.indexOf("jq_l2") >= 0 || industry.indexOf("sw_l3") >= 0 || industry.indexOf("zjw") >= 0) {
+                System.out.println(industry.split(",")[2]);
+            }
+        }
+
 
     }
 

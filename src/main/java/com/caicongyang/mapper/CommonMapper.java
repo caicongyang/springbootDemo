@@ -24,5 +24,8 @@ public interface CommonMapper {
 
     String queryPreTradingDate(String currentDate);
 
+
+    String queryLastTradingDate(String currentDate);
+
 }
 

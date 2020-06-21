@@ -36,9 +36,15 @@ public class TTransactionStock implements Serializable {
 
     private String conceptStr;
 
-    private String conceptList;
-
     private String tradingDay;
+
+    @ApiModelProperty(value = "申万行业")
+    private String swL3;
+
+    @ApiModelProperty(value = "聚宽行业")
+    private String jqL2;
+
+    private String zjw;
 
 
 }

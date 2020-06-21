@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.caicongyang.component.HttpClientProvider;
 import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TTransactionStock;
-import com.caicongyang.domain.TTransactionTock;
 import com.caicongyang.mail.MailService;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TStockMapper;
@@ -13,21 +12,28 @@ import com.caicongyang.mapper.TTransactionStockMapper;
 import com.caicongyang.services.StockService;
 import com.caicongyang.utils.JsonUtils;
 import com.caicongyang.utils.TomDateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
  */
 @Service
 public class StockServiceImpl implements StockService {
+
+    private static final Logger logger = LoggerFactory.getLogger(StockServiceImpl.class);
+
 
     private static String apiUrl = "https://dataapi.joinquant.com/apis";
 
@@ -36,7 +42,6 @@ public class StockServiceImpl implements StockService {
 
     @Autowired
     HttpClientProvider provider;
-
     @Resource
     protected CommonMapper mapper;
 
@@ -75,9 +80,10 @@ public class StockServiceImpl implements StockService {
         for (Map<String, Object> item : maps) {
             String jKIndustryStocks = getJKIndustryStocks(jkToken, (String) item.get("stock_code"));
             List<String> jKIndustryStockList = Arrays.asList(jKIndustryStocks.split("\n"));
-            List<String>  resultList =  jKIndustryStockList.subList(1,jKIndustryStockList.size());
+            List<String> resultList = jKIndustryStockList.subList(1, jKIndustryStockList.size());
             jKIndustryStocks = JsonUtils.jsonFromObject(resultList);
             item.put("concept_str", jKIndustryStocks);
+
 
             TTransactionStock stock = new TTransactionStock();
             stock.setStockCode((String) item.get("stock_code"));
@@ -85,17 +91,41 @@ public class StockServiceImpl implements StockService {
             stock.setLastDayCompare(((BigDecimal) item.get("last_day_compare")).doubleValue());
             stock.setMeanRatio(((BigDecimal) item.get("mean_ratio")).doubleValue());
             stock.setTradingDay(currentDate);
-            tTransactionStockMapper.insert(stock);
 
+            parseIndustryStockData(stock, resultList);
+
+            try {
+                tTransactionStockMapper.insert(stock);
+            } catch (Exception e) {
+                logger.error("插入异常股票错误", e);
+            }
 
         }
 
 
-//        for (String mail : senderList) {
-//            mailService.sendSimpleMail(mail, currentDate + "异动股票", JsonUtils.jsonFromObject(maps));
-//        }
+        for (String mail : senderList) {
+            mailService.sendSimpleMail(mail, currentDate + "异动股票", JsonUtils.jsonFromObject(maps));
+        }
 
         return maps;
+    }
+
+    @Override
+    public List<TTransactionStock> getTransactionStockData(String currentDate) throws Exception {
+        TTransactionStock stock = new TTransactionStock();
+        stock.setTradingDay(currentDate);
+        Wrapper<TTransactionStock> wrapper = new QueryWrapper<>(stock);
+        ((QueryWrapper<TTransactionStock>) wrapper).orderByDesc("jq_l2","sw_l3","zjw");
+        List<TTransactionStock> reuslt = tTransactionStockMapper.selectList(wrapper);
+
+        //如果当天没有，则获取最近一个交易日
+        if (CollectionUtils.isEmpty(reuslt)) {
+            String lastTradingDate = mapper.queryLastTradingDate(currentDate);
+            stock.setTradingDay(lastTradingDate);
+            ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock);
+            reuslt = tTransactionStockMapper.selectList(wrapper);
+        }
+        return reuslt;
     }
 
 
@@ -137,5 +167,24 @@ public class StockServiceImpl implements StockService {
         params.put("date", TomDateUtils.getDayPatternCurrentDay());
 
         return provider.doPostWithApplicationJson(apiUrl, params);
+    }
+
+
+    private void parseIndustryStockData(TTransactionStock stock, List<String> resultList) {
+        for (String industry : resultList) {
+            if (industry.indexOf("jq_l2") >= 0) {
+                System.out.println(industry.split(",")[2]);
+                stock.setJqL2(industry.split(",")[2]);
+            }
+
+            if (industry.indexOf("sw_l3") >= 0) {
+                stock.setSwL3(industry.split(",")[2]);
+
+            }
+
+            if (industry.indexOf("zjw") >= 0) {
+                stock.setZjw(industry.split(",")[2]);
+            }
+        }
     }
 }

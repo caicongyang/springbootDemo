@@ -52,9 +52,11 @@ public class MybatisPlusGenerator {
         PackageConfig pc = new PackageConfig();
         pc.setParent(rb.getString("parent"));
 
-        pc.setController(rb.getString("controller"));
-        pc.setService(rb.getString("service"));
-        pc.setServiceImpl(rb.getString("serviceImpl"));
+      //  pc.setController(rb.getString("controller"));
+
+
+     //   pc.setService(rb.getString("service"));
+     //   pc.setServiceImpl(rb.getString("serviceImpl"));
         pc.setEntity(rb.getString("entity"));
         pc.setMapper(rb.getString("mapper"));
         pc.setXml("mapper");
