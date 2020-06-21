@@ -80,7 +80,7 @@
             day.setTime(day.getTime());
             dayStr = day.getFullYear() + "-" + (day.getMonth() + 1) + "-" + day.getDate();
         }
-        $.get("http://127.0.0.1:8080/stock/getTransactionStockData",
+        $.get("/stock/getTransactionStockData",
             {
                 currentDate: dayStr
             },
