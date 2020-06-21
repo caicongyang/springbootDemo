@@ -103,9 +103,9 @@ public class StockServiceImpl implements StockService {
         }
 
 
-        for (String mail : senderList) {
-            mailService.sendSimpleMail(mail, currentDate + "异动股票", JsonUtils.jsonFromObject(maps));
-        }
+//        for (String mail : senderList) {
+//            mailService.sendSimpleMail(mail, currentDate + "异动股票", JsonUtils.jsonFromObject(maps));
+//        }
 
         return maps;
     }
