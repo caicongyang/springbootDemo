@@ -27,5 +27,8 @@ public interface CommonMapper {
 
     String queryLastTradingDate(String currentDate);
 
+
+    List<Map<String, Object>> getIntervalTransactionStockData(HashMap<String, String> map);
+
 }
 

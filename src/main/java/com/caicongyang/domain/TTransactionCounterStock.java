@@ -1,16 +1,13 @@
 package com.caicongyang.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.time.LocalDate;
-import java.io.Serializable;
-import java.util.Date;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -25,17 +22,11 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("T_transaction_stock")
 @ApiModel(value = "TTransactionStock对象", description = "")
-public class TTransactionStock implements Serializable {
+public class TTransactionCounterStock implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String stockCode;
-
-    private Double lastDayCompare;
-
-    private Double meanRatio;
-
-    private String conceptStr;
 
     private String tradingDay;
 
@@ -48,7 +39,7 @@ public class TTransactionStock implements Serializable {
     private String zjw;
 
     @ApiModelProperty(value = "出现次数")
-    private Integer count;
+    private Long counter;
 
 
 }

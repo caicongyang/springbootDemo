@@ -115,7 +115,7 @@ public class StockServiceImpl implements StockService {
         TTransactionStock stock = new TTransactionStock();
         stock.setTradingDay(currentDate);
         Wrapper<TTransactionStock> wrapper = new QueryWrapper<>(stock);
-        ((QueryWrapper<TTransactionStock>) wrapper).orderByDesc("jq_l2","sw_l3","zjw");
+        ((QueryWrapper<TTransactionStock>) wrapper).orderByDesc("jq_l2", "sw_l3", "zjw");
         List<TTransactionStock> reuslt = tTransactionStockMapper.selectList(wrapper);
 
         //如果当天没有，则获取最近一个交易日
@@ -126,6 +126,15 @@ public class StockServiceImpl implements StockService {
             reuslt = tTransactionStockMapper.selectList(wrapper);
         }
         return reuslt;
+    }
+
+
+    @Override
+    public List<Map<String, Object>> getIntervalTransactionStockData(String startDate, String endDate) {
+        HashMap<String, String> param = new HashMap<>();
+        param.put("startDate", startDate);
+        param.put("endDate", endDate);
+        return mapper.getIntervalTransactionStockData(param);
     }
 
 

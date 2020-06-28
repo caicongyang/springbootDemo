@@ -23,12 +23,20 @@ public interface StockService {
     List<Map<String, Object>> catchTransactionStockData(String currentDate) throws Exception;
 
 
-
     /**
      * 获取当天的异动股票数据
      * *
      */
     List<TTransactionStock> getTransactionStockData(String currentDate) throws Exception;
+
+    /**
+     * 查询时间间隔的股票异动数据
+     *
+     * @param startDate
+     * @param endDate
+     * @return
+     */
+    List<Map<String, Object>> getIntervalTransactionStockData(String startDate, String endDate);
 
 
     /**
