@@ -47,8 +47,7 @@ public class TTransactionStock implements Serializable {
 
     private String zjw;
 
-    @ApiModelProperty(value = "出现次数")
-    private Integer count;
+
 
 
 }
