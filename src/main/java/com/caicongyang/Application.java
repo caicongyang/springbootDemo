@@ -5,21 +5,21 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * Spring Boot web程序主入口
  *
  * @author caicongyang
  */
-@Configuration//配置控制  
-@EnableAutoConfiguration//启用自动配置  
-@ComponentScan//组件扫描
+@SpringBootApplication
 @EnableScheduling
-@MapperScan("com.caicongyang.mapper")
+@EnableTransactionManagement
 public class Application {
     public static void main(String[] args) {
         //第一个简单的应用，   
