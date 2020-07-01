@@ -1,6 +1,7 @@
 package com.caicongyang;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.actuate.autoconfigure.metrics.MeterRegistryCustomizer;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -18,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAutoConfiguration//启用自动配置  
 @ComponentScan//组件扫描
 @EnableScheduling
+@MapperScan("com.caicongyang.mapper")
 public class Application {
     public static void main(String[] args) {
         //第一个简单的应用，   

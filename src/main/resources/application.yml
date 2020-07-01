@@ -7,8 +7,7 @@ spring:
     url: jdbc:mysql://49.235.178.21:3306/stock?characterEncoding=utf8&useSSL=true
     username: root
     password: 24777365ccyCCY!
-    type: com.zaxxer.hikari.HikariDataSource
-    driver-class-name: com.mysql.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
 
   mail:
@@ -43,7 +42,7 @@ management:
 
 
 mybatis-plus:
-  mapper-locations: classpath*:/mapper/**/*.xml
+  mapper-locations: classpath*:/mapper/*.xml
   typeAliasesPackage: com.caicongyang.domain
   global-config:
     db-config:
