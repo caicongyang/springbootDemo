@@ -57,9 +57,11 @@
         <tr>
             <th data-priority="1">股票</th>
             <th data-priority="2">交易日期</th>
-            <th data-priority="3">swL3</th>
-            <th data-priority="4">jqL2</th>
-            <th data-priority="5">zjw</th>
+            <th data-priority="3">lastDayCompare</th>
+            <th data-priority="4">meanRatio</th>
+            <th data-priority="5">swL3</th>
+            <th data-priority="6">jqL2</th>
+            <th data-priority="7">zjw</th>
         </tr>
         </thead>
         <tbody id="tbodydata">
@@ -95,6 +97,8 @@
                             html += "<tr>";
                             html += "<td>" + optionJson[i].stockCode.split(".")[0] + "</td>";
                             html += "<td>" + optionJson[i].tradingDay + "</td>";
+                            html += "<td>" + optionJson[i].lastDayCompare + "</td>";
+                            html += "<td>" + optionJson[i].meanRatio + "</td>";
                             html += "<td>" + optionJson[i].swL3 + "</td>";
                             html += "<td>" + optionJson[i].jqL2 + "</td>";
                             html += "<td>" + optionJson[i].zjw + "</td>";
