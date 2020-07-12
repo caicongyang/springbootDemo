@@ -1,4 +1,4 @@
-package com.caicongyang.controllers;
+package com.caicongyang.controller;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
  * </p>
  *
  * @author caicongyang
- * @since 2020-06-03
+ * @since 2020-07-08
  */
 @RestController
-@RequestMapping("/t-transaction-tock")
-public class TTransactionTockController {
+@RequestMapping("/t-transaction-etf")
+public class TTransactionEtfController {
 
 }

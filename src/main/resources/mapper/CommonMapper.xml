@@ -20,7 +20,6 @@
         WHERE
         t0.volume / t1.volume > 1.5   -- 成交量是前一天的2倍
         AND t0.`close` >= t0.`open`  --  收盘价 大于开盘价
-        AND t0.`close` >= t0.`high`  -- 收盘价 大于最高价
         AND  t0.`close`/ t1.`close` > 1
         ) s0
         JOIN (
@@ -72,8 +71,7 @@
 	s.jq_l2,
 	s.zjw
 FROM
-	T_transaction_stock s
-	 JOIN ( SELECT count(*) AS counter, stock_code FROM T_transaction_stock where  trading_day BETWEEN #{startDate}  AND #{endDate}  GROUP BY stock_code HAVING counter > 1  )  t on t.stock_code =  s.stock_code
+	 ( SELECT count(*) AS counter, stock_code FROM T_transaction_stock where  trading_day BETWEEN #{startDate}  AND #{endDate}  GROUP BY stock_code HAVING counter > 1  ) as t  left join  T_transaction_stock s on t.stock_code =  s.stock_code
 WHERE
 	s.trading_day BETWEEN #{startDate}
 	AND #{endDate}  and s.jq_l2 is not null  and s.sw_l3 is not null and s.zjw is not null

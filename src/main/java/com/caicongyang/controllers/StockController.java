@@ -33,7 +33,7 @@ public class StockController {
     private StockService stockService;
 
     @GetMapping("/catchTransactionStockData")
-    @ApiOperation(value = "查询当天的股票异动数据", notes = "查询当天的股票异动数据")
+    @ApiOperation(value = "捕获当天的股票异动数据", notes = "查询当天的股票异动数据")
     public @ResponseBody
     Result<List<Map<String, Object>>> catchTransactionStockData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
 
