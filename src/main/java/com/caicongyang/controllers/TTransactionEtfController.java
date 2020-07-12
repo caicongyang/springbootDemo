@@ -1,4 +1,4 @@
-package com.caicongyang.controller;
+package com.caicongyang.controllers;
 
 
 import org.springframework.web.bind.annotation.RequestMapping;

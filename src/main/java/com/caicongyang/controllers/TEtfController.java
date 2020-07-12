@@ -1,9 +1,10 @@
-package com.caicongyang.controller;
+package com.caicongyang.controllers;
 
 
 import com.caicongyang.common.Result;
 import com.caicongyang.domain.TTransactionEtf;
 import com.caicongyang.services.ITEtfService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author caicongyang
  * @since 2020-07-08
  */
+@Api(value = "etf")
 @RestController
 @RequestMapping("/t-etf")
 public class TEtfController {
