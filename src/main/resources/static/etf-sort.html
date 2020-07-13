@@ -58,7 +58,6 @@
             <th data-priority="1">股票</th>
             <th data-priority="2">交易日期</th>
             <th data-priority="3">lastDayCompare</th>
-            <th data-priority="4">meanRatio</th>
         </tr>
         </thead>
         <tbody id="tbodydata">
@@ -95,7 +94,6 @@
                             html += "<td>" + optionJson[i].stockCode.split(".")[0] + "</td>";
                             html += "<td>" + optionJson[i].tradingDay + "</td>";
                             html += "<td>" + optionJson[i].lastDayCompare + "</td>";
-                            html += "<td>" + optionJson[i].meanRatio + "</td>";
                             html += "</tr>";
                         }
                         $("#titleData").append(optionJson[0].tradingDay + "异动etf排序");

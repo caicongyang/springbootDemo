@@ -2,14 +2,13 @@ package com.caicongyang.services.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caicongyang.domain.TEtf;
 import com.caicongyang.domain.TTransactionEtf;
-import com.caicongyang.domain.TTransactionStock;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TEtfMapper;
 import com.caicongyang.mapper.TTransactionEtfMapper;
 import com.caicongyang.services.ITEtfService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +54,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
             TTransactionEtf item = new TTransactionEtf();
             item.setStockCode((String) map.getOrDefault("stock_code", ""));
             item.setLastDayCompare(((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
+            item.setTradingDay(currentDate);
             resultList.add(item);
         }
         return resultList;
@@ -74,6 +74,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
                 item.setStockCode((String) map.getOrDefault("stock_code", ""));
                 item.setLastDayCompare(((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
                 item.setMeanRatio(((BigDecimal) map.get("mean_ratio")).doubleValue());
+                item.setTradingDay(currentDate);
                 resultList.add(item);
                 tTransactionEtfMapper.insert(item);
             }

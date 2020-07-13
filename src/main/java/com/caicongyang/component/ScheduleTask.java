@@ -1,5 +1,6 @@
 package com.caicongyang.component;
 
+import com.caicongyang.services.ITEtfService;
 import com.caicongyang.services.StockService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,10 @@ public class ScheduleTask {
     @Autowired
     StockService stockService;
 
+
+    @Autowired
+    ITEtfService itEtfService;
+
     /**
      * 每天17点执行一次
      */
@@ -31,6 +36,9 @@ public class ScheduleTask {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             String currentDate = format.format(new Date());
             stockService.catchTransactionStockData(currentDate);
+
+            itEtfService.catchTransactionStockData(currentDate);
+
         }
         logger.info("执行任务结束....");
     }
