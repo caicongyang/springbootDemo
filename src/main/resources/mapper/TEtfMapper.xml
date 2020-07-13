@@ -12,7 +12,7 @@ WHERE
 	t1.trading_day = #{currentDate}
 	AND t1.volume IS NOT NULL
 AND t2.volume is not null
- and t0.volume > 10000000  -- 成交金额大于一千万
+ and t1.volume > 10000000  -- 成交金额大于一千万
 ORDER BY
 	t1.volume / t2.volume DESC
 

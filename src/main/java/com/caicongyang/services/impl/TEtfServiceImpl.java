@@ -14,6 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +54,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
         for (Map map : maps) {
             TTransactionEtf item = new TTransactionEtf();
             item.setStockCode((String) map.getOrDefault("stock_code", ""));
-            item.setLastDayCompare((Double) map.getOrDefault("last_day_compare", ""));
+            item.setLastDayCompare(((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
             resultList.add(item);
         }
         return resultList;
@@ -66,13 +67,13 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
         HashMap queryMap = new HashMap();
         queryMap.put("currentDate", currentDate);
         queryMap.put("preDate", preTradingDate);
-        List<Map<String, Object>> maps = tEtfMapper.catchTransactionStockData(queryMap);
+        List<Map<String, Object>> maps = tEtfMapper.catchTransactionEtf(queryMap);
         if (CollectionUtils.isNotEmpty(maps)) {
             for (Map map : maps) {
                 TTransactionEtf item = new TTransactionEtf();
                 item.setStockCode((String) map.getOrDefault("stock_code", ""));
-                item.setLastDayCompare((Double) map.getOrDefault("last_day_compare", ""));
-                item.setMeanRatio((Double) map.getOrDefault("mean_ratio", ""));
+                item.setLastDayCompare(((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
+                item.setMeanRatio(((BigDecimal) map.get("mean_ratio")).doubleValue());
                 resultList.add(item);
                 tTransactionEtfMapper.insert(item);
             }

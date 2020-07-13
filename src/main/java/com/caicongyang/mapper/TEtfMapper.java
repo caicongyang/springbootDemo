@@ -22,6 +22,6 @@ public interface TEtfMapper extends BaseMapper<TEtf> {
     List<Map<String, Object>> querySortEtfStockData(HashMap map);
 
 
-    List<Map<String, Object>> catchTransactionStockData(HashMap map);
+    List<Map<String, Object>> catchTransactionEtf(HashMap map);
 
 }
