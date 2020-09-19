@@ -2,6 +2,7 @@ package com.caicongyang.component;
 
 import com.caicongyang.services.ITEtfService;
 import com.caicongyang.services.StockService;
+import com.caicongyang.utils.TomDateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class ScheduleTask {
             stockService.catchTransactionStockData(currentDate);
 
             itEtfService.catchTransactionStockData(currentDate);
+
+        }else{
+            logger.info(TomDateUtils.getDayPatternCurrentDay()+"未获取到交易数据");
 
         }
         logger.info("执行任务结束....");
