@@ -9,15 +9,14 @@ import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TEtfMapper;
 import com.caicongyang.mapper.TTransactionEtfMapper;
 import com.caicongyang.services.ITEtfService;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.stereotype.Service;
-
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Resource;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.stereotype.Service;
 
 /**
  * <p>
@@ -50,6 +49,13 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
         queryMap.put("currentDate", currentDate);
         queryMap.put("preDate", preTradingDate);
         List<Map<String, Object>> maps = tEtfMapper.querySortEtfStockData(queryMap);
+        if (CollectionUtils.isEmpty(maps)) {
+            //如果当天没有，则获取最近一个交易日
+            String lastTradingDate = mapper.queryLastTradingDate(currentDate);
+            queryMap.put("currentDate", lastTradingDate);
+            maps = tEtfMapper.querySortEtfStockData(queryMap);
+        }
+
         for (Map map : maps) {
             TTransactionEtf item = new TTransactionEtf();
             item.setStockCode((String) map.getOrDefault("stock_code", ""));

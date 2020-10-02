@@ -1,6 +1,6 @@
 package com.caicongyang.mapper;
 
-import com.caicongyang.domain.TTransactionEtf;
+import com.caicongyang.domain.TStockHigher;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,9 +10,9 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author caicongyang
- * @since 2020-07-08
+ * @since 2020-10-02
  */
 
-public interface TTransactionEtfMapper extends BaseMapper<TTransactionEtf> {
+public interface TStockHigherMapper extends BaseMapper<TStockHigher> {
 
 }

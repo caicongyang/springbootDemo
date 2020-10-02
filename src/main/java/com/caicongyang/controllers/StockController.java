@@ -1,11 +1,17 @@
 package com.caicongyang.controllers;
 
 import com.caicongyang.common.Result;
+import com.caicongyang.domain.TStockHigher;
 import com.caicongyang.domain.TTransactionCounterStock;
 import com.caicongyang.domain.TTransactionStock;
+import com.caicongyang.services.ITStockService;
 import com.caicongyang.services.StockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +21,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/stock")
@@ -31,6 +32,10 @@ public class StockController {
 
     @Autowired
     private StockService stockService;
+
+
+    @Autowired
+    private ITStockService itStockService;
 
     @GetMapping("/catchTransactionStockData")
     @ApiOperation(value = "捕获当天的股票异动数据", notes = "查询当天的股票异动数据")
@@ -98,4 +103,21 @@ public class StockController {
     }
 
 
+    @GetMapping("/calculateHigherStock")
+    @ApiOperation(value = "计算当日新高的股票", notes = "查询当日新高的股票")
+    public void calculateHigherStock(
+        @RequestParam(required = false, value = "tradingDay") String tradingDay)
+        throws ParseException {
+        itStockService.calculateHigherStock(tradingDay);
+    }
+
+
+    @GetMapping("/getHigherStock")
+    @ApiOperation(value = "获取当日新高的股票", notes = "获取当日新高的股票")
+    public @ResponseBody
+    Result<List<TStockHigher>> getHigherStock(
+        @RequestParam(required = true, value = "tradingDay") String tradingDay)
+        throws ParseException {
+        return Result.ok(itStockService.getHigherStock(tradingDay));
+    }
 }

@@ -94,8 +94,20 @@
                     var html = "";
                     if (optionJson.length > 0) {
                         for (var i = 0; i < optionJson.length; i++) {
-                            html += "<tr>";
-                            html += "<td>" + optionJson[i].stockCode.split(".")[0] + "</td>";
+                          var url;
+                          if (optionJson[i].stockCode.split(".")[0].indexOf("6") == 0) {
+                            url = "https://quotes.sina.cn/hs/company/quotes/view/sh"
+                                + optionJson[i].stockCode.split(".")[0];
+                          } else {
+                            url = "https://quotes.sina.cn/hs/company/quotes/view/sz"
+                                + optionJson[i].stockCode.split(".")[0];
+
+                          }
+
+                           html += "<tr>";
+                           html += "<td><a href=" + url + " target='_blank\n'>"
+                              + optionJson[i].stockCode.split(".")[0]
+                              + "</a></td>";
                             html += "<td>" + optionJson[i].tradingDay + "</td>";
                             html += "<td>" + optionJson[i].lastDayCompare + "</td>";
                             html += "<td>" + optionJson[i].meanRatio + "</td>";

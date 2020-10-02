@@ -16,7 +16,7 @@ import java.util.Map;
  * @author caicongyang
  * @since 2020-07-08
  */
-@Mapper
+
 public interface TEtfMapper extends BaseMapper<TEtf> {
 
     List<Map<String, Object>> querySortEtfStockData(HashMap map);

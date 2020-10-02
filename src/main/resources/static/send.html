@@ -65,14 +65,23 @@
         var year = before.getFullYear();
         var month = before.getMonth() + 1;
         var date = before.getDate();
-        return year + (str ? str : '-') + (month < 9 ? '0' + month : month) + (str ? str : '-') + (date < 9 ? '0' + date : date)
+        return year + (str ? str : '-') + (month < 10 ? '0' + month : month) + (str ? str : '-') + (date < 10 ? '0' + date : date)
     }
 
 
     $(document).ready(function () {
         var day = new Date();
         day.setTime(day.getTime());
-        var endDate = day.getFullYear() + "-" + (day.getMonth() + 1) + "-" + day.getDate();
+      dayStr = day.getDate() < 10 ? '0' + day.getDate() : day.getDate();
+      var monStr;
+      if ((day.getMonth() + 1) < 10) {
+        monStr = '0' + (day.getMonth() + 1);
+      } else {
+        monStr = (day.getMonth() + 1);
+      }
+
+
+      var endDate = day.getFullYear() + "-" + monStr + "-" + dayStr;
         var startDate = getBeforeDate(20)
 
         $("#titleData").text(startDate + "~" + endDate + "异动股票");
@@ -91,9 +100,22 @@
                     }
                     else if (optionJson.length > 0) {
                         for (var i = 0; i < optionJson.length; i++) {
-                            html += "<tr>";
-                            html += "<td>" + optionJson[i].stockCode.split(".")[0] + "</td>";
-                            html += "<td>" + optionJson[i].tradingDay + "</td>";
+
+                          var url;
+                          if (optionJson[i].stockCode.split(".")[0].indexOf("6") == 0) {
+                            url = "https://quotes.sina.cn/hs/company/quotes/view/sh"
+                                + optionJson[i].stockCode.split(".")[0];
+                          } else {
+                            url = "https://quotes.sina.cn/hs/company/quotes/view/sz"
+                                + optionJson[i].stockCode.split(".")[0];
+
+                          }
+
+                          html += "<tr>";
+                          html += "<td><a href=" + url + " target='_blank\n'>"
+                              + optionJson[i].stockCode.split(".")[0]
+                              + "</a></td>";
+                          html += "<td>" + optionJson[i].tradingDay + "</td>";
                             html += "<td>" + optionJson[i].counter + "</td>";
                             html += "<td>" + optionJson[i].swL3 + "</td>";
                             html += "<td>" + optionJson[i].jqL2 + "</td>";

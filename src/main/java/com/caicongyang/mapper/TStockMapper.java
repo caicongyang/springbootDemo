@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @author caicongyang
  * @since 2020-05-31
  */
-@Mapper
+
 public interface TStockMapper extends BaseMapper<TStock> {
 
 }

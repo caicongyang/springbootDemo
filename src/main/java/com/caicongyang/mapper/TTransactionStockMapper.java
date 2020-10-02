@@ -1,8 +1,7 @@
 package com.caicongyang.mapper;
 
-import com.caicongyang.domain.TTransactionStock;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
+import com.caicongyang.domain.TTransactionStock;
 
 /**
  * <p>
@@ -12,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @author caicongyang
  * @since 2020-05-31
  */
-@Mapper
+
 public interface TTransactionStockMapper extends BaseMapper<TTransactionStock> {
 
 }

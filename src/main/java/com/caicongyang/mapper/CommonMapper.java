@@ -15,7 +15,6 @@ import java.util.Map;
  * @email 80730305@yonghui.cn
  * @date 2018-12-17 22:15:03
  */
-@Mapper
 public interface CommonMapper {
 
 

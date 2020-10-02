@@ -2,6 +2,7 @@ package com.caicongyang.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -96,12 +97,23 @@ public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
         return sdf.format(new Date());
     }
 
-
+    /**
+     * Date 转 localDate
+     */
     public static LocalDate date2LocalDate(Date date) {
         if(null == date) {
             return null;
         }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
+
+
+    public static Date LocalDate2date(LocalDate localDate) {
+        ZoneId zone = ZoneId.systemDefault();
+        Instant instant = localDate.atStartOfDay().atZone(zone).toInstant();
+        return Date.from(instant);
+    }
+
+
 
 }

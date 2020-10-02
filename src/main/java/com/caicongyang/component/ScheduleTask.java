@@ -1,6 +1,7 @@
 package com.caicongyang.component;
 
 import com.caicongyang.services.ITEtfService;
+import com.caicongyang.services.ITStockService;
 import com.caicongyang.services.StockService;
 import com.caicongyang.utils.TomDateUtils;
 import org.slf4j.Logger;
@@ -27,8 +28,12 @@ public class ScheduleTask {
     @Autowired
     ITEtfService itEtfService;
 
+
+    @Autowired
+    private ITStockService itStockService;
+
     /**
-     * 每天17点执行一次
+     * 每天18点执行一次
      */
     @Scheduled(cron = "0 0 18 * * ?")
     public void task() throws Exception {
@@ -41,10 +46,30 @@ public class ScheduleTask {
             itEtfService.catchTransactionStockData(currentDate);
 
         }else{
-            logger.info(TomDateUtils.getDayPatternCurrentDay()+"未获取到交易数据");
+            logger.info(TomDateUtils.getDayPatternCurrentDay()+"：未获取到交易数据");
 
         }
         logger.info("执行任务结束....");
     }
 
+
+
+    /**
+     * 每天17点执行一次
+     */
+    @Scheduled(cron = "0 0 19 * * ?")
+    public void task2() throws Exception {
+        logger.info("执行任务开始....");
+        if (stockService.TradeFlag()) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String currentDate = format.format(new Date());
+            itStockService.calculateHigherStock(currentDate);
+
+
+        }else{
+            logger.info(TomDateUtils.getDayPatternCurrentDay()+"：未获取到交易数据");
+
+        }
+        logger.info("执行任务结束....");
+    }
 }

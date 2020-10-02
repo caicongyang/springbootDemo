@@ -12,26 +12,23 @@ import com.caicongyang.mapper.TTransactionStockMapper;
 import com.caicongyang.services.StockService;
 import com.caicongyang.utils.JsonUtils;
 import com.caicongyang.utils.TomDateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  *
  */
 @Service
-@Transactional(rollbackFor = Exception.class)
 public class StockServiceImpl implements StockService {
 
     private static final Logger logger = LoggerFactory.getLogger(StockServiceImpl.class);
@@ -45,7 +42,7 @@ public class StockServiceImpl implements StockService {
     @Autowired
     HttpClientProvider provider;
     @Resource
-    protected CommonMapper mapper;
+    protected CommonMapper commonMapper;
 
 
     @Resource
@@ -69,14 +66,13 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<Map<String, Object>> catchTransactionStockData(String currentDate) throws Exception {
 
-
-        String preTradingDate = mapper.queryPreTradingDate(currentDate);
+        String preTradingDate = commonMapper.queryPreTradingDate(currentDate);
 
         HashMap map = new HashMap();
 
         map.put("currentDate", currentDate);
         map.put("preDate", preTradingDate);
-        List<Map<String, Object>> maps = mapper.queryTransactionStock(map);
+        List<Map<String, Object>> maps = commonMapper.queryTransactionStock(map);
 
         String jkToken = getJKToken();
         for (Map<String, Object> item : maps) {
@@ -122,7 +118,7 @@ public class StockServiceImpl implements StockService {
 
         //如果当天没有，则获取最近一个交易日
         if (CollectionUtils.isEmpty(reuslt)) {
-            String lastTradingDate = mapper.queryLastTradingDate(currentDate);
+            String lastTradingDate = commonMapper.queryLastTradingDate(currentDate);
             stock.setTradingDay(lastTradingDate);
             ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock);
             reuslt = tTransactionStockMapper.selectList(wrapper);
@@ -136,7 +132,7 @@ public class StockServiceImpl implements StockService {
         HashMap<String, String> param = new HashMap<>();
         param.put("startDate", startDate);
         param.put("endDate", endDate);
-        return mapper.getIntervalTransactionStockData(param);
+        return commonMapper.getIntervalTransactionStockData(param);
     }
 
 
