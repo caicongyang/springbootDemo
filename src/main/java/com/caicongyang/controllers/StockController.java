@@ -1,6 +1,7 @@
 package com.caicongyang.controllers;
 
 import com.caicongyang.common.Result;
+import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.TStockHigher;
 import com.caicongyang.domain.TTransactionCounterStock;
 import com.caicongyang.domain.TTransactionStock;
@@ -120,4 +121,15 @@ public class StockController {
         throws ParseException {
         return Result.ok(itStockService.getHigherStock(tradingDay));
     }
+
+
+    @GetMapping("/get-breakthrough-platform")
+    @ApiOperation(value = "获取平台突破的股票", notes = "获取平台突破的股票")
+    public @ResponseBody
+    Result<List<BreakthroughPlatformStock>> getBreakthroughPlatform(
+        @RequestParam(required = true, value = "currentDate") String currentDate)
+        throws ParseException {
+        return Result.ok(itStockService.getBreakthroughPlatform(currentDate));
+    }
+
 }

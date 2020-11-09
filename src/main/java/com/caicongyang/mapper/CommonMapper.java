@@ -1,9 +1,6 @@
 package com.caicongyang.mapper;
 
 
-import org.apache.ibatis.annotations.Mapper;
-
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +25,9 @@ public interface CommonMapper {
 
 
     List<Map<String, Object>> getIntervalTransactionStockData(HashMap<String, String> map);
+
+
+    List<Map<String, Object>> getBreakthroughPlatform(HashMap<String, String> map);
 
 }
 

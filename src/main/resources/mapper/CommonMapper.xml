@@ -82,5 +82,29 @@ ORDER BY
 	s.zjw DESC
     </select>
 
+
+    <select id="getBreakthroughPlatform" parameterType="java.util.HashMap"
+        resultType="java.util.HashMap">
+	SELECT
+	ts.stock_code,
+	sh.interval_days,
+	ts.last_day_compare,
+	ts.mean_ratio,
+	ts.jq_l2,
+	ts.zjw,
+	ts.sw_l3,
+	ts.trading_day
+FROM
+	T_transaction_stock ts
+	INNER JOIN T_Stock_Higher sh ON sh.stock_code = ts.stock_code
+	AND sh.trading_day = ts.trading_day
+WHERE
+	ts.trading_day = #{currentDate}
+	ORDER BY  ts.sw_l3 asc ,
+	sh.interval_days desc
+
+    </select>
+
+
 </mapper>
 

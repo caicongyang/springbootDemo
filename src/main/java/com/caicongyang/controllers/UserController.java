@@ -1,22 +1,21 @@
 package com.caicongyang.controllers;
 
+import com.caicongyang.component.PrometheusCustomMonitor;
 import com.caicongyang.domain.Adress;
+import com.caicongyang.domain.UserInfo;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.caicongyang.domain.UserInfo;
-
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
 
 /**
  * @author caicongyang
@@ -27,6 +26,9 @@ import io.swagger.annotations.ApiOperation;
 public class UserController {
 
     private static Map<Long, UserInfo> uMap = new ConcurrentHashMap<>();
+
+    @Autowired
+    private PrometheusCustomMonitor monitor;
 
     static {
         UserInfo u1 = new UserInfo();
@@ -46,6 +48,13 @@ public class UserController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Boolean setStudentById(@RequestBody UserInfo userInfo) {
         uMap.put(userInfo.getUserId(), userInfo);
+
+        if(userInfo.getUserId() == 1){
+            //模拟
+            monitor.getStudentAddCountError().increment();
+        }
+        monitor.getStudentAddCount().increment();
+
         return true;
     }
 

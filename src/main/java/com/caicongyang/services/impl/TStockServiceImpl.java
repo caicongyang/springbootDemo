@@ -2,6 +2,7 @@ package com.caicongyang.services.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.HighestInPeriodResult;
 import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TStockHigher;
@@ -11,10 +12,14 @@ import com.caicongyang.mapper.TStockMapper;
 import com.caicongyang.services.ITStockService;
 import com.caicongyang.utils.TomDateUtils;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -93,6 +98,43 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             result = higherMapper.selectList(queryWrapper);
         }
         return result;
+    }
+
+    @Override
+    public List<BreakthroughPlatformStock> getBreakthroughPlatform(String currentDate)
+        throws ParseException {
+
+        HashMap<String, String> queryMap = new HashMap<>();
+        queryMap.put("currentDate", StringUtils.isNotBlank(currentDate) ? currentDate
+            : TomDateUtils.getDayPatternCurrentDay());
+
+        List<Map<String, Object>> queryResultList = mapper.getBreakthroughPlatform(queryMap);
+        if (CollectionUtils.isEmpty(queryResultList)) {
+            queryMap.put("currentDate", mapper.queryLastTradingDate(currentDate));
+            queryResultList = mapper.getBreakthroughPlatform(queryMap);
+
+        }
+        List<BreakthroughPlatformStock> result = new ArrayList<>();
+
+        for (Map<String, Object> map : queryResultList) {
+            BreakthroughPlatformStock stock = new BreakthroughPlatformStock();
+            stock.setStockCode((String) map.getOrDefault("stock_code", ""));
+            stock.setIntervalDays((Integer) map.getOrDefault("interval_days", ""));
+
+            stock.setLastDayCompare((Double) map.getOrDefault("last_day_compare", ""));
+            stock.setMeanRatio((Double) map.getOrDefault("mean_ratio", ""));
+
+            stock.setJqL2((String) map.getOrDefault("jq_l2", ""));
+            stock.setSwL3((String) map.getOrDefault("sw_l3", ""));
+            stock.setZjw((String) map.getOrDefault("zjw", ""));
+            stock.setTradingDay(TomDateUtils.formateDayPattern2Date((String) map.getOrDefault("trading_day", "")));
+            result.add(stock);
+
+        }
+
+        return result;
+
+
     }
 
 
