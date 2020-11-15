@@ -79,7 +79,8 @@ ORDER BY
     t.counter desc,
 	s.jq_l2 DESC,
 	s.sw_l3 DESC,
-	s.zjw DESC
+	s.zjw DESC,
+	s.trading_day desc
     </select>
 
 
