@@ -1,7 +1,10 @@
 package com.caicongyang.component;
 
 import com.caicongyang.BaseApplicationTest;
+import com.caicongyang.domain.TStockMain;
+import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.utils.JsonUtils;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ public class HttpClientProviderTest extends BaseApplicationTest {
 
     @Autowired
     HttpClientProvider provider;
+
+    @Autowired
+    ITStockMainService itStockMainService;
 
 
     private String apiUrl = "https://dataapi.joinquant.com/apis";
@@ -39,9 +45,12 @@ public class HttpClientProviderTest extends BaseApplicationTest {
 //                "code": "HY007",
 //                "date": "2016-03-29"
 //        }
+
+        String token2=  "5b6a9ba2b2f272b721667f2f07cb00b2313216c1";
+
         Map<String, String> params = new HashMap<>();
         params.put("method", "get_industry");
-        params.put("token", "5b6a9ba2b2f272b721667f2c0ecf0eb9d722d45d");
+        params.put("token", token2);
         params.put("code", "000011.XSHE");
         params.put("date", "2020-06-12");
 
@@ -62,6 +71,49 @@ public class HttpClientProviderTest extends BaseApplicationTest {
                 System.out.println(industry.split(",")[2]);
             }
         }
+
+
+    }
+
+
+
+
+    @Test
+    public void test2() throws Exception{
+        String token2=  "5b6a9ba2b2f272b721667f2f07cb00b92430e94f";
+
+        Map<String, String> params = new HashMap<>();
+        params.put("method", "get_all_securities");
+        params.put("token", token2);
+        params.put("code", "etf");
+        params.put("date", "2020-12-02");
+
+        String s = JsonUtils.jsonFromObject(params);
+        System.out.println(s);
+
+        String result = provider.doPostWithApplicationJson(apiUrl, params);
+        System.out.println(result);
+
+
+        List<String> resultList = Arrays.asList(result.split("\n"));
+
+        List<TStockMain> insertlist = new ArrayList<>();
+
+       // resultList.remove(0);
+
+        for(String key : resultList){
+
+            TStockMain entity = new TStockMain();
+            String[] keys = key.split(",");
+            entity.setStockCode(keys[0]);
+            entity.setStockName(keys[1]);
+            entity.setType(keys[5]);
+            insertlist.add(entity);
+        }
+
+
+        itStockMainService.saveBatch(insertlist);
+
 
 
     }

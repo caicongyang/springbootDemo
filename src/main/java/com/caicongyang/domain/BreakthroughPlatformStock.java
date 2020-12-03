@@ -21,6 +21,8 @@ public class BreakthroughPlatformStock {
 
     private String stockCode;
 
+    private String stockName;
+
     private Double lastDayCompare;
 
     private Double meanRatio;
@@ -97,5 +99,14 @@ public class BreakthroughPlatformStock {
 
     public void setZjw(String zjw) {
         this.zjw = zjw;
+    }
+
+
+    public String getStockName() {
+        return stockName;
+    }
+
+    public void setStockName(String stockName) {
+        this.stockName = stockName;
     }
 }

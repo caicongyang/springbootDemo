@@ -4,6 +4,7 @@ import com.caicongyang.domain.TEtf;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.caicongyang.domain.TTransactionEtf;
 
+import com.caicongyang.domain.TTransactionEtfDTO;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +18,9 @@ import java.util.Map;
  */
 public interface ITEtfService extends IService<TEtf> {
 
-    List<TTransactionEtf> querySortEtfStockData(String currentDate);
+    List<TTransactionEtfDTO> querySortEtfStockData(String currentDate);
 
     List<TTransactionEtf> catchTransactionStockData(String currentDate);
 
-    List<TTransactionEtf> getTransactionEtfData(String currentDate);
+    List<TTransactionEtfDTO> getTransactionEtfData(String currentDate);
 }

@@ -22,6 +22,10 @@
         tr:nth-child(even) {
             background: #e9e9e9;
         }
+
+        .ui-content {
+            overflow-x: scroll;
+        }
     </style>
     <script>
         /**
@@ -56,8 +60,8 @@
         <thead>
         <tr>
             <th data-priority="1">股票</th>
-            <th data-priority="2">交易日期</th>
-            <th data-priority="3">lastDayCompare</th>
+            <th data-priority="2">名称</th>
+            <th data-priority="4">lastDayCompare</th>
         </tr>
         </thead>
         <tbody id="tbodydata">
@@ -92,7 +96,11 @@
                         for (var i = 0; i < optionJson.length; i++) {
                             html += "<tr>";
                             html += "<td>" + optionJson[i].stockCode.split(".")[0] + "</td>";
-                            html += "<td>" + optionJson[i].tradingDay + "</td>";
+
+                          html += "<td>" + optionJson[i].stockName + "</td>";
+
+
+
                             html += "<td>" + optionJson[i].lastDayCompare + "</td>";
                             html += "</tr>";
                         }

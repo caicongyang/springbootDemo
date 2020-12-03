@@ -19,13 +19,16 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("T_transaction_stock")
 @ApiModel(value = "TTransactionStock对象", description = "")
-public class TTransactionCounterStock implements Serializable {
+public class TTransactionCounterStockDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String stockCode;
+
+    private String stockName;
+
+
     private String tradingDay;
 
     @ApiModelProperty(value = "申万行业")

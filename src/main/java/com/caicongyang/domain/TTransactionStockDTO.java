@@ -1,6 +1,5 @@
 package com.caicongyang.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.io.Serializable;
@@ -19,13 +18,21 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("T_transaction_stock")
 @ApiModel(value = "TTransactionStock对象", description = "")
-public class TTransactionCounterStock implements Serializable {
+public class TTransactionStockDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private String stockCode;
+
+    private String stockName;
+
+    private Double lastDayCompare;
+
+    private Double meanRatio;
+
+    private String conceptStr;
+
     private String tradingDay;
 
     @ApiModelProperty(value = "申万行业")
@@ -35,9 +42,6 @@ public class TTransactionCounterStock implements Serializable {
     private String jqL2;
 
     private String zjw;
-
-    @ApiModelProperty(value = "出现次数")
-    private Long counter;
 
 
 }

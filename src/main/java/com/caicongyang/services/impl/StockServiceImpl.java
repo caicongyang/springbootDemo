@@ -5,15 +5,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.caicongyang.component.HttpClientProvider;
 import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TTransactionStock;
+import com.caicongyang.domain.TTransactionStockDTO;
 import com.caicongyang.mail.MailService;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TStockMapper;
 import com.caicongyang.mapper.TTransactionStockMapper;
+import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.StockService;
 import com.caicongyang.utils.JsonUtils;
 import com.caicongyang.utils.TomDateUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -53,7 +57,11 @@ public class StockServiceImpl implements StockService {
 
 
     @Autowired
-    MailService mailService;
+    private ITStockMainService itStockMainService;
+
+
+    @Autowired
+    private MailService mailService;
 
     @Override
     public Boolean TradeFlag() {
@@ -109,7 +117,7 @@ public class StockServiceImpl implements StockService {
     }
 
     @Override
-    public List<TTransactionStock> getTransactionStockData(String currentDate) throws Exception {
+    public List<TTransactionStockDTO> getTransactionStockData(String currentDate) throws Exception {
         TTransactionStock stock = new TTransactionStock();
         stock.setTradingDay(currentDate);
         Wrapper<TTransactionStock> wrapper = new QueryWrapper<>(stock);
@@ -123,7 +131,19 @@ public class StockServiceImpl implements StockService {
             ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock);
             reuslt = tTransactionStockMapper.selectList(wrapper);
         }
-        return reuslt;
+
+        List<TTransactionStockDTO> returnList = new ArrayList<>();
+        if (org.apache.commons.collections.CollectionUtils.isNotEmpty(reuslt)) {
+
+            for (TTransactionStock item : reuslt) {
+                TTransactionStockDTO dto = new TTransactionStockDTO();
+                BeanUtils.copyProperties(item, dto);
+                dto.setStockName(itStockMainService.getStockNameByStockCode(item.getStockCode()));
+                returnList.add(dto);
+
+            }
+        }
+        return returnList;
     }
 
 

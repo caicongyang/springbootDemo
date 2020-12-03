@@ -2,6 +2,7 @@ package com.caicongyang.services;
 
 import com.caicongyang.domain.TTransactionStock;
 
+import com.caicongyang.domain.TTransactionStockDTO;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public interface StockService {
      * 获取当天的异动股票数据
      * *
      */
-    List<TTransactionStock> getTransactionStockData(String currentDate) throws Exception;
+    List<TTransactionStockDTO> getTransactionStockData(String currentDate) throws Exception;
 
     /**
      * 查询时间间隔的股票异动数据

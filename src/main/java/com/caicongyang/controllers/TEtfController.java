@@ -3,6 +3,7 @@ package com.caicongyang.controllers;
 
 import com.caicongyang.common.Result;
 import com.caicongyang.domain.TTransactionEtf;
+import com.caicongyang.domain.TTransactionEtfDTO;
 import com.caicongyang.services.ITEtfService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +38,7 @@ public class TEtfController {
     @GetMapping("/querySortEtfStockData")
     @ApiOperation(value = "大于1000w的etf按当日成交额与前一个成交额的比率倒序排名", notes = "查询当天的股票异动数据")
     public @ResponseBody
-    Result<List<TTransactionEtf>> querySortEtfStockData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
+    Result<List<TTransactionEtfDTO>> querySortEtfStockData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
         try {
             return Result.ok(etfService.querySortEtfStockData(currentDate));
         } catch (Exception e) {
@@ -65,7 +66,7 @@ public class TEtfController {
     @GetMapping("/getTransactionEtfData")
     @ApiOperation(value = "捕获当天的etf异动数据", notes = "查询当天的股票异动数据")
     public @ResponseBody
-    Result<List<TTransactionEtf>> getTransactionEtfData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
+    Result<List<TTransactionEtfDTO>> getTransactionEtfData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
         try {
             return Result.ok(etfService.getTransactionEtfData(currentDate));
         } catch (Exception e) {

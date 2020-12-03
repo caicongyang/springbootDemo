@@ -2,9 +2,10 @@ package com.caicongyang.controllers;
 
 import com.caicongyang.common.Result;
 import com.caicongyang.domain.BreakthroughPlatformStock;
-import com.caicongyang.domain.TStockHigher;
-import com.caicongyang.domain.TTransactionCounterStock;
-import com.caicongyang.domain.TTransactionStock;
+import com.caicongyang.domain.TStockHigherDTO;
+import com.caicongyang.domain.TTransactionCounterStockDTO;
+import com.caicongyang.domain.TTransactionStockDTO;
+import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.ITStockService;
 import com.caicongyang.services.StockService;
 import io.swagger.annotations.Api;
@@ -13,6 +14,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,10 @@ public class StockController {
     @Autowired
     private ITStockService itStockService;
 
+    @Resource
+    private ITStockMainService itStockMainService;
+
+
     @GetMapping("/catchTransactionStockData")
     @ApiOperation(value = "捕获当天的股票异动数据", notes = "查询当天的股票异动数据")
     public @ResponseBody
@@ -59,9 +65,11 @@ public class StockController {
     @GetMapping("/getTransactionStockData")
     @ApiOperation(value = "查询当天的股票异动数据", notes = "查询当天的股票异动数据")
     public @ResponseBody
-    Result<List<TTransactionStock>> getTransactionStockData(@RequestParam(required = false, value = "currentDate") String currentDate) throws Exception {
+    Result<List<TTransactionStockDTO>> getTransactionStockData(
+        @RequestParam(required = false, value = "currentDate") String currentDate)
+        throws Exception {
 
-        List<TTransactionStock> result = null;
+        List<TTransactionStockDTO> result = null;
         try {
             result = stockService.getTransactionStockData(currentDate);
             return Result.ok(result);
@@ -76,22 +84,25 @@ public class StockController {
     @GetMapping("/getIntervalTransactionStockData")
     @ApiOperation(value = "查询时间间隔的股票异动数据", notes = "查询时间间隔内的股票异动数据")
     public @ResponseBody
-    Result<List<TTransactionCounterStock>> getIntervalTransactionStockData(@RequestParam(required = false, value = "startDate") String startDate,
+    Result<List<TTransactionCounterStockDTO>> getIntervalTransactionStockData(
+        @RequestParam(required = false, value = "startDate") String startDate,
                                                                            @RequestParam(required = false, value = "endDate") String endDate) throws Exception {
-        List<TTransactionCounterStock> result = new ArrayList<>();
+        List<TTransactionCounterStockDTO> result = new ArrayList<>();
         try {
             List<Map<String, Object>> queryResult = stockService.getIntervalTransactionStockData(startDate, endDate);
             if (CollectionUtils.isEmpty(queryResult)) {
                 return Result.ok(null);
             } else {
                 for (Map<String, Object> map : queryResult) {
-                    TTransactionCounterStock stock = new TTransactionCounterStock();
+                    TTransactionCounterStockDTO stock = new TTransactionCounterStockDTO();
                     stock.setCounter((Long) map.getOrDefault("counter", null));
                     stock.setStockCode((String) map.getOrDefault("stock_code", ""));
                     stock.setJqL2((String) map.getOrDefault("jq_l2", ""));
                     stock.setSwL3((String) map.getOrDefault("sw_l3", ""));
                     stock.setZjw((String) map.getOrDefault("zjw", ""));
                     stock.setTradingDay((String) map.getOrDefault("trading_day", ""));
+                    stock.setStockName(
+                        itStockMainService.getStockNameByStockCode(stock.getStockCode()));
                     result.add(stock);
                 }
                 return Result.ok(result);
@@ -116,7 +127,7 @@ public class StockController {
     @GetMapping("/getHigherStock")
     @ApiOperation(value = "获取当日新高的股票", notes = "获取当日新高的股票")
     public @ResponseBody
-    Result<List<TStockHigher>> getHigherStock(
+    Result<List<TStockHigherDTO>> getHigherStock(
         @RequestParam(required = true, value = "tradingDay") String tradingDay)
         throws ParseException {
         return Result.ok(itStockService.getHigherStock(tradingDay));

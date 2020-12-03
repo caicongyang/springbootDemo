@@ -6,9 +6,11 @@ import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.HighestInPeriodResult;
 import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TStockHigher;
+import com.caicongyang.domain.TStockHigherDTO;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TStockHigherMapper;
 import com.caicongyang.mapper.TStockMapper;
+import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.ITStockService;
 import com.caicongyang.utils.TomDateUtils;
 import java.text.ParseException;
@@ -20,6 +22,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,6 +45,10 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
     @Resource
     private TStockHigherMapper higherMapper;
+
+
+    @Resource
+    private ITStockMainService mainService;
 
     @Override
     public List<TStock> calculateHigherStock(String tradingDay) throws ParseException {
@@ -81,7 +88,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     }
 
     @Override
-    public List<TStockHigher> getHigherStock(String tradingDay) throws ParseException {
+    public List<TStockHigherDTO> getHigherStock(String tradingDay) throws ParseException {
 
         QueryWrapper<TStockHigher> queryWrapper = new QueryWrapper<>();
         TStockHigher entity = new TStockHigher();
@@ -97,7 +104,18 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             queryWrapper.setEntity(entity);
             result = higherMapper.selectList(queryWrapper);
         }
-        return result;
+
+        List<TStockHigherDTO> returnList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(result)) {
+            for (TStockHigher item : result) {
+                TStockHigherDTO dto = new TStockHigherDTO();
+                BeanUtils.copyProperties(item, dto);
+                dto.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
+                returnList.add(dto);
+            }
+        }
+
+        return returnList;
     }
 
     @Override
@@ -128,6 +146,8 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             stock.setSwL3((String) map.getOrDefault("sw_l3", ""));
             stock.setZjw((String) map.getOrDefault("zjw", ""));
             stock.setTradingDay(TomDateUtils.formateDayPattern2Date((String) map.getOrDefault("trading_day", "")));
+            stock.setStockName(mainService.getStockNameByStockCode(stock.getStockCode()));
+
             result.add(stock);
 
         }
