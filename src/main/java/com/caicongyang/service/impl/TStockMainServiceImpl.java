@@ -27,7 +27,7 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
 
 
     @Override
-    @Cacheable(cacheNames = "getStockNameByStockCode" ,key = "#stockCode")
+    @Cacheable(cacheNames = "TStockMainServiceImpl.getStockNameByStockCode" ,key = "#stockCode")
     public String getStockNameByStockCode(String stockCode) {
         if (StringUtils.isBlank(stockCode)) {
             return StringUtils.EMPTY;
