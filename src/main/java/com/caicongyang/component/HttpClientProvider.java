@@ -1,6 +1,10 @@
 package com.caicongyang.component;
 
 import com.caicongyang.utils.JsonUtils;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.config.RequestConfig;
@@ -18,11 +22,6 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Component
 public class HttpClientProvider {
@@ -68,6 +67,8 @@ public class HttpClientProvider {
 
     public String doPostWithApplicationJson(String url, Map<String, String> map) throws IOException {
 
+        logger.info("doPostWithApplicationJson; url ={}, args = {}", url,
+            JsonUtils.jsonFromObject(map));
         CloseableHttpResponse closeableHttpResponse = null;
         try {
             HttpPost httpPost = new HttpPost(url);

@@ -1,12 +1,24 @@
 package com.caicongyang.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.caicongyang.component.HttpClientProvider;
 import com.caicongyang.domain.TStockMain;
 import com.caicongyang.mapper.TStockMainMapper;
 import com.caicongyang.service.ITStockMainService;
+import com.caicongyang.utils.TomDateUtils;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +34,27 @@ import org.springframework.stereotype.Service;
 public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockMain> implements
     ITStockMainService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TStockMainServiceImpl.class);
+
+
     @Resource
     TStockMainMapper tStockMainMapper;
 
+    @Autowired
+    HttpClientProvider provider;
+
+    private static String apiUrl = "https://dataapi.joinquant.com/apis";
+
+    private static ConcurrentHashMap<String, String> tokenMap = new ConcurrentHashMap<>();
+
+
+    static {
+        tokenMap.put("token", "5b6a9ba2b2f272b721667f2f07cb00b2313216c1");
+    }
+
 
     @Override
-    @Cacheable(cacheNames = "TStockMainServiceImpl.getStockNameByStockCode" ,key = "#stockCode")
+    @Cacheable(cacheNames = "getStockNameByStockCode", key = "#stockCode")
     public String getStockNameByStockCode(String stockCode) {
         if (StringUtils.isBlank(stockCode)) {
             return StringUtils.EMPTY;
@@ -35,5 +62,94 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
         TStockMain entity = tStockMainMapper.selectOne(new QueryWrapper<TStockMain>()
             .eq("stock_code", stockCode));
         return entity == null ? "" : entity.getStockName();
+    }
+
+
+    @Override
+    @Cacheable(cacheNames = "getIndustryByStockCode", key = "#stockCode")
+    public TStockMain getIndustryByStockCode(String stockCode) throws IOException {
+        TStockMain entity = tStockMainMapper
+            .selectOne(new QueryWrapper<TStockMain>().eq("stock_code", stockCode));
+        if (!StringUtils.isBlank(entity.getJqL2()) && !StringUtils.isBlank(entity.getSwL3())
+            && !StringUtils.isBlank(entity.getZjw())) {
+            return entity;
+        } else {
+            TStockMain tStockMain = _getIndustryByStockCode(tokenMap.get("token"), stockCode);
+            if (null != tStockMain) {
+                tStockMainMapper
+                    .update(tStockMain,
+                        new UpdateWrapper<TStockMain>().eq("stock_code", stockCode));
+            }
+            return tStockMain;
+        }
+    }
+
+    public TStockMain _getIndustryByStockCode(String jkToken, String stockCode) throws IOException {
+        String jkIndustryStr = getJKIndustryStocks(jkToken, stockCode);
+        if (jkIndustryStr.contains("error")) {
+            tokenMap.put("token", getJKToken());
+            jkIndustryStr = getJKIndustryStocks(tokenMap.get("token"), stockCode);
+
+        }
+
+        //todo  token 过期判断
+        List<String> jKIndustryStockList = Arrays.asList(jkIndustryStr.split("\n"));
+        List<String> resultList = jKIndustryStockList.subList(1, jKIndustryStockList.size());
+        return parseIndustryStockData(stockCode, resultList);
+    }
+
+
+    public String getJKToken() throws IOException {
+        Map<String, String> params = new HashMap<>();
+        params.put("method", "get_token");
+        params.put("mob", "13774598865");
+        params.put("pwd", "123456");
+        //todo 需要把token 缓存起来
+        return provider.doPostWithApplicationJson(apiUrl, params);
+    }
+
+
+    /**
+     * 获取某只股票的聚宽行业信息
+     */
+    public String getJKIndustryStocks(String token, String code) throws IOException {
+        /**
+         *  example:
+         *                {
+         *                     "method": "get_industry_stocks",
+         *                         "token": "5b6a9ba7b0f572bb6c287e280ed",
+         *                         "code": "HY007",
+         *                         "date": "2016-03-29"
+         *                 }
+         */
+
+        Map<String, String> params = new HashMap<>();
+        params.put("method", "get_industry");
+        params.put("token", token);
+        params.put("code", code);
+        params.put("date", TomDateUtils.getDayPatternCurrentDay());
+
+        return provider.doPostWithApplicationJson(apiUrl, params);
+    }
+
+
+    private TStockMain parseIndustryStockData(String stockCode, List<String> resultList) {
+        TStockMain stock = new TStockMain();
+        for (String industry : resultList) {
+            if (industry.indexOf("jq_l2") >= 0) {
+                System.out.println(industry.split(",")[2]);
+                stock.setJqL2(industry.split(",")[2]);
+            }
+
+            if (industry.indexOf("sw_l3") >= 0) {
+                stock.setSwL3(industry.split(",")[2]);
+
+            }
+
+            if (industry.indexOf("zjw") >= 0) {
+                stock.setZjw(industry.split(",")[2]);
+            }
+        }
+        return stock;
     }
 }

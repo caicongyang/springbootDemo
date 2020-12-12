@@ -3,8 +3,8 @@ package com.caicongyang.services;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.TStock;
-import com.caicongyang.domain.TStockHigher;
 import com.caicongyang.domain.TStockHigherDTO;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -24,7 +24,8 @@ public interface ITStockService extends IService<TStock> {
 
     public List<TStock> calculateHigherStock(String tradingDay) throws ParseException;
 
-    public List<TStockHigherDTO> getHigherStock(String tradingDay) throws ParseException;
+    public List<TStockHigherDTO> getHigherStock(String tradingDay)
+        throws ParseException, IOException;
 
     public List<BreakthroughPlatformStock> getBreakthroughPlatform(String currentDate)
         throws ParseException;

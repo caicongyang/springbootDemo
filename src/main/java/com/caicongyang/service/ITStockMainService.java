@@ -2,6 +2,7 @@ package com.caicongyang.service;
 
 import com.caicongyang.domain.TStockMain;
 import com.baomidou.mybatisplus.extension.service.IService;
+import java.io.IOException;
 
 /**
  * <p>
@@ -15,5 +16,7 @@ public interface ITStockMainService extends IService<TStockMain> {
 
 
     public String getStockNameByStockCode(String stockCode);
+
+    public TStockMain getIndustryByStockCode(String stockCode) throws IOException;
 
 }

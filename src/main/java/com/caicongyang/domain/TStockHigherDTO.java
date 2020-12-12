@@ -39,5 +39,13 @@ public class TStockHigherDTO implements Serializable {
     @ApiModelProperty(value = "前期高点日期")
     private LocalDate previousHighsDate;
 
+    @ApiModelProperty(value = "申万行业")
+    private String swL3;
+
+    @ApiModelProperty(value = "聚宽行业")
+    private String jqL2;
+
+    private String zjw;
+
 
 }

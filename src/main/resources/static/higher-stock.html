@@ -64,6 +64,11 @@
       <th>名称</th>
       <th>intervalDays</th>
       <th>previousHighsDate</th>
+      <th>swL3</th>
+      <th>jqL2</th>
+      <th>zjw</th>
+
+
     </tr>
     </thead>
     <tbody id="tbodydata">
@@ -112,6 +117,10 @@
                 html += "<td>" + optionJson[i].stockName + "</td>";
                 html += "<td>" + optionJson[i].intervalDays + "</td>";
                 html += "<td>" + optionJson[i].previousHighsDate + "</td>";
+                html += "<td>" + optionJson[i].swL3 + "</td>";
+                html += "<td>" + optionJson[i].jqL2 + "</td>";
+                html += "<td>" + optionJson[i].zjw + "</td>";
+
                 html += "</tr>";
               }
               $("#titleData").append(optionJson[0].tradingDay + "创新高股票列表");

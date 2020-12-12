@@ -7,12 +7,14 @@ import com.caicongyang.domain.HighestInPeriodResult;
 import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TStockHigher;
 import com.caicongyang.domain.TStockHigherDTO;
+import com.caicongyang.domain.TStockMain;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TStockHigherMapper;
 import com.caicongyang.mapper.TStockMapper;
 import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.ITStockService;
 import com.caicongyang.utils.TomDateUtils;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -88,8 +90,8 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     }
 
     @Override
-    public List<TStockHigherDTO> getHigherStock(String tradingDay) throws ParseException {
-
+    public List<TStockHigherDTO> getHigherStock(String tradingDay)
+        throws ParseException, IOException {
         QueryWrapper<TStockHigher> queryWrapper = new QueryWrapper<>();
         TStockHigher entity = new TStockHigher();
         Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
@@ -105,12 +107,19 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             result = higherMapper.selectList(queryWrapper);
         }
 
+        //其他展示字段补充
         List<TStockHigherDTO> returnList = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(result)) {
             for (TStockHigher item : result) {
                 TStockHigherDTO dto = new TStockHigherDTO();
                 BeanUtils.copyProperties(item, dto);
                 dto.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
+                TStockMain industryEntity = mainService.getIndustryByStockCode(item.getStockCode());
+                if (industryEntity != null) {
+                    dto.setJqL2(industryEntity.getJqL2());
+                    dto.setZjw(industryEntity.getZjw());
+                    dto.setSwL3(industryEntity.getSwL3());
+                }
                 returnList.add(dto);
             }
         }

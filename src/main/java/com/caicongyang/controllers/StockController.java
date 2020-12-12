@@ -10,6 +10,7 @@ import com.caicongyang.services.ITStockService;
 import com.caicongyang.services.StockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,6 +66,7 @@ public class StockController {
 
     @GetMapping("/getTransactionStockData")
     @ApiOperation(value = "查询当天的股票异动数据", notes = "查询当天的股票异动数据")
+    @Cacheable(value = "getTransactionStockData", key = "#currentDate")
     public @ResponseBody
     Result<List<TTransactionStockDTO>> getTransactionStockData(
         @RequestParam(required = false, value = "currentDate") String currentDate)
@@ -83,6 +86,7 @@ public class StockController {
 
     @GetMapping("/getIntervalTransactionStockData")
     @ApiOperation(value = "查询时间间隔的股票异动数据", notes = "查询时间间隔内的股票异动数据")
+    @Cacheable(value = "getIntervalTransactionStockData", key = "#startDate+ '_' +#endDate")
     public @ResponseBody
     Result<List<TTransactionCounterStockDTO>> getIntervalTransactionStockData(
         @RequestParam(required = false, value = "startDate") String startDate,
@@ -126,16 +130,18 @@ public class StockController {
 
     @GetMapping("/getHigherStock")
     @ApiOperation(value = "获取当日新高的股票", notes = "获取当日新高的股票")
+    @Cacheable(value = "getHigherStock", key = "#tradingDay")
     public @ResponseBody
     Result<List<TStockHigherDTO>> getHigherStock(
         @RequestParam(required = true, value = "tradingDay") String tradingDay)
-        throws ParseException {
+        throws ParseException, IOException {
         return Result.ok(itStockService.getHigherStock(tradingDay));
     }
 
 
     @GetMapping("/get-breakthrough-platform")
     @ApiOperation(value = "获取平台突破的股票", notes = "获取平台突破的股票")
+    @Cacheable(value = "getBreakthroughPlatform", key = "#currentDate")
     public @ResponseBody
     Result<List<BreakthroughPlatformStock>> getBreakthroughPlatform(
         @RequestParam(required = true, value = "currentDate") String currentDate)
