@@ -2,18 +2,24 @@ package com.caicongyang.controllers;
 
 
 import com.caicongyang.common.Result;
+import com.caicongyang.domain.TEtfHigher;
+import com.caicongyang.domain.TEtfHigherDTO;
 import com.caicongyang.domain.TTransactionEtf;
 import com.caicongyang.domain.TTransactionEtfDTO;
 import com.caicongyang.services.ITEtfService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.text.ParseException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * <p>
@@ -75,9 +81,32 @@ public class TEtfController {
             return Result.ok(etfService.getTransactionEtfData(currentDate));
         } catch (Exception e) {
             logger.error("查询当天的etf股票异动数据失败", e);
-            e.printStackTrace();
             return Result.fail(e);
         }
+    }
+
+
+    @GetMapping("/getHigherEtf")
+    @ApiOperation(value = "计算当日新高的etf", notes = "计算当日新高的etf")
+    @Cacheable(value = "getHigherEtf", key = "#currentDate")
+    public Result<List<TEtfHigherDTO>> getHigherEtf(
+        @RequestParam(required = true, value = "currentDate") String currentDate) {
+        try {
+            return Result.ok(etfService.getHigherEtf(currentDate));
+        } catch (
+            Exception e) {
+            logger.error("计算当日新高的etf", e);
+            return Result.fail(e);
+        }
+    }
+
+
+    @GetMapping("/calculateHigherEtf")
+    @ApiOperation(value = "计算当日新高的etf", notes = "计算当日新高的etf")
+    public void calculateHigherStock(
+        @RequestParam(required = false, value = "currentDate") String currentDate)
+        throws ParseException {
+        etfService.calculateHigherStock(currentDate);
     }
 
 

@@ -95,8 +95,13 @@
                     var html = "";
                     if (optionJson.length > 0) {
                         for (var i = 0; i < optionJson.length; i++) {
-                            html += "<tr>";
-                            html += "<td>" + optionJson[i].stockCode.split(".")[0] + "</td>";
+                          var url = "https://m.10jqka.com.cn/stockpage/hs_"
+                              + optionJson[i].stockCode.split(".")[0] + "/#&atab=geguNews";
+                          html += "<tr>";
+                          html += "<td><a href=" + url + " target='_blank'>"
+                              + optionJson[i].stockCode.split(
+                                  ".")[0]
+                              + "</a></td>";
                             html += "<td>" + optionJson[i].stockName + "</td>";
                             html += "<td>" + optionJson[i].lastDayCompare + "</td>";
                             html += "<td>" + optionJson[i].meanRatio + "</td>";

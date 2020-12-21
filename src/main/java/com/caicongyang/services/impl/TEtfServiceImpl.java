@@ -3,16 +3,24 @@ package com.caicongyang.services.impl;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.caicongyang.domain.HighestInPeriodResult;
 import com.caicongyang.domain.TEtf;
+import com.caicongyang.domain.TEtfHigher;
+import com.caicongyang.domain.TEtfHigherDTO;
 import com.caicongyang.domain.TTransactionEtf;
 import com.caicongyang.domain.TTransactionEtfDTO;
 import com.caicongyang.mapper.CommonMapper;
+import com.caicongyang.mapper.TEtfHigherMapper;
 import com.caicongyang.mapper.TEtfMapper;
 import com.caicongyang.mapper.TTransactionEtfMapper;
+import com.caicongyang.service.ITEtfHigherService;
 import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.ITEtfService;
+import com.caicongyang.utils.TomDateUtils;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +53,13 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
 
     @Resource
     private ITStockMainService itStockMainService;
+
+
+    @Resource
+    private ITEtfHigherService itEtfHigherService;
+
+    @Resource
+    private TEtfHigherMapper etfHigherMapper;
 
 
 
@@ -124,5 +139,103 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
         return returnList;
     }
 
+    @Override
+    public void calculateHigherStock(String tradingDay) throws ParseException {
+        TEtf etf = new TEtf();
+        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
+        etf.setTradingDay(TomDateUtils.date2LocalDate(date));
+        QueryWrapper<TEtf> groupByWrapper = new QueryWrapper<>();
+        groupByWrapper.setEntity(etf);
+        groupByWrapper.groupBy("stock_code");
+        groupByWrapper.select("stock_code");
+        List<TEtf> tEtfList = tEtfMapper.selectList(groupByWrapper);
+
+        for (TEtf item : tEtfList) {
+            String stockCode = item.getStockCode();
+            TEtf queryItem = new TEtf();
+            QueryWrapper<TEtf> queryByWrapper = new QueryWrapper<>();
+            queryItem.setStockCode(stockCode);
+            queryByWrapper.setEntity(queryItem);
+            queryByWrapper.orderByDesc("trading_day");
+            List<TEtf> itemList = tEtfMapper.selectList(queryByWrapper);
+
+            HighestInPeriodResult result = getHighestInPeriodResult(itemList);
+            if (null != result && result.getIntervalDays() > 30) {
+                TEtfHigher entity = new TEtfHigher();
+                entity.setIntervalDays(result.getIntervalDays());
+                entity.setPreviousHighsDate(
+                    TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
+                entity.setStockCode(result.getStockCode());
+                entity.setTradingDay(etf.getTradingDay());
+                itEtfHigherService.save(entity);
+            }
+
+        }
+
+    }
+
+    @Override
+    public List<TEtfHigherDTO> getHigherEtf(String currentDate) throws ParseException {
+        TEtfHigher queryItem = new TEtfHigher();
+        queryItem.setTradingDay(
+            TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(currentDate)));
+        Wrapper<TEtfHigher> wrapper = new QueryWrapper<>(queryItem).orderByAsc("interval_days");
+        List<TEtfHigher> result = etfHigherMapper.selectList(wrapper);
+
+        if (CollectionUtils.isEmpty(result)) {
+            //如果当天没有，则获取最近一个交易日
+            String lastTradingDate = mapper.queryLastTradingDate(currentDate);
+            queryItem.setTradingDay(
+                TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate)));
+            ((QueryWrapper<TEtfHigher>) wrapper).setEntity(queryItem);
+            result = etfHigherMapper.selectList(wrapper);
+        }
+
+        List<TEtfHigherDTO> returnList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(result)) {
+            for (TEtfHigher item : result) {
+                TEtfHigherDTO dto = new TEtfHigherDTO();
+                BeanUtils.copyProperties(item,dto);
+                dto.setStockName(itStockMainService.getStockNameByStockCode(item.getStockCode()));
+                returnList.add(dto);
+            }
+        }
+
+        return returnList;
+    }
+
+
+    //当前天数，多少天内最高， 当一个比当前高的天数；
+    private HighestInPeriodResult getHighestInPeriodResult(List<TEtf> list) {
+        int intervalDays = 0;
+        Date previousHighsDate = null;
+        TEtf currentStockData = list.get(0);
+        if (null == currentStockData.getHigh()) {
+            return null;
+        }
+
+        for (int i = 1; i < list.size(); i++) {
+            //验证数据的完整性
+            if (null == list.get(i).getHigh()) {
+                break;
+            }
+            if (currentStockData.getHigh() >= list.get(i).getHigh()) {
+                intervalDays++;
+            } else {
+                previousHighsDate = TomDateUtils.LocalDate2date(list.get(i).getTradingDay());
+                //找到大于当前股权的日期跳出循环
+                break;
+            }
+
+        }
+        HighestInPeriodResult result = new HighestInPeriodResult();
+        result.setIntervalDays(intervalDays);
+        result.setPreviousHighsDate(previousHighsDate);
+        result.setStockCode(list.get(0).getStockCode());
+
+        intervalDays = 0;
+        previousHighsDate = null;
+        return result;
+    }
 
 }
