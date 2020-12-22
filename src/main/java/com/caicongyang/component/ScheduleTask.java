@@ -32,6 +32,9 @@ public class ScheduleTask {
     @Autowired
     private ITStockService itStockService;
 
+
+
+
     /**
      * 每天18点执行一次
      */
@@ -55,9 +58,9 @@ public class ScheduleTask {
 
 
     /**
-     * 每天17点执行一次
+     * 每天19点执行一次
      */
-    @Scheduled(cron = "0 0 19 * * ?")
+    @Scheduled(cron = "0 30 18 * * ?")
     public void task2() throws Exception {
         logger.info("执行任务开始....");
         if (stockService.TradeFlag()) {
@@ -69,6 +72,23 @@ public class ScheduleTask {
         }else{
             logger.info(TomDateUtils.getDayPatternCurrentDay()+"：未获取到交易数据");
 
+        }
+        logger.info("执行任务结束....");
+    }
+
+
+    /**
+     * 每天19点执行一次
+     */
+    @Scheduled(cron = "0 0 19 * * ?")
+    public void task3() throws Exception {
+        logger.info("执行任务开始....");
+        if (stockService.TradeFlag()) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            String currentDate = format.format(new Date());
+            itEtfService.calculateHigherStock(currentDate);
+        }else{
+            logger.info(TomDateUtils.getDayPatternCurrentDay()+"：未获取到交易数据");
         }
         logger.info("执行任务结束....");
     }

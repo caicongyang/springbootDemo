@@ -5,6 +5,7 @@ import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.TStockHigherDTO;
 import com.caicongyang.domain.TTransactionCounterStockDTO;
 import com.caicongyang.domain.TTransactionStockDTO;
+import com.caicongyang.domain.VolumeGtYesterdayStockDTO;
 import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.ITStockService;
 import com.caicongyang.services.StockService;
@@ -147,6 +148,17 @@ public class StockController {
         @RequestParam(required = true, value = "currentDate") String currentDate)
         throws ParseException {
         return Result.ok(itStockService.getBreakthroughPlatform(currentDate));
+    }
+
+
+    @GetMapping("/getVolumeGtYesterdayStock")
+    @ApiOperation(value = "当天12点获取交易量大于昨天的股票")
+    @Cacheable(value = "getBreakthroughPlatform", key = "#currentDate")
+    public @ResponseBody
+    Result<List<VolumeGtYesterdayStockDTO>> getVolumeGtYesterdayStock(
+        @RequestParam(required = true, value = "currentDate") String currentDate)
+        throws IOException {
+        return Result.ok(itStockService.getVolumeGtYesterdayStock(currentDate));
     }
 
 }

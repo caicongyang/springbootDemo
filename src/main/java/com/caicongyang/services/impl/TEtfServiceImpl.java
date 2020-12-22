@@ -160,7 +160,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
             List<TEtf> itemList = tEtfMapper.selectList(queryByWrapper);
 
             HighestInPeriodResult result = getHighestInPeriodResult(itemList);
-            if (null != result && result.getIntervalDays() > 30) {
+            if (null != result && result.getIntervalDays() > 30  && result.getVolume() > 10000000) {
                 TEtfHigher entity = new TEtfHigher();
                 entity.setIntervalDays(result.getIntervalDays());
                 entity.setPreviousHighsDate(
@@ -232,6 +232,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
         result.setIntervalDays(intervalDays);
         result.setPreviousHighsDate(previousHighsDate);
         result.setStockCode(list.get(0).getStockCode());
+        result.setVolume(currentStockData.getVolume());
 
         intervalDays = 0;
         previousHighsDate = null;

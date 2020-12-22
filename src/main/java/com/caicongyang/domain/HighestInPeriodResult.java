@@ -28,6 +28,9 @@ public class HighestInPeriodResult implements Serializable {
     private String stockCode;
 
 
+    private Long volume;
+
+
     public Integer getIntervalDays() {
         return intervalDays;
     }
@@ -59,5 +62,13 @@ public class HighestInPeriodResult implements Serializable {
 
     public void setStockCode(String stockCode) {
         this.stockCode = stockCode;
+    }
+
+    public Long getVolume() {
+        return volume;
+    }
+
+    public void setVolume(Long volume) {
+        this.volume = volume;
     }
 }

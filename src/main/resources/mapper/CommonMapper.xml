@@ -107,5 +107,23 @@ WHERE
     </select>
 
 
+
+
+    <select id="getVolumeGtYesterdayStock" parameterType="java.util.HashMap"
+        resultType="java.util.HashMap">
+
+    SELECT
+    tf.volume / ts.volume AS counter,
+    tf.stock_code
+    FROM
+    T_Stock_Half_Day tf
+    LEFT JOIN (select stock_code, volume from T_Stock where  trading_day = #{preDate}) as ts  ON tf.stock_code = ts.stock_code
+    WHERE
+    tf.trading_day = #{currentDate}
+    AND tf.volume / ts.volume > 1
+    ORDER BY
+    tf.volume / ts.volume DESC;
+    </select>
+
 </mapper>
 

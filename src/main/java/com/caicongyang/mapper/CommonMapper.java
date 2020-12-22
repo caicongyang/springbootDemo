@@ -29,5 +29,8 @@ public interface CommonMapper {
 
     List<Map<String, Object>> getBreakthroughPlatform(HashMap<String, String> map);
 
+
+    List<Map<String, Object>> getVolumeGtYesterdayStock(HashMap<String, String> map);
+
 }
 

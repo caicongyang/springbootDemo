@@ -70,15 +70,20 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
     public TStockMain getIndustryByStockCode(String stockCode) throws IOException {
         TStockMain entity = tStockMainMapper
             .selectOne(new QueryWrapper<TStockMain>().eq("stock_code", stockCode));
-        if (!StringUtils.isBlank(entity.getJqL2()) && !StringUtils.isBlank(entity.getSwL3())
+        if (null != entity && !StringUtils.isBlank(entity.getJqL2()) && !StringUtils
+            .isBlank(entity.getSwL3())
             && !StringUtils.isBlank(entity.getZjw())) {
             return entity;
         } else {
             TStockMain tStockMain = _getIndustryByStockCode(tokenMap.get("token"), stockCode);
             if (null != tStockMain) {
-                tStockMainMapper
-                    .update(tStockMain,
-                        new UpdateWrapper<TStockMain>().eq("stock_code", stockCode));
+                if (null != entity) {
+                    tStockMainMapper
+                        .update(tStockMain,
+                            new UpdateWrapper<TStockMain>().eq("stock_code", stockCode));
+                } else {
+                    tStockMainMapper.insert(tStockMain);
+                }
             }
             return tStockMain;
         }
@@ -135,6 +140,7 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
 
     private TStockMain parseIndustryStockData(String stockCode, List<String> resultList) {
         TStockMain stock = new TStockMain();
+        stock.setStockCode(stockCode);
         for (String industry : resultList) {
             if (industry.indexOf("jq_l2") >= 0) {
                 System.out.println(industry.split(",")[2]);

@@ -8,6 +8,7 @@ import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TStockHigher;
 import com.caicongyang.domain.TStockHigherDTO;
 import com.caicongyang.domain.TStockMain;
+import com.caicongyang.domain.VolumeGtYesterdayStockDTO;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TStockHigherMapper;
 import com.caicongyang.mapper.TStockMapper;
@@ -15,6 +16,7 @@ import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.ITStockService;
 import com.caicongyang.utils.TomDateUtils;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -164,6 +166,39 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         return result;
 
 
+    }
+
+    @Override
+    public List<VolumeGtYesterdayStockDTO> getVolumeGtYesterdayStock(String currentDate)
+        throws IOException {
+
+        String preTradingDate = mapper.queryPreTradingDate(currentDate);
+
+        HashMap queryMap = new HashMap();
+        queryMap.put("currentDate", currentDate);
+        queryMap.put("preDate", preTradingDate);
+        List<Map<String, Object>> list = mapper.getVolumeGtYesterdayStock(queryMap);
+        List<VolumeGtYesterdayStockDTO> resultList = new ArrayList<>();
+
+        if (CollectionUtils.isNotEmpty(list)) {
+            for (Map<String, Object> map : list) {
+                VolumeGtYesterdayStockDTO dto = new VolumeGtYesterdayStockDTO();
+                dto.setCounter(((BigDecimal) map.get("counter")).doubleValue());
+                dto.setStockCode((String) map.get("stock_code"));
+
+                TStockMain stockMain = mainService.getIndustryByStockCode(dto.getStockCode());
+                if (null != stockMain) {
+                    dto.setStockName(stockMain.getStockName());
+                    dto.setJqL2(stockMain.getJqL2());
+                    dto.setZjw(stockMain.getZjw());
+                }
+
+                resultList.add(dto);
+
+            }
+        }
+
+        return resultList;
     }
 
 

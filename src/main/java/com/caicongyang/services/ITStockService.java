@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TStockHigherDTO;
+import com.caicongyang.domain.VolumeGtYesterdayStockDTO;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
@@ -29,4 +30,7 @@ public interface ITStockService extends IService<TStock> {
 
     public List<BreakthroughPlatformStock> getBreakthroughPlatform(String currentDate)
         throws ParseException;
+
+    public List<VolumeGtYesterdayStockDTO> getVolumeGtYesterdayStock(String currentDate)
+        throws IOException;
 }
