@@ -153,7 +153,7 @@ public class StockController {
 
     @GetMapping("/getVolumeGtYesterdayStock")
     @ApiOperation(value = "当天12点获取交易量大于昨天的股票")
-    @Cacheable(value = "getBreakthroughPlatform", key = "#currentDate")
+    @Cacheable(value = "getVolumeGtYesterdayStock", key = "#currentDate")
     public @ResponseBody
     Result<List<VolumeGtYesterdayStockDTO>> getVolumeGtYesterdayStock(
         @RequestParam(required = true, value = "currentDate") String currentDate)

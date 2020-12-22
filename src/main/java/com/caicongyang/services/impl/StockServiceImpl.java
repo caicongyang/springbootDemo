@@ -122,7 +122,7 @@ public class StockServiceImpl implements StockService {
 
         //如果当天没有，则获取最近一个交易日
         if (CollectionUtils.isEmpty(reuslt)) {
-            String lastTradingDate = commonMapper.queryLastTradingDate(currentDate);
+            String lastTradingDate = commonMapper.queryLastTradingDate();
             stock.setTradingDay(lastTradingDate);
             ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock);
             reuslt = tTransactionStockMapper.selectList(wrapper);

@@ -74,7 +74,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
         List<Map<String, Object>> maps = tEtfMapper.querySortEtfStockData(queryMap);
         if (CollectionUtils.isEmpty(maps)) {
             //如果当天没有，则获取最近一个交易日
-            String lastTradingDate = mapper.queryLastTradingDate(currentDate);
+            String lastTradingDate = mapper.queryLastTradingDate();
             queryMap.put("currentDate", lastTradingDate);
             maps = tEtfMapper.querySortEtfStockData(queryMap);
         }
@@ -122,7 +122,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
 
         if (CollectionUtils.isEmpty(result)) {
             //如果当天没有，则获取最近一个交易日
-            String lastTradingDate = mapper.queryLastTradingDate(currentDate);
+            String lastTradingDate = mapper.queryLastTradingDate();
             queryItem.setTradingDay(lastTradingDate);
             ((QueryWrapper<TTransactionEtf>) wrapper).setEntity(queryItem);
             result = tTransactionEtfMapper.selectList(wrapper);
@@ -184,7 +184,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
 
         if (CollectionUtils.isEmpty(result)) {
             //如果当天没有，则获取最近一个交易日
-            String lastTradingDate = mapper.queryLastTradingDate(currentDate);
+            String lastTradingDate = mapper.queryLastTradingDate();
             queryItem.setTradingDay(
                 TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate)));
             ((QueryWrapper<TEtfHigher>) wrapper).setEntity(queryItem);

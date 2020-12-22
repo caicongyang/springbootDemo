@@ -11,6 +11,8 @@ public class VolumeGtYesterdayStockDTO implements Serializable {
 
     private Double counter;
 
+    private String tradingDay;
+
     @ApiModelProperty(value = "申万行业")
     private String swL3;
 
@@ -65,5 +67,13 @@ public class VolumeGtYesterdayStockDTO implements Serializable {
 
     public void setZjw(String zjw) {
         this.zjw = zjw;
+    }
+
+    public String getTradingDay() {
+        return tradingDay;
+    }
+
+    public void setTradingDay(String tradingDay) {
+        this.tradingDay = tradingDay;
     }
 }

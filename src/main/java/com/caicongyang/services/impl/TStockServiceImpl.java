@@ -102,7 +102,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         queryWrapper.orderByAsc("interval_days");
         List<TStockHigher> result = higherMapper.selectList(queryWrapper);
         if (CollectionUtils.isEmpty(result)) {
-            String lastTradingDate = mapper.queryLastTradingDate(tradingDay);
+            String lastTradingDate = mapper.queryLastTradingDate();
             date = TomDateUtils.formateDayPattern2Date(lastTradingDate);
             entity.setTradingDay(TomDateUtils.date2LocalDate(date));
             queryWrapper.setEntity(entity);
@@ -139,7 +139,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
         List<Map<String, Object>> queryResultList = mapper.getBreakthroughPlatform(queryMap);
         if (CollectionUtils.isEmpty(queryResultList)) {
-            queryMap.put("currentDate", mapper.queryLastTradingDate(currentDate));
+            queryMap.put("currentDate", mapper.queryLastTradingDate());
             queryResultList = mapper.getBreakthroughPlatform(queryMap);
 
         }
@@ -172,10 +172,11 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     public List<VolumeGtYesterdayStockDTO> getVolumeGtYesterdayStock(String currentDate)
         throws IOException {
 
-        String preTradingDate = mapper.queryPreTradingDate(currentDate);
+        String day = mapper.queryLastTradingDate();
 
+        String preTradingDate = mapper.queryPreTradingDate(day);
         HashMap queryMap = new HashMap();
-        queryMap.put("currentDate", currentDate);
+        queryMap.put("currentDate", day);
         queryMap.put("preDate", preTradingDate);
         List<Map<String, Object>> list = mapper.getVolumeGtYesterdayStock(queryMap);
         List<VolumeGtYesterdayStockDTO> resultList = new ArrayList<>();
@@ -185,12 +186,13 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
                 VolumeGtYesterdayStockDTO dto = new VolumeGtYesterdayStockDTO();
                 dto.setCounter(((BigDecimal) map.get("counter")).doubleValue());
                 dto.setStockCode((String) map.get("stock_code"));
-
+                dto.setTradingDay(day);
                 TStockMain stockMain = mainService.getIndustryByStockCode(dto.getStockCode());
                 if (null != stockMain) {
                     dto.setStockName(stockMain.getStockName());
                     dto.setJqL2(stockMain.getJqL2());
                     dto.setZjw(stockMain.getZjw());
+                    dto.setSwL3(stockMain.getSwL3());
                 }
 
                 resultList.add(dto);
