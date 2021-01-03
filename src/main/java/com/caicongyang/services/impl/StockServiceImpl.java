@@ -124,13 +124,12 @@ public class StockServiceImpl implements StockService {
         if (CollectionUtils.isEmpty(reuslt)) {
             String lastTradingDate = commonMapper.queryLastTradingDate();
             stock.setTradingDay(lastTradingDate);
-            ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock);
+            ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock).orderByDesc("jq_l2", "sw_l3", "zjw");;
             reuslt = tTransactionStockMapper.selectList(wrapper);
         }
 
         List<TTransactionStockDTO> returnList = new ArrayList<>();
         if (org.apache.commons.collections.CollectionUtils.isNotEmpty(reuslt)) {
-
             for (TTransactionStock item : reuslt) {
                 TTransactionStockDTO dto = new TTransactionStockDTO();
                 BeanUtils.copyProperties(item, dto);

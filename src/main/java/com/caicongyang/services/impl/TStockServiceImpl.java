@@ -19,10 +19,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -126,7 +128,23 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             }
         }
 
-        return returnList;
+        //java8 联合排序
+
+        Comparator<TStockHigherDTO> byJqL2 = Comparator.nullsLast(Comparator
+            .comparing(TStockHigherDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TStockHigherDTO> bySwL3 = Comparator.nullsLast(Comparator
+            .comparing(TStockHigherDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TStockHigherDTO> byZjw = Comparator.nullsLast(Comparator
+            .comparing(TStockHigherDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        // 联合排序
+        Comparator<TStockHigherDTO> finalComparator = Comparator
+            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+
+        return returnList.stream().sorted(finalComparator)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -163,7 +181,24 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
         }
 
-        return result;
+        //java8 联合排序
+
+        Comparator<BreakthroughPlatformStock> byJqL2 = Comparator
+            .comparing(BreakthroughPlatformStock::getJqL2, Comparator.nullsLast(Comparator.naturalOrder()));
+
+        Comparator<BreakthroughPlatformStock> bySwL3 = Comparator
+            .comparing(BreakthroughPlatformStock::getSwL3, Comparator.nullsLast(Comparator.naturalOrder()));
+
+        Comparator<BreakthroughPlatformStock> byZjw = Comparator
+            .comparing(BreakthroughPlatformStock::getZjw, Comparator.nullsLast(Comparator.naturalOrder()));
+
+        // 联合排序
+        Comparator<BreakthroughPlatformStock> finalComparator = Comparator
+            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+
+        return result.stream().sorted(finalComparator)
+            .collect(Collectors.toList());
+
 
 
     }
@@ -194,13 +229,28 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
                     dto.setZjw(stockMain.getZjw());
                     dto.setSwL3(stockMain.getSwL3());
                 }
-
                 resultList.add(dto);
 
             }
         }
 
-        return resultList;
+        //java8 联合排序
+
+        Comparator<VolumeGtYesterdayStockDTO> byJqL2 = Comparator
+            .comparing(VolumeGtYesterdayStockDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder()));
+
+        Comparator<VolumeGtYesterdayStockDTO> bySwL3 = Comparator
+            .comparing(VolumeGtYesterdayStockDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder()));
+
+        Comparator<VolumeGtYesterdayStockDTO> byZjw = Comparator
+            .comparing(VolumeGtYesterdayStockDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder()));
+
+        // 联合排序
+        Comparator<VolumeGtYesterdayStockDTO> finalComparator = Comparator
+            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+
+        return resultList.stream().sorted(finalComparator)
+            .collect(Collectors.toList());
     }
 
 
