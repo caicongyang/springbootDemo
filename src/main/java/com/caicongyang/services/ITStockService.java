@@ -29,7 +29,7 @@ public interface ITStockService extends IService<TStock> {
         throws ParseException, IOException;
 
     public List<BreakthroughPlatformStock> getBreakthroughPlatform(String currentDate)
-        throws ParseException;
+        throws ParseException, IOException;
 
     public List<VolumeGtYesterdayStockDTO> getVolumeGtYesterdayStock(String currentDate)
         throws IOException;

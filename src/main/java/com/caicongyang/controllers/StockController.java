@@ -146,7 +146,7 @@ public class StockController {
     public @ResponseBody
     Result<List<BreakthroughPlatformStock>> getBreakthroughPlatform(
         @RequestParam(required = true, value = "currentDate") String currentDate)
-        throws ParseException {
+        throws ParseException, IOException {
         return Result.ok(itStockService.getBreakthroughPlatform(currentDate));
     }
 

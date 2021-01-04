@@ -17,6 +17,7 @@ import com.caicongyang.service.ITEtfHigherService;
 import com.caicongyang.service.ITStockMainService;
 import com.caicongyang.services.ITEtfService;
 import com.caicongyang.utils.TomDateUtils;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
 
 
     @Override
-    public List<TTransactionEtfDTO> querySortEtfStockData(String currentDate) {
+    public List<TTransactionEtfDTO> querySortEtfStockData(String currentDate) throws IOException {
 
         String preTradingDate = mapper.queryPreTradingDate(currentDate);
         List<TTransactionEtfDTO> resultList = new ArrayList<>();
@@ -113,7 +114,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
     }
 
     @Override
-    public List<TTransactionEtfDTO> getTransactionEtfData(String currentDate) {
+    public List<TTransactionEtfDTO> getTransactionEtfData(String currentDate) throws IOException {
         TTransactionEtf queryItem = new TTransactionEtf();
         queryItem.setTradingDay(currentDate);
         Wrapper<TTransactionEtf> wrapper = new QueryWrapper<>(queryItem);
@@ -175,7 +176,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
     }
 
     @Override
-    public List<TEtfHigherDTO> getHigherEtf(String currentDate) throws ParseException {
+    public List<TEtfHigherDTO> getHigherEtf(String currentDate) throws ParseException, IOException {
         TEtfHigher queryItem = new TEtfHigher();
         queryItem.setTradingDay(
             TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(currentDate)));

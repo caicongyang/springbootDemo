@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Resource;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,13 +56,37 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
 
     @Override
     @Cacheable(cacheNames = "getStockNameByStockCode", key = "#stockCode")
-    public String getStockNameByStockCode(String stockCode) {
+    public String getStockNameByStockCode(String stockCode) throws IOException {
         if (StringUtils.isBlank(stockCode)) {
             return StringUtils.EMPTY;
         }
         TStockMain entity = tStockMainMapper.selectOne(new QueryWrapper<TStockMain>()
             .eq("stock_code", stockCode));
-        return entity == null ? "" : entity.getStockName();
+        if (entity != null && StringUtils.isNoneBlank(entity.getStockName())) {
+            return entity.getStockName();
+        } else {
+            String stocksInfo = getStocksInfo(tokenMap.get("token"), stockCode);
+            if (stocksInfo.contains("error")) {
+                logger.info("聚宽放回错误信息：{}", stocksInfo);
+                tokenMap.put("token", getJKToken());
+                stocksInfo = getStocksInfo(tokenMap.get("token"), stockCode);
+            }
+            List<String> jKIndustryStockList = Arrays.asList(stocksInfo.split("\n"));
+            List<String> resultList = jKIndustryStockList.subList(1, jKIndustryStockList.size());
+            TStockMain stockMain = parseStockMain(stockCode, resultList);
+            if (null == stockMain) {
+                return StringUtils.EMPTY;
+            }
+            if (entity == null) {
+                tStockMainMapper.insert(stockMain);
+            } else {
+                entity.setStockName(stockMain.getStockName());
+                entity.setType(stockMain.getType());
+                tStockMainMapper.update(entity,
+                    new UpdateWrapper<TStockMain>().eq("stock_code", entity.getStockCode()));
+            }
+            return stockMain.getStockName();
+        }
     }
 
 
@@ -138,12 +163,26 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
     }
 
 
+    /**
+     * 获取某只股票的聚宽行业信息
+     */
+    public String getStocksInfo(String token, String code) throws IOException {
+        Map<String, String> params = new HashMap<>();
+        params.put("method", "get_security_info");
+        params.put("token", token);
+        params.put("code", code);
+        params.put("date", TomDateUtils.getDayPatternCurrentDay());
+
+        return provider.doPostWithApplicationJson(apiUrl, params);
+    }
+
+
+
     private TStockMain parseIndustryStockData(String stockCode, List<String> resultList) {
         TStockMain stock = new TStockMain();
         stock.setStockCode(stockCode);
         for (String industry : resultList) {
             if (industry.indexOf("jq_l2") >= 0) {
-                System.out.println(industry.split(",")[2]);
                 stock.setJqL2(industry.split(",")[2]);
             }
 
@@ -158,4 +197,18 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
         }
         return stock;
     }
+
+
+    public TStockMain parseStockMain(String stockCode, List<String> resultList) {
+        if (CollectionUtils.isEmpty(resultList)) {
+            return null;
+        }
+        TStockMain stockMain = new TStockMain();
+        stockMain.setStockName(resultList.get(0).split(",")[1]);
+        stockMain.setStockCode(stockCode);
+        stockMain.setType(resultList.get(0).split(",")[5]);
+        return stockMain;
+
+    }
+
 }

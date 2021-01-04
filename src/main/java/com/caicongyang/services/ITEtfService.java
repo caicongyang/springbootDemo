@@ -8,6 +8,7 @@ import com.caicongyang.domain.TEtfHigherDTO;
 import com.caicongyang.domain.TTransactionEtf;
 
 import com.caicongyang.domain.TTransactionEtfDTO;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -22,13 +23,13 @@ import java.util.Map;
  */
 public interface ITEtfService extends IService<TEtf> {
 
-    List<TTransactionEtfDTO> querySortEtfStockData(String currentDate);
+    List<TTransactionEtfDTO> querySortEtfStockData(String currentDate) throws IOException;
 
     List<TTransactionEtf> catchTransactionStockData(String currentDate);
 
-    List<TTransactionEtfDTO> getTransactionEtfData(String currentDate);
+    List<TTransactionEtfDTO> getTransactionEtfData(String currentDate) throws IOException;
 
     void calculateHigherStock(String tradingDay) throws ParseException;
 
-    List<TEtfHigherDTO> getHigherEtf(String currentDate) throws ParseException;
+    List<TEtfHigherDTO> getHigherEtf(String currentDate) throws ParseException, IOException;
 }

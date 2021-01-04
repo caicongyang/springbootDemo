@@ -149,7 +149,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
     @Override
     public List<BreakthroughPlatformStock> getBreakthroughPlatform(String currentDate)
-        throws ParseException {
+        throws ParseException, IOException {
 
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put("currentDate", StringUtils.isNotBlank(currentDate) ? currentDate

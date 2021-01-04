@@ -15,7 +15,7 @@ import java.io.IOException;
 public interface ITStockMainService extends IService<TStockMain> {
 
 
-    public String getStockNameByStockCode(String stockCode);
+    public String getStockNameByStockCode(String stockCode) throws IOException;
 
     public TStockMain getIndustryByStockCode(String stockCode) throws IOException;
 
