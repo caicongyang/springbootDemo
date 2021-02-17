@@ -8,11 +8,19 @@ import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TStockHigher;
 import com.caicongyang.domain.TStockHigherDTO;
 import com.caicongyang.domain.TStockMain;
+import com.caicongyang.domain.TStockWeek;
+import com.caicongyang.domain.TStockWeekHigher;
+import com.caicongyang.domain.TTransactionEtfDTO;
+import com.caicongyang.domain.TTransactionStock;
+import com.caicongyang.domain.TTransactionStockDTO;
 import com.caicongyang.domain.VolumeGtYesterdayStockDTO;
 import com.caicongyang.mapper.CommonMapper;
 import com.caicongyang.mapper.TStockHigherMapper;
 import com.caicongyang.mapper.TStockMapper;
+import com.caicongyang.mapper.TStockWeekHigherMapper;
+import com.caicongyang.mapper.TStockWeekMapper;
 import com.caicongyang.service.ITStockMainService;
+import com.caicongyang.service.ITStockWeekHigherService;
 import com.caicongyang.services.ITStockService;
 import com.caicongyang.utils.TomDateUtils;
 import java.io.IOException;
@@ -52,9 +60,21 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     @Resource
     private TStockHigherMapper higherMapper;
 
-
     @Resource
     private ITStockMainService mainService;
+
+    @Resource
+    private ITStockWeekHigherService weekHigherService;
+
+    @Resource
+    private TStockWeekHigherMapper weekHigherMapper;
+
+    @Resource
+    private TStockWeekMapper weekMapper;
+
+
+
+
 
     @Override
     public List<TStock> calculateHigherStock(String tradingDay) throws ParseException {
@@ -253,6 +273,120 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             .collect(Collectors.toList());
     }
 
+    @Override
+    public void calculateHigherWeekStock(String tradingDay) throws ParseException {
+
+        TStockWeek stock = new TStockWeek();
+        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
+        stock.setTradingDay(TomDateUtils.date2LocalDate(date));
+        QueryWrapper<TStockWeek> groupByWrapper = new QueryWrapper<>();
+        groupByWrapper.setEntity(stock);
+        groupByWrapper.groupBy("stock_code");
+        groupByWrapper.select("stock_code");
+        List<TStockWeek> tStocks = weekMapper.selectList(groupByWrapper);
+
+        for (TStockWeek item : tStocks) {
+            String stockCode = item.getStockCode();
+            TStockWeek queryItem = new TStockWeek();
+            QueryWrapper<TStockWeek> queryByWrapper = new QueryWrapper<>();
+            queryItem.setStockCode(stockCode);
+            queryByWrapper.setEntity(queryItem);
+            queryByWrapper.orderByDesc("trading_day");
+            List<TStockWeek> itemList = weekMapper.selectList(queryByWrapper);
+
+            HighestInPeriodResult result = getHighestWeekInPeriodResult(itemList);
+            if (null != result && result.getIntervalDays() > 30) {
+                TStockWeekHigher entity = new TStockWeekHigher();
+                entity.setIntervalDays(result.getIntervalDays());
+                entity.setPreviousHighsDate(
+                    TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
+                entity.setStockCode(result.getStockCode());
+                entity.setTradingDay(stock.getTradingDay());
+                weekHigherMapper.insert(entity);
+            }
+
+        }
+    }
+
+    @Override
+    public List<TStockHigherDTO> getHigherWeekStock(String tradingDay)
+        throws ParseException, IOException {
+        QueryWrapper<TStockWeekHigher> queryWrapper = new QueryWrapper<>();
+        TStockWeekHigher entity = new TStockWeekHigher();
+        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
+        entity.setTradingDay(TomDateUtils.date2LocalDate(date));
+        queryWrapper.setEntity(entity);
+        queryWrapper.orderByAsc("interval_days");
+        List<TStockWeekHigher> result = weekHigherMapper.selectList(queryWrapper);
+        if (CollectionUtils.isEmpty(result)) {
+            String lastTradingDate = mapper.queryLastWeekTradingDate();
+            date = TomDateUtils.formateDayPattern2Date(lastTradingDate);
+            entity.setTradingDay(TomDateUtils.date2LocalDate(date));
+            queryWrapper.setEntity(entity);
+            result = weekHigherMapper.selectList(queryWrapper);
+        }
+
+        //其他展示字段补充
+        List<TStockHigherDTO> returnList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(result)) {
+            for (TStockWeekHigher item : result) {
+                TStockHigherDTO dto = new TStockHigherDTO();
+                BeanUtils.copyProperties(item, dto);
+                dto.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
+                TStockMain industryEntity = mainService.getIndustryByStockCode(item.getStockCode());
+                if (industryEntity != null) {
+                    dto.setJqL2(industryEntity.getJqL2());
+                    dto.setZjw(industryEntity.getZjw());
+                    dto.setSwL3(industryEntity.getSwL3());
+                }
+                returnList.add(dto);
+            }
+        }
+
+        //java8 联合排序
+
+        Comparator<TStockHigherDTO> byJqL2 = Comparator.nullsLast(Comparator
+            .comparing(TStockHigherDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TStockHigherDTO> bySwL3 = Comparator.nullsLast(Comparator
+            .comparing(TStockHigherDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TStockHigherDTO> byZjw = Comparator.nullsLast(Comparator
+            .comparing(TStockHigherDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        // 联合排序
+        Comparator<TStockHigherDTO> finalComparator = Comparator
+            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+
+        return returnList.stream().sorted(finalComparator)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TTransactionStockDTO> querySortWeekStockData(String currentDate) throws IOException {
+        String lastTradingDate = mapper.queryLastWeekTradingDate();
+        String preTradingDate = mapper.queryPreWeekTradingDate(lastTradingDate);
+        List<TTransactionStockDTO> resultList = new ArrayList<>();
+        HashMap queryMap = new HashMap();
+        queryMap.put("currentDate", lastTradingDate);
+        queryMap.put("preDate", preTradingDate);
+        List<Map<String, Object>> maps = weekMapper.querySortWeekStockData(queryMap);
+        if (CollectionUtils.isEmpty(maps)) {
+            return resultList;
+        }
+
+        for (Map map : maps) {
+            TTransactionStockDTO item = new TTransactionStockDTO();
+            item.setStockCode((String) map.getOrDefault("stock_code", ""));
+            item.setLastDayCompare(
+                ((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
+            item.setTradingDay(currentDate);
+            item.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
+            resultList.add(item);
+        }
+        return resultList;
+    }
+
 
     //当前天数，多少天内最高， 当一个比当前高的天数；
     private HighestInPeriodResult getHighestInPeriodResult(List<TStock> list) {
@@ -288,7 +422,38 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     }
 
 
+    //当前天数，多少天内最高， 当一个比当前高的天数；
+    private HighestInPeriodResult getHighestWeekInPeriodResult(List<TStockWeek> list) {
+        int intervalDays = 0;
+        Date previousHighsDate = null;
+        TStockWeek currentStockData = list.get(0);
+        if (null == currentStockData.getHigh()) {
+            return null;
+        }
 
+        for (int i = 1; i < list.size(); i++) {
+            //验证数据的完整性
+            if (null == list.get(i).getHigh()) {
+                break;
+            }
+            if (currentStockData.getHigh() >= list.get(i).getHigh()) {
+                intervalDays++;
+            } else {
+                previousHighsDate = TomDateUtils.LocalDate2date(list.get(i).getTradingDay());
+                //找到大于当前股权的日期跳出循环
+                break;
+            }
+
+        }
+        HighestInPeriodResult result = new HighestInPeriodResult();
+        result.setIntervalDays(intervalDays);
+        result.setPreviousHighsDate(previousHighsDate);
+        result.setStockCode(list.get(0).getStockCode());
+
+        intervalDays = 0;
+        previousHighsDate = null;
+        return result;
+    }
 
 
 }

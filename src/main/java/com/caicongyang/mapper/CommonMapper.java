@@ -24,6 +24,12 @@ public interface CommonMapper {
     String queryLastTradingDate();
 
 
+    String queryLastWeekTradingDate();
+
+
+    String queryPreWeekTradingDate(String currentDate);
+
+
     List<Map<String, Object>> getIntervalTransactionStockData(HashMap<String, String> map);
 
 

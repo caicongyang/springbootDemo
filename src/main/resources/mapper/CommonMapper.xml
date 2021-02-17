@@ -62,6 +62,15 @@
     </select>
 
 
+    <select id="queryLastWeekTradingDate" resultType="java.lang.String">
+      SELECT trading_day FROM ( SELECT trading_day FROM T_Stock_Week ORDER BY trading_day DESC limit  1,1 ) AS t
+    </select>
+
+    <select id="queryPreWeekTradingDate" resultType="java.lang.String">
+       SELECT trading_day FROM ( SELECT trading_day FROM T_Stock_Week WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>   #{currentDate} ORDER BY trading_day DESC limit  1,1 ) AS t
+    </select>
+
+
     <select id="getIntervalTransactionStockData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
         SELECT
 	t.counter,

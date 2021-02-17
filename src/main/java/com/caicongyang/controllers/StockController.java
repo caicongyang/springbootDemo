@@ -4,6 +4,8 @@ import com.caicongyang.common.Result;
 import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.TStockHigherDTO;
 import com.caicongyang.domain.TTransactionCounterStockDTO;
+import com.caicongyang.domain.TTransactionEtfDTO;
+import com.caicongyang.domain.TTransactionStock;
 import com.caicongyang.domain.TTransactionStockDTO;
 import com.caicongyang.domain.VolumeGtYesterdayStockDTO;
 import com.caicongyang.service.ITStockMainService;
@@ -161,4 +163,37 @@ public class StockController {
         return Result.ok(itStockService.getVolumeGtYesterdayStock(currentDate));
     }
 
+
+    @GetMapping("/calculateHigherWeekStock")
+    @ApiOperation(value = "计算每周新高的股票", notes = "计算每周新高的股票")
+    public void calculateHigherWeekStock(
+        @RequestParam(required = false, value = "tradingDay") String tradingDay)
+        throws ParseException {
+        itStockService.calculateHigherWeekStock(tradingDay);
+    }
+
+
+    @GetMapping("/getHigherWeekStock")
+    @ApiOperation(value = "获取每周新高的股票", notes = "获取每周新高的股票")
+    @Cacheable(value = "getHigherWeekStock", key = "#tradingDay")
+    public @ResponseBody
+    Result<List<TStockHigherDTO>> getHigherWeekStock(
+        @RequestParam(required = true, value = "tradingDay") String tradingDay)
+        throws ParseException, IOException {
+        return Result.ok(itStockService.getHigherWeekStock(tradingDay));
+    }
+
+
+    @GetMapping("/querySortWeekStockData")
+    @ApiOperation(value = "按周成交额与前一个成交额的比率倒序排名")
+    @Cacheable(value = "querySortWeekStockData", key = "#currentDate")
+    public @ResponseBody
+    Result<List<TTransactionStockDTO>> querySortWeekStockData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
+        try {
+            return Result.ok(itStockService.querySortWeekStockData(currentDate));
+        } catch (Exception e) {
+            logger.error("按周成交额与前一个成交额的比率倒序排名数据失败", e);
+            return Result.fail(e);
+        }
+    }
 }

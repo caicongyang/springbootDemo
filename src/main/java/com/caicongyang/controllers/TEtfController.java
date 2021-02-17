@@ -45,7 +45,6 @@ public class TEtfController {
     @GetMapping("/querySortEtfStockData")
     @ApiOperation(value = "大于1000w的etf按当日成交额与前一个成交额的比率倒序排名", notes = "查询当天的股票异动数据")
     @Cacheable(value = "querySortEtfStockData", key = "#currentDate")
-
     public @ResponseBody
     Result<List<TTransactionEtfDTO>> querySortEtfStockData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
         try {

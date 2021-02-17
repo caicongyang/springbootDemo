@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.caicongyang.domain.BreakthroughPlatformStock;
 import com.caicongyang.domain.TStock;
 import com.caicongyang.domain.TStockHigherDTO;
+import com.caicongyang.domain.TTransactionStock;
+import com.caicongyang.domain.TTransactionStockDTO;
 import com.caicongyang.domain.VolumeGtYesterdayStockDTO;
 import java.io.IOException;
 import java.text.ParseException;
@@ -33,4 +35,12 @@ public interface ITStockService extends IService<TStock> {
 
     public List<VolumeGtYesterdayStockDTO> getVolumeGtYesterdayStock(String currentDate)
         throws IOException;
+
+    public void calculateHigherWeekStock(String tradingDay) throws ParseException;
+
+
+    public List<TStockHigherDTO> getHigherWeekStock(String tradingDay)
+        throws ParseException, IOException;
+
+    public List<TTransactionStockDTO> querySortWeekStockData(String currentDate) throws IOException;
 }
