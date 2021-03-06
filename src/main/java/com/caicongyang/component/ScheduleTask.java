@@ -93,8 +93,9 @@ public class ScheduleTask {
 
     /**
      * 每周六中午执行一次
+     * 0 0 12 ? * WED
      */
-    @Scheduled(cron = "0 0 9 ? * SAT")
+    @Scheduled(cron = "0 0 19 ? * FRI")
     public void task4() throws Exception {
         logger.info("执行任务开始....");
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");

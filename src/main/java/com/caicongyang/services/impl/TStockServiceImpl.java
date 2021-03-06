@@ -382,6 +382,15 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
                 ((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
             item.setTradingDay(currentDate);
             item.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
+
+            TStockMain industryEntity = mainService.getIndustryByStockCode(item.getStockCode());
+            if (industryEntity != null) {
+                item.setJqL2(industryEntity.getJqL2());
+                item.setZjw(industryEntity.getZjw());
+                item.setSwL3(industryEntity.getSwL3());
+            }
+
+
             resultList.add(item);
         }
         return resultList;
