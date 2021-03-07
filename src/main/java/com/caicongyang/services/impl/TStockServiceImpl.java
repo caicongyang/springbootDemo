@@ -393,7 +393,27 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
             resultList.add(item);
         }
-        return resultList;
+
+
+
+        //java8 联合排序
+
+        Comparator<TTransactionStockDTO> byJqL2 = Comparator.nullsLast(Comparator
+            .comparing(TTransactionStockDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TTransactionStockDTO> bySwL3 = Comparator.nullsLast(Comparator
+            .comparing(TTransactionStockDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TTransactionStockDTO> byZjw = Comparator.nullsLast(Comparator
+            .comparing(TTransactionStockDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        // 联合排序
+        Comparator<TTransactionStockDTO> finalComparator = Comparator
+            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+
+        return resultList.stream().sorted(finalComparator)
+            .collect(Collectors.toList());
+
     }
 
 
