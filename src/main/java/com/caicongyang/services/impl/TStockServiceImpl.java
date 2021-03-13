@@ -10,8 +10,6 @@ import com.caicongyang.domain.TStockHigherDTO;
 import com.caicongyang.domain.TStockMain;
 import com.caicongyang.domain.TStockWeek;
 import com.caicongyang.domain.TStockWeekHigher;
-import com.caicongyang.domain.TTransactionEtfDTO;
-import com.caicongyang.domain.TTransactionStock;
 import com.caicongyang.domain.TTransactionStockDTO;
 import com.caicongyang.domain.VolumeGtYesterdayStockDTO;
 import com.caicongyang.mapper.CommonMapper;
@@ -364,7 +362,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
     @Override
     public List<TTransactionStockDTO> querySortWeekStockData(String currentDate) throws IOException {
-        String lastTradingDate = mapper.queryLastWeekTradingDate();
+        String lastTradingDate = currentDate;
         String preTradingDate = mapper.queryPreWeekTradingDate(lastTradingDate);
         List<TTransactionStockDTO> resultList = new ArrayList<>();
         HashMap queryMap = new HashMap();
@@ -372,7 +370,12 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         queryMap.put("preDate", preTradingDate);
         List<Map<String, Object>> maps = weekMapper.querySortWeekStockData(queryMap);
         if (CollectionUtils.isEmpty(maps)) {
-            return resultList;
+
+            lastTradingDate = mapper.queryLastWeekTradingDate();
+            preTradingDate = mapper.queryPreWeekTradingDate(lastTradingDate);
+            queryMap.put("currentDate", lastTradingDate);
+            queryMap.put("preDate", preTradingDate);
+            maps = weekMapper.querySortWeekStockData(queryMap);
         }
 
         for (Map map : maps) {
