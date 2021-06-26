@@ -2,6 +2,9 @@ package com.caicongyang.core.domain;
 
 import java.io.Serializable;
 
+/**
+ * @author caicongyang
+ */
 public class RequestInfo implements Serializable {
 
     private static final long serialVersionUID = 803302995653372403L;

@@ -2,7 +2,7 @@ package com.caicongyang.core.aspect;
 
 import com.caicongyang.core.domain.RequestErrorInfo;
 import com.caicongyang.core.domain.RequestInfo;
-import com.caicongyang.core.utils.jacksonUtils;
+import com.caicongyang.core.utils.JacksonUtils;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +14,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +54,7 @@ public class RequestLogAspect {
         requestInfo.setRequestParams(getRequestParamsByProceedingJoinPoint(proceedingJoinPoint));
         requestInfo.setResult(result);
         requestInfo.setTimeCost(System.currentTimeMillis() - start);
-        LOGGER.info("Request Info      : {}", jacksonUtils.jsonFromObject(requestInfo));
+        LOGGER.info("Request Info      : {}", JacksonUtils.jsonFromObject(requestInfo));
 
         return result;
     }
@@ -79,7 +78,7 @@ public class RequestLogAspect {
                 joinPoint.getSignature().getName()));
         requestErrorInfo.setRequestParams(getRequestParamsByJoinPoint(joinPoint));
         requestErrorInfo.setException(e);
-        LOGGER.info("Error Request Info      : {}", jacksonUtils.jsonFromObject(requestErrorInfo));
+        LOGGER.info("Error Request Info      : {}", JacksonUtils.jsonFromObject(requestErrorInfo));
     }
 
     /**

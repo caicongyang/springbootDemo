@@ -2,6 +2,9 @@ package com.caicongyang.core.domain;
 
 import java.io.Serializable;
 
+/**
+ * @author caicongyang
+ */
 public class RequestErrorInfo  implements Serializable {
 
 
