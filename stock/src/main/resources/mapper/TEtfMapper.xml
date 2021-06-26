@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.caicongyang.stock.mapper.TEtfMapper">
+    <select id="querySortEtfStockData" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT
+	t1.stock_code,
+	t1.volume / t2.volume AS last_day_compare
+FROM
+	T_etf t1
+	LEFT JOIN ( SELECT volume, stock_code FROM T_etf WHERE trading_day = #{preDate} ) t2 ON t2.stock_code = t1.stock_code
+WHERE
+	t1.trading_day = #{currentDate}
+	AND t1.volume IS NOT NULL
+AND t2.volume is not null
+ and t1.volume > 10000000  -- 成交金额大于一千万
+ORDER BY
+	t1.volume / t2.volume DESC
+
+    </select>
+
+
+    <select id="catchTransactionEtf" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT
+        s0.stock_code,
+        s0.lastDayCompare AS last_day_compare,
+        s1.mean_ratio AS mean_ratio
+        FROM
+        (
+        SELECT
+        t0.stock_code,
+        t0.volume / t1.volume AS lastDayCompare
+        FROM
+        ( SELECT stock_code, volume, `close`, `open`, `high`, `low` FROM T_etf WHERE trading_day = #{currentDate} ) AS t0
+        -- 最后一个交易日
+        LEFT JOIN ( SELECT stock_code, volume, `close` FROM T_etf WHERE trading_day = #{preDate} ) AS t1 ON
+        t0.stock_code = t1.stock_code -- 倒数第二个交易
+
+        WHERE
+        t0.volume / t1.volume > 1.5 -- 成交量是前一天的2倍
+        and t0.volume > 10000000
+        ) s0
+        JOIN (
+        SELECT
+        t0.volume / ( t1.mean ) AS mean_ratio,
+        t0.stock_code
+        FROM
+        T_etf AS t0
+        LEFT JOIN (
+        SELECT
+        SUM( volume ) / 3 AS mean,-- 获取最近3个工作日的成交量平均数
+        stock_code
+        FROM
+        T_etf
+        WHERE
+        volume is not null
+        and
+        trading_day IN ( SELECT trading_day FROM ( SELECT trading_day FROM T_etf WHERE stock_code = '512980.XSHG' AND
+        trading_day
+        <![CDATA[ < ]]>  #{currentDate} ORDER BY trading_day DESC LIMIT 3 ) AS t )
+        GROUP BY
+        stock_code
+        ) t1 ON t0.stock_code = t1.stock_code
+        where
+        t0.trading_day = #{currentDate}
+        AND t1.mean != 0
+        AND t1.mean IS NOT NULL
+        AND t0.volume / t1.mean > 1.5
+        and t0.volume > 10000000 -- 当日交易金额大于1000万
+
+        ) s1 ON s0.stock_code = s1.stock_code;
+
+    </select>
+
+
+</mapper>
