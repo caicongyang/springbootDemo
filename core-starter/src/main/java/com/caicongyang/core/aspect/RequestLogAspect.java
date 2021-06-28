@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
  *
  * @author caicongyang 需要启用AspectJ动态代理 @EnableAspectJAutoProxy
  *
- * 如何把@EnableAspectJAutoProxy 放在starter 中
+ *
  */
 @Aspect
 public class RequestLogAspect {
