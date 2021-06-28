@@ -1,7 +1,7 @@
 package com.caicongyang.stock.controllers;
 
 
-import com.caicongyang.stock.common.Result;
+import com.caicongyang.core.basic.Result;
 import com.caicongyang.stock.domain.TEtfHigherDTO;
 import com.caicongyang.stock.domain.TTransactionEtf;
 import com.caicongyang.stock.domain.TTransactionEtfDTO;

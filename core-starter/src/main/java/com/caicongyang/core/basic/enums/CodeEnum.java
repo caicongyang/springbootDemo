@@ -1,7 +1,3 @@
-/**
- * u51.com Inc.
- * Copyright (c) 2004-2016 All Rights Reserved.
- */
 package com.caicongyang.core.basic.enums;
 
 import com.google.common.base.Preconditions;

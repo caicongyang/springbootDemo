@@ -1,6 +1,6 @@
 package com.caicongyang.stock.controllers;
 
-import com.caicongyang.stock.common.Result;
+import com.caicongyang.core.basic.Result;
 import com.caicongyang.stock.domain.BreakthroughPlatformStock;
 import com.caicongyang.stock.domain.TStockHigherDTO;
 import com.caicongyang.stock.domain.TTransactionCounterStockDTO;
