@@ -132,8 +132,8 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
     public String getJKToken() throws IOException {
         Map<String, String> params = new HashMap<>();
         params.put("method", "get_token");
-        params.put("mob", "13774598865");
-        params.put("pwd", "123456");
+        params.put("mob", "18558611751");
+        params.put("pwd", "24777365ccyCCY");
         //todo 需要把token 缓存起来
         return provider.doPostWithApplicationJson(apiUrl, params);
     }
