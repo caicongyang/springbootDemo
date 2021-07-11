@@ -72,4 +72,6 @@ public class RequestInfo implements Serializable {
     public void setTimeCost(Long timeCost) {
         this.timeCost = timeCost;
     }
+
+
 }

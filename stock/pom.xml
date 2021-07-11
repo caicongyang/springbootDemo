@@ -21,11 +21,11 @@
             <version>${app.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.caicongyang</groupId>
-            <artifactId>lock-starter</artifactId>
-            <version>${app.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.caicongyang</groupId>-->
+            <!--<artifactId>lock-starter</artifactId>-->
+            <!--<version>${app.version}</version>-->
+        <!--</dependency>-->
 
         <!-- spring boot web -->
         <dependency>

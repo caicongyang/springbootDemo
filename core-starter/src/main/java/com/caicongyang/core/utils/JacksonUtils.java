@@ -1,9 +1,13 @@
 package com.caicongyang.core.utils;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import java.io.IOException;
 import java.io.StringWriter;
 import org.slf4j.Logger;
@@ -16,7 +20,20 @@ import org.slf4j.LoggerFactory;
 public class JacksonUtils {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(JacksonUtils.class);
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private final static ObjectMapper mapper = new ObjectMapper();
+
+
+    static  {
+        mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        // 此项必须配置，否则会报java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to XXX
+        mapper.activateDefaultTyping(
+            LaissezFaireSubTypeValidator.instance,
+            ObjectMapper.DefaultTyping.NON_FINAL,
+            JsonTypeInfo.As.WRAPPER_ARRAY);
+
+    }
 
     /**
      * 对象转json
@@ -45,8 +62,6 @@ public class JacksonUtils {
     public static <T> T objectFromJson(String json, TypeReference<T> klass) {
         T object = null;
 
-        //设置输入时忽略JSON字符串中存在而Java对象实际没有的属性
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             object = mapper.readValue(json, klass);
         } catch (JsonProcessingException e) {
@@ -64,8 +79,7 @@ public class JacksonUtils {
      */
     public static <T> T objectFromJson(String json, Class<T> klass) {
         T object = null;
-        //设置输入时忽略JSON字符串中存在而Java对象实际没有的属性
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         try {
             object = mapper.readValue(json, klass);
         } catch (JsonProcessingException e) {
