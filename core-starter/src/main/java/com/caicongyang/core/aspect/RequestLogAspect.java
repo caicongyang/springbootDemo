@@ -116,6 +116,11 @@ public class RequestLogAspect {
                 value = file.getOriginalFilename();
             }
 
+            if (value instanceof  HttpServletRequest) {
+                //获取文件名
+                value = ((HttpServletRequest) value).getRequestURL();
+            }
+
             requestParams.put(paramNames[i], value);
         }
 

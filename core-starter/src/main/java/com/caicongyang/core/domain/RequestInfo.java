@@ -1,5 +1,6 @@
 package com.caicongyang.core.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.io.Serializable;
 
 /**
@@ -12,6 +13,8 @@ public class RequestInfo implements Serializable {
     private String url;
     private String httpMethod;
     private String classMethod;
+
+    @JsonManagedReference
     private Object requestParams;
     private Object result;
     private Long timeCost;

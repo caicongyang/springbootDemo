@@ -19,6 +19,7 @@
         <module>httpclient-expand-starter</module>
         <module>dubbo-mock-starter</module>
         <module>sklywalking-expand-starter</module>
+        <module>local-test</module>
     </modules>
     <name>springBoot Maven Webapp</name>
     <url>http://maven.apache.org</url>
