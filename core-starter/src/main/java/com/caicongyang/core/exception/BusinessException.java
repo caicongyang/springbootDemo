@@ -10,17 +10,17 @@ public class BusinessException extends RuntimeException {
     /**
      * <p>Constructor for BusinessException.</p>
      */
-    protected BusinessException() {
+    public BusinessException() {
     }
 
     /**
      * 异常代码
      */
-    protected Integer errCode;
+    public Integer errCode;
     /**
      * 异常提示，和exception的msg字段区分开。
      */
-    protected String errMsg;
+    public String errMsg;
 
 
     public Integer getErrCode() {
@@ -51,7 +51,7 @@ public class BusinessException extends RuntimeException {
      * @param code a {@link String} object.
      * @param msg a {@link String} object.
      */
-    protected BusinessException(Integer code, String msg) {
+    public BusinessException(Integer code, String msg) {
         super(msg);
         this.errCode = code;
         this.errMsg = msg;
@@ -64,7 +64,7 @@ public class BusinessException extends RuntimeException {
      * @param msg a {@link String} object.
      * @param cause a {@link Throwable} object.
      */
-    protected BusinessException(Integer code, String msg, Throwable cause) {
+    public BusinessException(Integer code, String msg, Throwable cause) {
         super(msg, cause);
         this.errCode = code;
         this.errMsg = msg;

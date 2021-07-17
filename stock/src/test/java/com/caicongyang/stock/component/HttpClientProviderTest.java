@@ -1,5 +1,6 @@
 package com.caicongyang.stock.component;
 
+import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.BaseApplicationTest;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.service.ITStockMainService;

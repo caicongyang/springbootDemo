@@ -1,6 +1,9 @@
-package com.caicongyang.stock.component;
+package com.caicongyang.httper;
 
-import com.caicongyang.stock.utils.jacksonUtils;
+import com.caicongyang.core.exception.BusinessException;
+import com.caicongyang.core.utils.JacksonUtils;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -48,9 +51,8 @@ public class HttpClientProvider {
         //3分钟关闭空闲链接
         poolingHttpClientConnectionManager.closeIdleConnections(3, TimeUnit.MINUTES);
 
-
         RequestConfig config = RequestConfig.custom().setConnectTimeout(timeout)
-                .setSocketTimeout(timeout).setConnectionRequestTimeout(timeout).build();
+            .setSocketTimeout(timeout).setConnectionRequestTimeout(timeout).build();
         httpClientBuilder.setConnectionManager(poolingHttpClientConnectionManager);
         httpClientBuilder.setDefaultRequestConfig(config);
         httpClientBuilder.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy());
@@ -65,10 +67,19 @@ public class HttpClientProvider {
     }
 
 
-    public String doPostWithApplicationJson(String url, Map<String, String> map) throws IOException {
-
+    @HystrixCommand(fallbackMethod = "fallback",
+        commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "10000")},
+        threadPoolKey = "studentServiceThreadPool",
+        threadPoolProperties = {
+            @HystrixProperty(name = "coreSize", value = "10"),
+            @HystrixProperty(name = "maxQueueSize", value = "10")
+        }
+    )
+    public String doPostWithApplicationJson(String url, Map<String, String> map)
+        throws IOException {
         logger.info("doPostWithApplicationJson; url ={}, args = {}", url,
-            jacksonUtils.jsonFromObject(map));
+            JacksonUtils.jsonFromObject(map));
         CloseableHttpResponse closeableHttpResponse = null;
         try {
             HttpPost httpPost = new HttpPost(url);
@@ -77,14 +88,15 @@ public class HttpClientProvider {
             httpPost.addHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON);
 
             //解决中文乱码问题
-            StringEntity entity = new StringEntity(jacksonUtils.jsonFromObject(map), "UTF-8");
+            StringEntity entity = new StringEntity(JacksonUtils.jsonFromObject(map), "UTF-8");
             entity.setContentEncoding("UTF-8");
             entity.setContentType(APPLICATION_JSON);
             httpPost.setEntity(entity);
             closeableHttpResponse = doRequest(httpPost);
 
             if (200 != closeableHttpResponse.getStatusLine().getStatusCode()) {
-                throw new HttpResponseException(closeableHttpResponse.getStatusLine().getStatusCode(), url);
+                throw new HttpResponseException(
+                    closeableHttpResponse.getStatusLine().getStatusCode(), url);
             }
             return EntityUtils.toString(closeableHttpResponse.getEntity());
 
@@ -100,7 +112,16 @@ public class HttpClientProvider {
     }
 
 
-    public String doPostWithFormsubmit(String url, Map<String, String> map) throws IOException {
+    @HystrixCommand(fallbackMethod = "fallback",
+        commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "10000")},
+        threadPoolKey = "studentServiceThreadPool",
+        threadPoolProperties = {
+            @HystrixProperty(name = "coreSize", value = "10"),
+            @HystrixProperty(name = "maxQueueSize", value = "10")
+        }
+    )
+    public String doPostWithFormSubmit(String url, Map<String, String> map) throws IOException {
         CloseableHttpResponse closeableHttpResponse = null;
         try {
             StringBuilder urlBuf = new StringBuilder(url).append("?");
@@ -118,7 +139,8 @@ public class HttpClientProvider {
             closeableHttpResponse = doRequest(httpPost);
 
             if (200 != closeableHttpResponse.getStatusLine().getStatusCode()) {
-                throw new HttpResponseException(closeableHttpResponse.getStatusLine().getStatusCode(), url);
+                throw new HttpResponseException(
+                    closeableHttpResponse.getStatusLine().getStatusCode(), url);
             }
             return EntityUtils.toString(closeableHttpResponse.getEntity());
         } finally {
@@ -132,4 +154,11 @@ public class HttpClientProvider {
             }
         }
     }
+
+
+    private String fallback() {
+        logger.error("CIRCUIT BREAKER ENABLED!!!fallback route enabled...");
+        throw new BusinessException(-1, "CIRCUIT BREAKER ENABLED; fallback");
+    }
+
 }

@@ -2,7 +2,7 @@ package com.caicongyang.stock.services.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.caicongyang.stock.component.HttpClientProvider;
+import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.domain.TStock;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.domain.TTransactionStock;

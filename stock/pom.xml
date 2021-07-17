@@ -21,11 +21,12 @@
             <version>${app.version}</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>com.caicongyang</groupId>-->
-            <!--<artifactId>lock-starter</artifactId>-->
-            <!--<version>${app.version}</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>com.caicongyang</groupId>
+            <artifactId>httpclient-expand-starter</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+
 
         <!-- spring boot web -->
         <dependency>
@@ -55,12 +56,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>org.junit.vintage</groupId>-->
+                    <!--<artifactId>junit-vintage-engine</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
         </dependency>
         <!-- spring boot freemarker -->
         <dependency>
@@ -110,10 +111,7 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-        </dependency>
+
 
 
         <dependency>

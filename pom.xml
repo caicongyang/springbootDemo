@@ -33,6 +33,7 @@
         <java.version>1.8</java.version>
         <java.encoding>UTF-8</java.encoding>
         <app.version>0.0.1-SNAPSHOT</app.version>
+        <spring-cloud.version>Hoxton.SR6</spring-cloud.version>
     </properties>
 
 
@@ -145,11 +146,6 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>4.5.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>4.4.8</version>
             </dependency>
 
 
@@ -275,6 +271,33 @@
                 <artifactId>redisson</artifactId>
                 <version>3.11.6</version>
             </dependency>
+
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+
+
+
+
+            <!--<dependency>-->
+                <!--<groupId>org.springframework.cloud</groupId>-->
+                <!--<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>-->
+                <!--<version>${spring-cloud.version}</version>-->
+            <!--</dependency>-->
+            <!--<dependency>-->
+                <!--<groupId>org.springframework.cloud</groupId>-->
+                <!--<artifactId>spring-cloud-starter-netflix-dashboard</artifactId>-->
+                <!--<version>${spring-cloud.version}</version>-->
+            <!--</dependency>-->
+
+
+
 
 
         </dependencies>

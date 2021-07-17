@@ -3,7 +3,7 @@ package com.caicongyang.stock.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.caicongyang.stock.component.HttpClientProvider;
+import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.mapper.TStockMainMapper;
 import com.caicongyang.stock.service.ITStockMainService;
