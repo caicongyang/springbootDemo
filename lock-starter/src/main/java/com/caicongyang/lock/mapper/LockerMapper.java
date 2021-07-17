@@ -1,6 +1,6 @@
 package com.caicongyang.lock.mapper;
 
-import com.caicongyang.lock.LockerResource;
+import com.caicongyang.lock.domain.LockerResource;
 import java.util.Date;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;

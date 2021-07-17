@@ -1,7 +1,6 @@
 package com.caicongyang.lock.config;
 
 import com.caicongyang.lock.MysqlDistributedLock;
-import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionFactoryBean;

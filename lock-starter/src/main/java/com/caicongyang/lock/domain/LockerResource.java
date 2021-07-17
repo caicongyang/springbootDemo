@@ -1,4 +1,4 @@
-package com.caicongyang.lock;
+package com.caicongyang.lock.domain;
 
 import java.io.Serializable;
 import java.util.Date;

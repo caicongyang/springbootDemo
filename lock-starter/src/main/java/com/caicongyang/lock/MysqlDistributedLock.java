@@ -1,5 +1,6 @@
 package com.caicongyang.lock;
 
+import com.caicongyang.lock.domain.LockerResource;
 import com.caicongyang.lock.mapper.LockerMapper;
 import java.util.Date;
 import java.util.TimerTask;
