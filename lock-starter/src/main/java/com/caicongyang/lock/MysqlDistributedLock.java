@@ -7,6 +7,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,8 @@ public class MysqlDistributedLock {
 
 
     private static final Logger logger = LoggerFactory.getLogger(MysqlDistributedLock.class);
+
+    private static ScheduledExecutorService service = new ScheduledThreadPoolExecutor(1);
 
 
     private static final String LOCK_NAME_PREFIX = "lock.mysql.";
@@ -58,7 +61,6 @@ public class MysqlDistributedLock {
      */
     @PostConstruct
     public void init() {
-        ScheduledExecutorService service = new ScheduledThreadPoolExecutor(1);
         service.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -68,6 +70,13 @@ public class MysqlDistributedLock {
             }
         }, 10, 10, TimeUnit.MINUTES);
 
+    }
+
+
+    @PreDestroy
+    public void preDestroy() throws InterruptedException {
+        service.shutdownNow();
+        service.awaitTermination(1, TimeUnit.MINUTES);
     }
 
 
