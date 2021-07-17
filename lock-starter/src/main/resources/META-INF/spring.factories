@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.caicongyang.lock.config.RedissionDistributedLockAutoConfig
+  com.caicongyang.lock.config.RedissionDistributedLockAutoConfig, \
+  com.caicongyang.lock.config.MysqlDistributedLockAutoConfig

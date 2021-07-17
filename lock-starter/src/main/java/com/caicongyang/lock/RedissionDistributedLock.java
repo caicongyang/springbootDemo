@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class RedissionDistributedLock {
 
-    private static final String LOCK_NAME_PREFIX = "lock.";
+    private static final String LOCK_NAME_PREFIX = "lock.redis.";
 
 
     @Autowired

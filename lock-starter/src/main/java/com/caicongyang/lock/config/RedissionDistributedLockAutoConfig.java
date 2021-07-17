@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Import;
 public class RedissionDistributedLockAutoConfig {
 
     @Bean
-    @ConditionalOnExpression("#{'true'.equals(environment['conditional.locker'])}")
-    //${spring.redis.single.address} == null|| ${spring.redis.host} != null || ${spring.redis.sentinel.nodes} !=null || ${spring.redis.cluster.nodes} !=null || ${spring.redis.url}!=null
+    @ConditionalOnExpression("#{'true'.equals(environment['conditional.redis.locker'])}")
     public RedissionDistributedLock redissionDistributedLock() {
         return new RedissionDistributedLock();
     }
