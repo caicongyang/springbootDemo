@@ -20,7 +20,7 @@
 9.  lock-starter: 基于redission和mysql 的分布式锁的简单封装  (done)
 10. seq-starter： 基于数据库、雪花算法、redis的自增序列号简单封装
 11. stock: demo 工程  (done)
-12. local-test： 测试工程  （done）
+12. local-test： 测试工程，所有的docker-compose文件都放在此处  （done）
 13. git-tools： 批量git操作
 
 
