@@ -98,7 +98,10 @@ public class HttpClientProvider {
                 throw new HttpResponseException(
                     closeableHttpResponse.getStatusLine().getStatusCode(), url);
             }
-            return EntityUtils.toString(closeableHttpResponse.getEntity());
+            String result = EntityUtils.toString(closeableHttpResponse.getEntity());
+            logger.info("doPostWithApplicationJson; url ={}, result = {}", url,
+                JacksonUtils.jsonFromObject(result));
+            return result;
 
         } finally {
             if (null != closeableHttpResponse) {

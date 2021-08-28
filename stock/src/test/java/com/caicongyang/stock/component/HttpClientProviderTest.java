@@ -5,6 +5,7 @@ import com.caicongyang.stock.BaseApplicationTest;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.utils.jacksonUtils;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,6 +24,18 @@ public class HttpClientProviderTest extends BaseApplicationTest {
 
 
     private String apiUrl = "https://dataapi.joinquant.com/apis";
+
+
+
+
+    @Test
+    public void test123() throws IOException {
+        TStockMain industryByStockCode = itStockMainService.getIndustryByStockCode("688456.XSHG");
+        System.out.println(jacksonUtils.jsonFromObject(industryByStockCode));
+
+    }
+
+
 
     @Test
     public void test() throws Exception {

@@ -1,11 +1,14 @@
 package com.caicongyang.stock.component;
 
+import com.caicongyang.stock.domain.TStockMain;
+import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.services.ITEtfService;
 import com.caicongyang.stock.services.ITStockService;
 import com.caicongyang.stock.services.StockService;
 import com.caicongyang.stock.utils.TomDateUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,10 @@ public class ScheduleTask {
 
     @Autowired
     private ITStockService itStockService;
+
+
+    @Autowired
+    ITStockMainService stockMainService;
 
 
 
@@ -103,4 +110,23 @@ public class ScheduleTask {
         itStockService.calculateHigherWeekStock(currentDate);
         logger.info("执行任务结束....");
     }
+
+
+    /**
+     * 每天23点执行一次
+     */
+    @Scheduled(cron = "0 0 23 * * ?")
+    public void makeUpMainData() throws Exception {
+        logger.info("执行任务补充主数据开始....");
+
+        List<TStockMain> list = stockMainService.list();
+        for (TStockMain stockMain : list) {
+            stockMainService.getStockNameByStockCode(stockMain.getStockCode());
+        }
+
+        logger.info("执行任务补充主数据....");
+    }
+
+
+
 }

@@ -282,22 +282,23 @@
             </dependency>
 
 
+            <dependency>
+                <groupId>com.itextpdf</groupId>
+                <artifactId>itextpdf</artifactId>
+                <version>5.5.13</version>
+            </dependency>
 
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports</artifactId>
+                <version>4.7.0</version>
+            </dependency>
 
-
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.cloud</groupId>-->
-                <!--<artifactId>spring-cloud-starter-netflix-hystrix</artifactId>-->
-                <!--<version>${spring-cloud.version}</version>-->
-            <!--</dependency>-->
-            <!--<dependency>-->
-                <!--<groupId>org.springframework.cloud</groupId>-->
-                <!--<artifactId>spring-cloud-starter-netflix-dashboard</artifactId>-->
-                <!--<version>${spring-cloud.version}</version>-->
-            <!--</dependency>-->
-
-
-
+            <dependency>
+                <groupId>org.xhtmlrenderer</groupId>
+                <artifactId>flying-saucer-pdf</artifactId>
+                <version>9.0.9</version>
+            </dependency>
 
 
         </dependencies>

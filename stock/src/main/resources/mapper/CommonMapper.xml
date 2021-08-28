@@ -85,12 +85,12 @@ WHERE
 	s.trading_day BETWEEN #{startDate}
 	AND #{endDate}  and s.jq_l2 is not null  and s.sw_l3 is not null and s.zjw is not null
 ORDER BY
-    t.counter asc,
+	s.trading_day desc,
+    t.counter desc,
 	s.jq_l2 DESC,
 	s.sw_l3 DESC,
-	s.zjw DESC,
-	s.trading_day desc,
-	s.trading_day desc
+	s.zjw DESC
+
     </select>
 
 
