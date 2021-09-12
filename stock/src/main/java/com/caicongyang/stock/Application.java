@@ -21,6 +21,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.caicongyang.stock.mapper")
 public class Application {
     public static void main(String[] args) {
+
+
+        //  -javaagent:/Users/caicongyang/docker-compose/docker-compose-skywalking/skywalking-agent.jar   -Dskywalking.agent.service_name=stock  -Dskywalking.collector.backend_service=127.0.0.1:11800
         //第一个简单的应用，   
         SpringApplication.run(Application.class, args);
     }
