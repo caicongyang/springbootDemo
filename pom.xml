@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
     <version>0.0.1-SNAPSHOT</version>
     <modules>
-        <module>lock-starter</module>
+        <module>locker-starter</module>
         <module>stock</module>
         <module>cache-starter</module>
         <module>seq-starter</module>
@@ -20,6 +20,9 @@
         <module>dubbo-mock-starter</module>
         <module>sklywalking-expand-starter</module>
         <module>local-test</module>
+        <module>upload-starter</module>
+        <module>logger-starter</module>
+        <module>encrypt-starter</module>
     </modules>
     <name>springBoot Maven Webapp</name>
     <url>http://maven.apache.org</url>
@@ -304,6 +307,23 @@
         </dependencies>
 
     </dependencyManagement>
+
+
+    <build>
+        <finalName>${artifactId}-${version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <compilerVersion>1.8</compilerVersion>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

@@ -36,6 +36,7 @@ public class DubboProviderExceptionFilter implements Filter {
                     return appResponse;
                 }
                 // directly throw if it's checked exception
+                // 增加此处代码，避免把业务异常吃掉，继续往上抛走到web
                 if (exception instanceof BusinessException) {
                     return appResponse;
                 }

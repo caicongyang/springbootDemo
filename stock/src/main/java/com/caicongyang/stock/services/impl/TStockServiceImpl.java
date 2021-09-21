@@ -93,6 +93,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             queryItem.setStockCode(stockCode);
             queryByWrapper.setEntity(queryItem);
             queryByWrapper.orderByDesc("trading_day");
+
             List<TStock> itemList = stockMapper.selectList(queryByWrapper);
 
             HighestInPeriodResult result = getHighestInPeriodResult(itemList);
