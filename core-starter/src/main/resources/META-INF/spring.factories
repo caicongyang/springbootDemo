@@ -1,3 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.caicongyang.core.conf.RequestLogAutoConfiguration ,\
-  com.caicongyang.core.conf.ExceptionAutoConfiguration
+  com.caicongyang.core.conf.ExceptionAutoConfiguration ,\
+  com.caicongyang.core.conf.XssFilterAtuoConfiguration
