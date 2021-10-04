@@ -1,7 +1,7 @@
-package com.caicongyang.config;
+package com.caicongyang.upload.config;
 
-import com.caicongyang.client.Uploader;
-import com.caicongyang.uploader.QiniuYunPublicAccessUploader;
+import com.caicongyang.upload.client.Uploader;
+import com.caicongyang.upload.uploader.QiniuYunPublicAccessUploader;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

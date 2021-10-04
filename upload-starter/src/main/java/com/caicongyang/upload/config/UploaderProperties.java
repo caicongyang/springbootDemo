@@ -1,4 +1,4 @@
-package com.caicongyang.config;
+package com.caicongyang.upload.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

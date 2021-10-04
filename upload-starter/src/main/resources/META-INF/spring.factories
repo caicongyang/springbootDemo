@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.caicongyang.config.UploaderAutoConfig
+  com.caicongyang.upload.config.UploaderAutoConfig

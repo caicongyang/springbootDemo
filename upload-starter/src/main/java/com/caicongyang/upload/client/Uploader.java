@@ -1,4 +1,4 @@
-package com.caicongyang.client;
+package com.caicongyang.upload.client;
 
 import java.io.IOException;
 

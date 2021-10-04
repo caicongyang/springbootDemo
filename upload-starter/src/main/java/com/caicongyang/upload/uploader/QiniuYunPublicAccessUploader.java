@@ -1,7 +1,7 @@
-package com.caicongyang.uploader;
+package com.caicongyang.upload.uploader;
 
-import com.caicongyang.client.Uploader;
-import com.caicongyang.config.UploaderProperties;
+import com.caicongyang.upload.client.Uploader;
+import com.caicongyang.upload.config.UploaderProperties;
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
