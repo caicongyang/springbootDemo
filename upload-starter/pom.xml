@@ -13,11 +13,6 @@
     <artifactId>upload-starter</artifactId>
     <dependencies>
         <dependency>
-            <groupId>com.ksyun</groupId>
-            <artifactId>ks3-kss-java-sdk</artifactId>
-            <version>0.8.2</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
@@ -93,87 +88,8 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpasyncclient</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.im4java</groupId>
-            <artifactId>im4java</artifactId>
-            <version>1.4.0</version>
-        </dependency>
-        <!--        <dependency>-->
-        <!--            <groupId>com.huawei.storage</groupId>-->
-        <!--            <artifactId>esdk-obs-java</artifactId>-->
-        <!--        </dependency>-->
-        <dependency>
-            <groupId>com.jamesmurty.utils</groupId>
-            <artifactId>java-xmlbuilder</artifactId>
-            <version>1.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.iharder</groupId>
-                    <artifactId>base64</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- for 阿里云 -->
-        <dependency>
-            <groupId>com.aliyun.oss</groupId>
-            <artifactId>aliyun-sdk-oss</artifactId>
-            <version>2.8.2</version>
-        </dependency>
-        <!-- for 七牛云 -->
-        <dependency>
-            <groupId>com.qiniu</groupId>
-            <artifactId>qiniu-java-sdk</artifactId>
-            <version>7.7.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.google.code.gson</groupId>
-                    <artifactId>gson</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <!-- for 腾讯云 -->
-        <dependency>
-            <groupId>com.qcloud</groupId>
-            <artifactId>cos_api</artifactId>
-            <version>5.4.6</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft.azure</groupId>
-            <artifactId>azure-storage</artifactId>
-            <version>8.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>1.11.524</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-kms</artifactId>
-            <version>1.11.524</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-core</artifactId>
-            <version>1.11.524</version>
 
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>jmespath-java</artifactId>
-            <version>1.11.524</version>
 
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -181,6 +97,14 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
+        </dependency>
+
+
+        <!--qiniu yun-->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>[7.8.0, 7.8.99]</version>
         </dependency>
     </dependencies>
 

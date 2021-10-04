@@ -13,7 +13,7 @@
 2.  cache-starter ： 基于redis的缓存增强，想实现自动为key 加上工程名称，大key报错等安全防范功能
 3.  dubbo-mocker-starter:  基于dubbo的mock 功能
 4.  dynamic-datasource-starter： 多数据源实现
-5.  file-expand-starter： 文件功能增强
+5.  file-expand-starter： 文件功能增强 (doing)
 6.  tcc-starter： tcc分布式封装
 7.  httpclient-expand-starter： 基于hystrix对httpclient的增强  (done)
 8.  sklywalking-expand-starter： 把sklywalking的traceId 和sklying地址放到http header 中
