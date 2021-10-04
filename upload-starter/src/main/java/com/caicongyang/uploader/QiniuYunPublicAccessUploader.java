@@ -2,11 +2,13 @@ package com.caicongyang.uploader;
 
 import com.caicongyang.client.Uploader;
 import com.caicongyang.config.UploaderProperties;
+import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +83,9 @@ public class QiniuYunPublicAccessUploader implements Uploader {
             Response res = uploadManager.put(file, folder + File.separator + key, getUpToken());
             //打印返回的信息
             logger.info("上传结果" + res.bodyString());
-            return res.bodyString();
+
+            DefaultPutRet putRet = new Gson().fromJson(res.bodyString(), DefaultPutRet.class);
+            return qiniuYunProperties.getQiniuBucketUrl() + putRet.key;
         } catch (QiniuException e) {
             throw new RuntimeException("七牛云上传异常", e);
 

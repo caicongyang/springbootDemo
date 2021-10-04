@@ -24,7 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 /**
- * 导入数据模板工具。
+ * 同步导入数据模板工具。
  */
 public abstract class AbstractDataImporter {
 

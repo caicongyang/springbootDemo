@@ -10,9 +10,11 @@ import org.springframework.context.annotation.PropertySource;
 public class UploaderProperties {
 
 
+    private String type;
     private String qiniuAccessKey;
     private String qiniuSecretKey;
     private String qiniuBucket;
+    private String qiniuBucketUrl;
 
 
     public String getQiniuAccessKey() {
@@ -37,5 +39,21 @@ public class UploaderProperties {
 
     public void setQiniuBucket(String qiniuBucket) {
         this.qiniuBucket = qiniuBucket;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getQiniuBucketUrl() {
+        return qiniuBucketUrl;
+    }
+
+    public void setQiniuBucketUrl(String qiniuBucketUrl) {
+        this.qiniuBucketUrl = qiniuBucketUrl;
     }
 }

@@ -4,7 +4,7 @@
 
 1. 基于springBoot的简单封装和测试
 1. 来自日常工作总结和测试使用
-1. 测试用例覆盖不够全面，不可直接用户生产环境
+1. 测试用例覆盖不够全面，不可直接用于生产环境
 
 
 #### module 说明
@@ -21,7 +21,8 @@
 10. seq-starter： 基于数据库、雪花算法、redis的自增序列号简单封装
 11. stock: demo 工程  (done)
 12. local-test： 测试工程，所有的docker-compose文件都放在此处  （done）
-13. git-tools： 批量git操作
+13. git-tools： 批量git操作  
+14. upload-starter : 云上传组件  （doing）
 
 
 
