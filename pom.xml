@@ -23,6 +23,7 @@
         <module>upload-starter</module>
         <module>logger-starter</module>
         <module>encrypt-starter</module>
+        <module>rest-mock-starter</module>
     </modules>
     <name>springBoot Maven Webapp</name>
     <url>http://maven.apache.org</url>

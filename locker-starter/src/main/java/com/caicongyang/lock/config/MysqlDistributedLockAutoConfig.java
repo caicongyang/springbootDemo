@@ -39,7 +39,7 @@ public class MysqlDistributedLockAutoConfig {
 
     @ConditionalOnMissingBean(name = "lockerDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.locker", ignoreInvalidFields = true)
-    @Bean
+    @Bean(name = "lockerDataSource")
     public DataSource lockerDataSource() {
         return DataSourceBuilder.create().build();
     }
