@@ -32,6 +32,9 @@ public class MysqlTest extends BaseApplicationTest {
 
         System.out.println(lockerDataSource instanceof HikariDataSource);
 
+
+
+
     }
 
 
