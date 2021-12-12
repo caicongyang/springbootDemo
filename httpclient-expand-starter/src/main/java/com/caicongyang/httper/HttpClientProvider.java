@@ -2,12 +2,16 @@ package com.caicongyang.httper;
 
 import com.caicongyang.core.exception.BusinessException;
 import com.caicongyang.core.utils.JacksonUtils;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import io.micrometer.core.instrument.util.JsonUtils;
 import org.apache.http.HttpRequest;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.config.RequestConfig;
@@ -78,8 +82,10 @@ public class HttpClientProvider {
     )
     public String doPostWithApplicationJson(String url, Map<String, String> map)
         throws IOException {
+        Gson gson = new Gson();
         logger.info("doPostWithApplicationJson; url ={}, args = {}", url,
-            JacksonUtils.jsonFromObject(map));
+                gson.toJson(map));
+
         CloseableHttpResponse closeableHttpResponse = null;
         try {
             HttpPost httpPost = new HttpPost(url);
@@ -88,7 +94,8 @@ public class HttpClientProvider {
             httpPost.addHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON);
 
             //解决中文乱码问题
-            StringEntity entity = new StringEntity(JacksonUtils.jsonFromObject(map), "UTF-8");
+
+            StringEntity entity = new StringEntity(gson.toJson(map), "UTF-8");
             entity.setContentEncoding("UTF-8");
             entity.setContentType(APPLICATION_JSON);
             httpPost.setEntity(entity);

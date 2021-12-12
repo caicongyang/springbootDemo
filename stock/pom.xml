@@ -19,6 +19,12 @@
             <groupId>com.caicongyang</groupId>
             <artifactId>core-starter</artifactId>
             <version>${app.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>lock-starter</artifactId>
+                    <groupId>com.caicongyang</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -27,11 +33,11 @@
             <version>${app.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.caicongyang</groupId>
-            <artifactId>lock-starter</artifactId>
-            <version>${app.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.caicongyang</groupId>-->
+<!--            <artifactId>lock-starter</artifactId>-->
+<!--            <version>${app.version}</version>-->
+<!--        </dependency>-->
 
 
 

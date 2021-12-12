@@ -30,7 +30,7 @@ public class HttpClientProviderTest extends BaseApplicationTest {
 
     @Test
     public void test123() throws IOException {
-        TStockMain industryByStockCode = itStockMainService.getIndustryByStockCode("688456.XSHG");
+        TStockMain industryByStockCode = itStockMainService.getIndustryByStockCode("001267.XSHE");
         System.out.println(jacksonUtils.jsonFromObject(industryByStockCode));
 
     }

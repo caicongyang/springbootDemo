@@ -8,8 +8,10 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
+
 import java.io.IOException;
 import java.io.StringWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,15 +25,15 @@ public class JacksonUtils {
     private final static ObjectMapper mapper = new ObjectMapper();
 
 
-    static  {
+    static {
         mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         // 此项必须配置，否则会报java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to XXX
         mapper.activateDefaultTyping(
-            LaissezFaireSubTypeValidator.instance,
-            ObjectMapper.DefaultTyping.NON_FINAL,
-            JsonTypeInfo.As.WRAPPER_ARRAY);
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                JsonTypeInfo.As.WRAPPER_ARRAY);
 
     }
 
@@ -42,14 +44,12 @@ public class JacksonUtils {
      * @return
      */
     public static String jsonFromObject(Object object) {
-        StringWriter writer = new StringWriter();
         try {
-            mapper.writeValue(writer, object);
+            return mapper.writeValueAsString(object);
         } catch (IOException e) {
             LOGGER.error("Unable to serialize to json: " + object, e);
             return null;
         }
-        return writer.toString();
     }
 
     /**
