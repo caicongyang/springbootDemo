@@ -54,7 +54,10 @@
 </div>
 
 <div data-role="main" class="ui-content">
-
+    <div data-role="main" class="ui-content">
+        <input type="text" id="queryDate">
+        <input type="button" data-inline="true" value="查询" onclick="query()">
+    </div>
 
     <table data-role="table" data-mode="columntoggle" class="ui-responsive ui-shadow" id="myTable">
         <thead>
@@ -123,5 +126,10 @@
                 }
             });
     });
+
+       function query() {
+        var queryDate = $("#queryDate").val();
+        window.location.href ="abnormal-stock.html?day="+queryDate;
+   }
 </script>
 </html>

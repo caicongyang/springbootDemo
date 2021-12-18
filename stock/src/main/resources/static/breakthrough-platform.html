@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>tom.cai选择助手之突破平台</title>
-  <!-- meta使用viewport以确保页面可自由缩放 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>tom.cai选择助手之突破平台</title>
+    <!-- meta使用viewport以确保页面可自由缩放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- 引入 jQuery Mobile 样式 -->
-  <link rel="stylesheet" href="http://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.css">
+    <!-- 引入 jQuery Mobile 样式 -->
+    <link rel="stylesheet" href="http://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.css">
 
-  <!-- 引入 jQuery 库 -->
-  <script src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <!-- 引入 jQuery 库 -->
+    <script src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
 
-  <!-- 引入 jQuery Mobile 库 -->
-  <script src="http://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-  <style>
+    <!-- 引入 jQuery Mobile 库 -->
+    <script src="http://apps.bdimg.com/libs/jquerymobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <style>
     th {
       border-bottom: 1px solid #d6d6d6;
     }
@@ -26,8 +26,9 @@
     .ui-content {
       overflow-x: scroll;
     }
-  </style>
-  <script>
+
+    </style>
+    <script>
     /**
      * [通过参数名获取url中的参数值]
      * 示例URL:http://htmlJsTest/getrequest.html?uid=admin&rid=1&fid=2&name=小明
@@ -45,39 +46,45 @@
       }
       return null;
     }
-  </script>
+
+    </script>
 </head>
 <body>
 
 <div data-role="header">
-  <h1 id="titleData"></h1>
+    <h1 id="titleData"></h1>
 </div>
 
+
+<div data-role="main" class="ui-content">
+    <input type="text" id="queryDate">
+    <input type="button" data-inline="true" value="查询" onclick="query()">
+</div>
 <div data-role="main" class="ui-content">
 
 
-  <table data-role="table" data-mode="columntoggle" class="ui-responsive ui-shadow" id="myTable">
-    <thead>
-    <tr>
-      <th data-priority="1">股票</th>
-      <th data-priority="1">名称</th>
+    <table data-role="table" data-mode="columntoggle" class="ui-responsive ui-shadow" id="myTable">
+        <thead>
+        <tr>
+            <th data-priority="1">股票</th>
+            <th data-priority="1">名称</th>
 
-      <th data-priority="2">intervalDays</th>
-      <th data-priority="4">lastDayCompare</th>
-      <th data-priority="5">meanRatio</th>
-      <th data-priority="6">swL3</th>
-      <th data-priority="7">jqL2</th>
-      <th data-priority="8">zjw</th>
-    </tr>
-    </thead>
-    <tbody id="tbodydata">
+            <th data-priority="2">intervalDays</th>
+            <th data-priority="4">lastDayCompare</th>
+            <th data-priority="5">meanRatio</th>
+            <th data-priority="6">swL3</th>
+            <th data-priority="7">jqL2</th>
+            <th data-priority="8">zjw</th>
+        </tr>
+        </thead>
+        <tbody id="tbodydata">
 
-    </tbody>
-  </table>
+        </tbody>
+    </table>
 </div>
 
 <div data-role="footer">
-  <h1>股市有风险，入市需谨慎</h1>
+    <h1>股市有风险，入市需谨慎</h1>
 </div>
 
 
@@ -124,5 +131,12 @@
           }
         });
   });
+
+
+   function query() {
+        var queryDate = $("#queryDate").val();
+        window.location.href ="breakthrough-platform.html?day="+queryDate;
+   }
+
 </script>
 </html>

@@ -14,7 +14,6 @@ public class RequestInfo implements Serializable {
     private String httpMethod;
     private String classMethod;
 
-    @JsonManagedReference
     private Object requestParams;
     private Object result;
     private Long timeCost;
