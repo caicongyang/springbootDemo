@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>tom.cai选股助手之异动股票区间</title>
+    <title>tom.cai选股助手之涨停股票区间</title>
     <!-- meta使用viewport以确保页面可自由缩放 -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -97,7 +97,7 @@
 
         $("#titleData").text(startDate + "~" + endDate + "异动股票");
 
-        $.get("/stock/getIntervalTransactionStockData",
+        $.get("/t-stock-limit/getIntervalLimitStockData",
             {
                 startDate: startDate,
                 endDate: endDate
@@ -120,7 +120,7 @@
                                 + "</a></td>";
                             html += "<td>" + optionJson[i].stockName + "</td>";
                             html += "<td>" + optionJson[i].counter + "</td>";
-                            html += "<td>" + optionJson[i].gain + "</td>";
+                            html += "<td>" + toPercent(optionJson[i].gain) + "</td>";
                             html += "<td>" + optionJson[i].tradingDay + "</td>";
                             html += "<td>" + optionJson[i].swL3 + "</td>";
                             html += "<td>" + optionJson[i].jqL2 + "</td>";
@@ -158,7 +158,7 @@
                             html += "<td>" + optionJson[i].stockCode.split(".")[0] + "</td>";
                             html += "<td>" + optionJson[i].stockName + "</td>";
                             html += "<td>" + optionJson[i].counter + "</td>";
-                            html += "<td>" + toPercent(optionJson[i].gain) + "</td>";
+                            html += "<td>" + optionJson[i].gain + "</td>";
                             html += "<td>" + optionJson[i].swL3 + "</td>";
                             html += "<td>" + optionJson[i].jqL2 + "</td>";
                             html += "<td>" + optionJson[i].zjw + "</td>";

@@ -1,4 +1,4 @@
-package com.caicongyang.stock.services.impl;
+package com.caicongyang.stock.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -12,21 +12,20 @@ import com.caicongyang.stock.mapper.CommonMapper;
 import com.caicongyang.stock.mapper.TStockMapper;
 import com.caicongyang.stock.mapper.TTransactionStockMapper;
 import com.caicongyang.stock.service.ITStockMainService;
-import com.caicongyang.stock.services.StockService;
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.annotation.Resource;
+import com.caicongyang.stock.service.StockService;
+import com.caicongyang.stock.utils.TomDateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  *
@@ -82,20 +81,22 @@ public class StockServiceImpl implements StockService {
         List<Map<String, Object>> maps = commonMapper.queryTransactionStock(map);
 
         for (Map<String, Object> item : maps) {
+            String stockCode = (String) item.get("stock_code");
             TTransactionStock stock = new TTransactionStock();
-            stock.setStockCode((String) item.get("stock_code"));
+            stock.setStockCode(stockCode);
             stock.setLastDayCompare(((BigDecimal) item.get("last_day_compare")).doubleValue());
             stock.setMeanRatio(((BigDecimal) item.get("mean_ratio")).doubleValue());
             stock.setTradingDay(currentDate);
             TStockMain main = itStockMainService
-                .getIndustryByStockCode((String) item.get("stock_code"));
+                    .getIndustryByStockCode(stockCode);
             if (null != main) {
                 stock.setJqL2(main.getJqL2());
                 stock.setSwL3(main.getSwL3());
                 stock.setZjw(main.getZjw());
             }
 
-
+            double v = getCurrentGain(currentDate, preTradingDate, stockCode);
+            stock.setGain(v);
             try {
                 tTransactionStockMapper.insert(stock);
             } catch (Exception e) {
@@ -112,6 +113,30 @@ public class StockServiceImpl implements StockService {
         return maps;
     }
 
+    public double getCurrentGain(String currentDate, String preTradingDate, String stockCode) throws ParseException {
+        // 查询今日股价信息
+        TStock currentStock = new TStock();
+        currentStock.setTradingDay(TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(currentDate)));
+        currentStock.setStockCode(stockCode);
+        Wrapper<TStock> currentWrapper = new QueryWrapper<>(currentStock);
+        currentStock = tStockMapper.selectOne(currentWrapper);
+
+
+        // 查询上一个交易日股价信息
+        TStock preDayStock = new TStock();
+        preDayStock.setTradingDay(TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(preTradingDate)));
+        preDayStock.setStockCode(stockCode);
+        Wrapper<TStock> wrapper = new QueryWrapper<>(preDayStock);
+        preDayStock = tStockMapper.selectOne(wrapper);
+
+
+        if (Objects.nonNull(preDayStock.getClose()) && Objects.nonNull(currentStock.getClose())) {
+            return (currentStock.getClose() - preDayStock.getClose()) / preDayStock.getClose();
+        } else {
+            return 0.0d;
+        }
+    }
+
     @Override
     public List<TTransactionStockDTO> getTransactionStockData(String currentDate) throws Exception {
         TTransactionStock stock = new TTransactionStock();
@@ -124,7 +149,8 @@ public class StockServiceImpl implements StockService {
         if (CollectionUtils.isEmpty(reuslt)) {
             String lastTradingDate = commonMapper.queryLastTradingDate();
             stock.setTradingDay(lastTradingDate);
-            ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock).orderByDesc("jq_l2", "sw_l3", "zjw");;
+            ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock).orderByDesc("jq_l2", "sw_l3", "zjw");
+            ;
             reuslt = tTransactionStockMapper.selectList(wrapper);
         }
 
@@ -135,7 +161,6 @@ public class StockServiceImpl implements StockService {
                 BeanUtils.copyProperties(item, dto);
                 dto.setStockName(itStockMainService.getStockNameByStockCode(item.getStockCode()));
                 returnList.add(dto);
-
             }
         }
         return returnList;

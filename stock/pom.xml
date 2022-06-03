@@ -24,6 +24,14 @@
                     <artifactId>lock-starter</artifactId>
                     <groupId>com.caicongyang</groupId>
                 </exclusion>
+                <exclusion>
+                    <artifactId>spring-boot-starter-data-redis</artifactId>
+                    <groupId>org.springframework.boot</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-data-redis</artifactId>
+                    <groupId>org.springframework.data</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 

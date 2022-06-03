@@ -1,45 +1,29 @@
-package com.caicongyang.stock.services.impl;
+package com.caicongyang.stock.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.caicongyang.stock.domain.BreakthroughPlatformStock;
-import com.caicongyang.stock.domain.HighestInPeriodResult;
-import com.caicongyang.stock.domain.TStock;
-import com.caicongyang.stock.domain.TStockHigher;
-import com.caicongyang.stock.domain.TStockHigherDTO;
-import com.caicongyang.stock.domain.TStockMain;
-import com.caicongyang.stock.domain.TStockWeek;
-import com.caicongyang.stock.domain.TStockWeekHigher;
-import com.caicongyang.stock.domain.TTransactionStockDTO;
-import com.caicongyang.stock.domain.VolumeGtYesterdayStockDTO;
-import com.caicongyang.stock.mapper.CommonMapper;
-import com.caicongyang.stock.mapper.TStockHigherMapper;
-import com.caicongyang.stock.mapper.TStockMapper;
-import com.caicongyang.stock.mapper.TStockWeekHigherMapper;
-import com.caicongyang.stock.mapper.TStockWeekMapper;
+import com.caicongyang.stock.domain.*;
+import com.caicongyang.stock.mapper.*;
 import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.ITStockWeekHigherService;
-import com.caicongyang.stock.services.ITStockService;
+import com.caicongyang.stock.service.ITStockService;
+import com.caicongyang.stock.service.StockService;
 import com.caicongyang.stock.utils.TomDateUtils;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.util.*;
+import java.util.stream.Collectors;
+
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author caicongyang
@@ -47,6 +31,17 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> implements ITStockService {
+
+
+    @Resource
+    private ITStockMainService mainService;
+
+    @Resource
+    private ITStockWeekHigherService weekHigherService;
+
+
+    @Resource
+    private StockService stockService;
 
 
     @Resource
@@ -58,20 +53,12 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     @Resource
     private TStockHigherMapper higherMapper;
 
-    @Resource
-    private ITStockMainService mainService;
-
-    @Resource
-    private ITStockWeekHigherService weekHigherService;
 
     @Resource
     private TStockWeekHigherMapper weekHigherMapper;
 
     @Resource
     private TStockWeekMapper weekMapper;
-
-
-
 
 
     @Override
@@ -96,14 +83,21 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
             List<TStock> itemList = stockMapper.selectList(queryByWrapper);
 
+            String preTradingDate = mapper.queryPreTradingDate(tradingDay);
+
             HighestInPeriodResult result = getHighestInPeriodResult(itemList);
             if (null != result && result.getIntervalDays() > 30) {
                 TStockHigher entity = new TStockHigher();
                 entity.setIntervalDays(result.getIntervalDays());
                 entity.setPreviousHighsDate(
-                    TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
+                        TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
                 entity.setStockCode(result.getStockCode());
                 entity.setTradingDay(stock.getTradingDay());
+
+
+                double currentGain = stockService.getCurrentGain(tradingDay, preTradingDate, result.getStockCode());
+
+                entity.setGain(currentGain);
                 higherMapper.insert(entity);
             }
 
@@ -114,7 +108,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
     @Override
     public List<TStockHigherDTO> getHigherStock(String tradingDay)
-        throws ParseException, IOException {
+            throws ParseException, IOException {
         QueryWrapper<TStockHigher> queryWrapper = new QueryWrapper<>();
         TStockHigher entity = new TStockHigher();
         Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
@@ -136,12 +130,12 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             for (TStockHigher item : result) {
                 TStockHigherDTO dto = new TStockHigherDTO();
                 BeanUtils.copyProperties(item, dto);
-                dto.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
                 TStockMain industryEntity = mainService.getIndustryByStockCode(item.getStockCode());
                 if (industryEntity != null) {
                     dto.setJqL2(industryEntity.getJqL2());
                     dto.setZjw(industryEntity.getZjw());
                     dto.setSwL3(industryEntity.getSwL3());
+                    dto.setStockName(industryEntity.getStockName());
                 }
                 returnList.add(dto);
             }
@@ -150,29 +144,29 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         //java8 联合排序
 
         Comparator<TStockHigherDTO> byJqL2 = Comparator.nullsLast(Comparator
-            .comparing(TStockHigherDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TStockHigherDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
 
         Comparator<TStockHigherDTO> bySwL3 = Comparator.nullsLast(Comparator
-            .comparing(TStockHigherDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TStockHigherDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
 
         Comparator<TStockHigherDTO> byZjw = Comparator.nullsLast(Comparator
-            .comparing(TStockHigherDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TStockHigherDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
 
         // 联合排序
         Comparator<TStockHigherDTO> finalComparator = Comparator
-            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+                .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
 
         return returnList.stream().sorted(finalComparator)
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<BreakthroughPlatformStock> getBreakthroughPlatform(String currentDate)
-        throws ParseException, IOException {
+            throws ParseException, IOException {
 
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put("currentDate", StringUtils.isNotBlank(currentDate) ? currentDate
-            : TomDateUtils.getDayPatternCurrentDay());
+                : TomDateUtils.getDayPatternCurrentDay());
 
         List<Map<String, Object>> queryResultList = mapper.getBreakthroughPlatform(queryMap);
         if (CollectionUtils.isEmpty(queryResultList)) {
@@ -193,6 +187,8 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             stock.setJqL2((String) map.getOrDefault("jq_l2", ""));
             stock.setSwL3((String) map.getOrDefault("sw_l3", ""));
             stock.setZjw((String) map.getOrDefault("zjw", ""));
+            stock.setGain((Double) map.getOrDefault("gain",0d));
+
             stock.setTradingDay(TomDateUtils.formateDayPattern2Date((String) map.getOrDefault("trading_day", "")));
             stock.setStockName(mainService.getStockNameByStockCode(stock.getStockCode()));
 
@@ -203,28 +199,27 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         //java8 联合排序
 
         Comparator<BreakthroughPlatformStock> byJqL2 = Comparator
-            .comparing(BreakthroughPlatformStock::getJqL2, Comparator.nullsLast(Comparator.naturalOrder()));
+                .comparing(BreakthroughPlatformStock::getJqL2, Comparator.nullsLast(Comparator.naturalOrder()));
 
         Comparator<BreakthroughPlatformStock> bySwL3 = Comparator
-            .comparing(BreakthroughPlatformStock::getSwL3, Comparator.nullsLast(Comparator.naturalOrder()));
+                .comparing(BreakthroughPlatformStock::getSwL3, Comparator.nullsLast(Comparator.naturalOrder()));
 
         Comparator<BreakthroughPlatformStock> byZjw = Comparator
-            .comparing(BreakthroughPlatformStock::getZjw, Comparator.nullsLast(Comparator.naturalOrder()));
+                .comparing(BreakthroughPlatformStock::getZjw, Comparator.nullsLast(Comparator.naturalOrder()));
 
         // 联合排序
         Comparator<BreakthroughPlatformStock> finalComparator = Comparator
-            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+                .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
 
         return result.stream().sorted(finalComparator)
-            .collect(Collectors.toList());
-
+                .collect(Collectors.toList());
 
 
     }
 
     @Override
     public List<VolumeGtYesterdayStockDTO> getVolumeGtYesterdayStock(String currentDate)
-        throws IOException {
+            throws IOException {
 
         String day = mapper.queryLastTradingDate();
 
@@ -256,20 +251,20 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         //java8 联合排序
 
         Comparator<VolumeGtYesterdayStockDTO> byJqL2 = Comparator
-            .comparing(VolumeGtYesterdayStockDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder()));
+                .comparing(VolumeGtYesterdayStockDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder()));
 
         Comparator<VolumeGtYesterdayStockDTO> bySwL3 = Comparator
-            .comparing(VolumeGtYesterdayStockDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder()));
+                .comparing(VolumeGtYesterdayStockDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder()));
 
         Comparator<VolumeGtYesterdayStockDTO> byZjw = Comparator
-            .comparing(VolumeGtYesterdayStockDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder()));
+                .comparing(VolumeGtYesterdayStockDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder()));
 
         // 联合排序
         Comparator<VolumeGtYesterdayStockDTO> finalComparator = Comparator
-            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+                .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
 
         return resultList.stream().sorted(finalComparator)
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -298,7 +293,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
                 TStockWeekHigher entity = new TStockWeekHigher();
                 entity.setIntervalDays(result.getIntervalDays());
                 entity.setPreviousHighsDate(
-                    TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
+                        TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
                 entity.setStockCode(result.getStockCode());
                 entity.setTradingDay(stock.getTradingDay());
                 weekHigherMapper.insert(entity);
@@ -309,7 +304,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
     @Override
     public List<TStockHigherDTO> getHigherWeekStock(String tradingDay)
-        throws ParseException, IOException {
+            throws ParseException, IOException {
         QueryWrapper<TStockWeekHigher> queryWrapper = new QueryWrapper<>();
         TStockWeekHigher entity = new TStockWeekHigher();
         Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
@@ -331,12 +326,12 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             for (TStockWeekHigher item : result) {
                 TStockHigherDTO dto = new TStockHigherDTO();
                 BeanUtils.copyProperties(item, dto);
-                dto.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
                 TStockMain industryEntity = mainService.getIndustryByStockCode(item.getStockCode());
                 if (industryEntity != null) {
                     dto.setJqL2(industryEntity.getJqL2());
                     dto.setZjw(industryEntity.getZjw());
                     dto.setSwL3(industryEntity.getSwL3());
+                    dto.setStockName(industryEntity.getStockName());
                 }
                 returnList.add(dto);
             }
@@ -345,20 +340,20 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         //java8 联合排序
 
         Comparator<TStockHigherDTO> byJqL2 = Comparator.nullsLast(Comparator
-            .comparing(TStockHigherDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TStockHigherDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
 
         Comparator<TStockHigherDTO> bySwL3 = Comparator.nullsLast(Comparator
-            .comparing(TStockHigherDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TStockHigherDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
 
         Comparator<TStockHigherDTO> byZjw = Comparator.nullsLast(Comparator
-            .comparing(TStockHigherDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TStockHigherDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
 
         // 联合排序
         Comparator<TStockHigherDTO> finalComparator = Comparator
-            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+                .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
 
         return returnList.stream().sorted(finalComparator)
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -383,15 +378,15 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             TTransactionStockDTO item = new TTransactionStockDTO();
             item.setStockCode((String) map.getOrDefault("stock_code", ""));
             item.setLastDayCompare(
-                ((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
+                    ((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
             item.setTradingDay(currentDate);
-            item.setStockName(mainService.getStockNameByStockCode(item.getStockCode()));
 
             TStockMain industryEntity = mainService.getIndustryByStockCode(item.getStockCode());
             if (industryEntity != null) {
                 item.setJqL2(industryEntity.getJqL2());
                 item.setZjw(industryEntity.getZjw());
                 item.setSwL3(industryEntity.getSwL3());
+                item.setStockName(industryEntity.getStockName());
             }
 
 
@@ -399,24 +394,23 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         }
 
 
-
         //java8 联合排序
 
         Comparator<TTransactionStockDTO> byJqL2 = Comparator.nullsLast(Comparator
-            .comparing(TTransactionStockDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TTransactionStockDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
 
         Comparator<TTransactionStockDTO> bySwL3 = Comparator.nullsLast(Comparator
-            .comparing(TTransactionStockDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TTransactionStockDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
 
         Comparator<TTransactionStockDTO> byZjw = Comparator.nullsLast(Comparator
-            .comparing(TTransactionStockDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+                .comparing(TTransactionStockDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
 
         // 联合排序
         Comparator<TTransactionStockDTO> finalComparator = Comparator
-            .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+                .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
 
         return resultList.stream().sorted(finalComparator)
-            .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
     }
 

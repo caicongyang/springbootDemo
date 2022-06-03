@@ -1,16 +1,13 @@
 package com.caicongyang.stock.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.time.LocalDate;
-import java.io.Serializable;
-import java.util.Date;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
 
 /**
  * <p>
@@ -39,15 +36,17 @@ public class TTransactionStock implements Serializable {
 
     private String tradingDay;
 
-    @ApiModelProperty(value = "申万行业")
+    @ApiModelProperty(value = "申万三级行业")
     private String swL3;
 
-    @ApiModelProperty(value = "聚宽行业")
+    @ApiModelProperty(value = "聚宽二级行业")
     private String jqL2;
 
+    @ApiModelProperty(value = "证监会行业")
     private String zjw;
 
-
+    @ApiModelProperty(value = "当日涨幅")
+    private Double gain;
 
 
 }

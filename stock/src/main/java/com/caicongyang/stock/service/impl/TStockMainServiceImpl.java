@@ -1,20 +1,13 @@
 package com.caicongyang.stock.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.mapper.TStockMainMapper;
 import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.utils.TomDateUtils;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Resource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,6 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockMain> implements
-    ITStockMainService {
+        ITStockMainService {
 
     private static final Logger logger = LoggerFactory.getLogger(TStockMainServiceImpl.class);
 
@@ -61,32 +62,11 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
             return StringUtils.EMPTY;
         }
         TStockMain entity = tStockMainMapper.selectOne(new QueryWrapper<TStockMain>()
-            .eq("stock_code", stockCode));
+                .eq("stock_code", stockCode));
         if (entity != null && StringUtils.isNoneBlank(entity.getStockName())) {
             return entity.getStockName();
-        } else {
-            String stocksInfo = getStocksInfo(tokenMap.get("token"), stockCode);
-            if (stocksInfo.contains("error")) {
-                logger.info("聚宽放回错误信息：{}", stocksInfo);
-                tokenMap.put("token", getJKToken());
-                stocksInfo = getStocksInfo(tokenMap.get("token"), stockCode);
-            }
-            List<String> jKIndustryStockList = Arrays.asList(stocksInfo.split("\n"));
-            List<String> resultList = jKIndustryStockList.subList(1, jKIndustryStockList.size());
-            TStockMain stockMain = parseStockMain(stockCode, resultList);
-            if (null == stockMain) {
-                return StringUtils.EMPTY;
-            }
-            if (entity == null) {
-                tStockMainMapper.insert(stockMain);
-            } else {
-                entity.setStockName(stockMain.getStockName());
-                entity.setType(stockMain.getType());
-                tStockMainMapper.update(entity,
-                    new UpdateWrapper<TStockMain>().eq("stock_code", entity.getStockCode()));
-            }
-            return stockMain.getStockName();
         }
+        return StringUtils.EMPTY;
     }
 
 
@@ -94,18 +74,18 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
     @Cacheable(cacheNames = "getIndustryByStockCode", key = "#stockCode")
     public TStockMain getIndustryByStockCode(String stockCode) throws IOException {
         TStockMain entity = tStockMainMapper
-            .selectOne(new QueryWrapper<TStockMain>().eq("stock_code", stockCode));
+                .selectOne(new QueryWrapper<TStockMain>().eq("stock_code", stockCode));
         if (null != entity && !StringUtils.isBlank(entity.getJqL2()) && !StringUtils
-            .isBlank(entity.getSwL3())
-            && !StringUtils.isBlank(entity.getZjw())) {
+                .isBlank(entity.getSwL3())
+                && !StringUtils.isBlank(entity.getZjw())) {
             return entity;
         } else {
             TStockMain tStockMain = _getIndustryByStockCode(tokenMap.get("token"), stockCode);
             if (null != tStockMain) {
                 if (null != entity) {
                     tStockMainMapper
-                        .update(tStockMain,
-                            new UpdateWrapper<TStockMain>().eq("stock_code", stockCode));
+                            .update(tStockMain,
+                                    new LambdaUpdateWrapper<TStockMain>().eq(TStockMain::getStockCode, stockCode));
                 } else {
                     tStockMainMapper.insert(tStockMain);
                 }
@@ -132,8 +112,8 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
     public String getJKToken() throws IOException {
         Map<String, String> params = new HashMap<>();
         params.put("method", "get_token");
-        params.put("mob", "18558611751");
-        params.put("pwd", "24777365ccyCCY");
+        params.put("mob", "13774598865");
+        params.put("pwd", "123456");
         //todo 需要把token 缓存起来
         return provider.doPostWithApplicationJson(apiUrl, params);
     }
@@ -175,7 +155,6 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
 
         return provider.doPostWithApplicationJson(apiUrl, params);
     }
-
 
 
     private TStockMain parseIndustryStockData(String stockCode, List<String> resultList) {

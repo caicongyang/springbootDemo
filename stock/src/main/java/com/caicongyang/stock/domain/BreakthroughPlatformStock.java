@@ -34,8 +34,11 @@ public class BreakthroughPlatformStock {
     @ApiModelProperty(value = "聚宽行业")
     private String jqL2;
 
+    @ApiModelProperty(value = "证监会行业")
     private String zjw;
 
+    @ApiModelProperty(value = "当天涨幅")
+    private Double gain;
 
     public Integer getIntervalDays() {
         return intervalDays;
@@ -108,5 +111,14 @@ public class BreakthroughPlatformStock {
 
     public void setStockName(String stockName) {
         this.stockName = stockName;
+    }
+
+
+    public Double getGain() {
+        return gain;
+    }
+
+    public void setGain(Double gain) {
+        this.gain = gain;
     }
 }

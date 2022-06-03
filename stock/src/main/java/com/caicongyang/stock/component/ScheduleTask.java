@@ -2,9 +2,9 @@ package com.caicongyang.stock.component;
 
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.service.ITStockMainService;
-import com.caicongyang.stock.services.ITEtfService;
-import com.caicongyang.stock.services.ITStockService;
-import com.caicongyang.stock.services.StockService;
+import com.caicongyang.stock.service.ITEtfService;
+import com.caicongyang.stock.service.ITStockService;
+import com.caicongyang.stock.service.StockService;
 import com.caicongyang.stock.utils.TomDateUtils;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -121,7 +121,7 @@ public class ScheduleTask {
 
         List<TStockMain> list = stockMainService.list();
         for (TStockMain stockMain : list) {
-            stockMainService.getStockNameByStockCode(stockMain.getStockCode());
+            stockMainService.getIndustryByStockCode(stockMain.getStockCode());
         }
 
         logger.info("执行任务补充主数据....");

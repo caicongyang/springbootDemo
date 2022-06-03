@@ -1,4 +1,4 @@
-package com.caicongyang.stock.services;
+package com.caicongyang.stock.service;
 
 import com.caicongyang.stock.domain.TTransactionStock;
 import com.baomidou.mybatisplus.extension.service.IService;

@@ -37,10 +37,14 @@ public class TTransactionCounterStockDTO implements Serializable {
     @ApiModelProperty(value = "聚宽行业")
     private String jqL2;
 
+    @ApiModelProperty(value = "证监会行业")
     private String zjw;
 
     @ApiModelProperty(value = "出现次数")
     private Long counter;
+
+    @ApiModelProperty(value = "证监会行业")
+    private Double gain;
 
 
 }

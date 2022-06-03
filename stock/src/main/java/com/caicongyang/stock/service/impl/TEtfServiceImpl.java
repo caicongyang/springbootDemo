@@ -1,4 +1,4 @@
-package com.caicongyang.stock.services.impl;
+package com.caicongyang.stock.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -15,7 +15,7 @@ import com.caicongyang.stock.mapper.TEtfMapper;
 import com.caicongyang.stock.mapper.TTransactionEtfMapper;
 import com.caicongyang.stock.service.ITEtfHigherService;
 import com.caicongyang.stock.service.ITStockMainService;
-import com.caicongyang.stock.services.ITEtfService;
+import com.caicongyang.stock.service.ITEtfService;
 import com.caicongyang.stock.utils.TomDateUtils;
 import java.io.IOException;
 import java.math.BigDecimal;

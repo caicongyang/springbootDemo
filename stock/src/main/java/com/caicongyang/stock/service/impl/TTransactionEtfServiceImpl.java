@@ -1,8 +1,8 @@
-package com.caicongyang.stock.services.impl;
+package com.caicongyang.stock.service.impl;
 
 import com.caicongyang.stock.domain.TTransactionEtf;
 import com.caicongyang.stock.mapper.TTransactionEtfMapper;
-import com.caicongyang.stock.services.ITTransactionEtfService;
+import com.caicongyang.stock.service.ITTransactionEtfService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 

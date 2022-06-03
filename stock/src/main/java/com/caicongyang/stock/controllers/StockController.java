@@ -7,8 +7,8 @@ import com.caicongyang.stock.domain.TTransactionCounterStockDTO;
 import com.caicongyang.stock.domain.TTransactionStockDTO;
 import com.caicongyang.stock.domain.VolumeGtYesterdayStockDTO;
 import com.caicongyang.stock.service.ITStockMainService;
-import com.caicongyang.stock.services.ITStockService;
-import com.caicongyang.stock.services.StockService;
+import com.caicongyang.stock.service.ITStockService;
+import com.caicongyang.stock.service.StockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
@@ -51,8 +51,6 @@ public class StockController {
     @ApiOperation(value = "捕获当天的股票异动数据", notes = "查询当天的股票异动数据")
     public @ResponseBody
     Result<List<Map<String, Object>>> catchTransactionStockData(@RequestParam(value = "currentDate") String currentDate) throws Exception {
-
-
         List<Map<String, Object>> result = null;
         try {
             result = stockService.catchTransactionStockData(currentDate);
@@ -108,6 +106,7 @@ public class StockController {
                     stock.setTradingDay((String) map.getOrDefault("trading_day", ""));
                     stock.setStockName(
                         itStockMainService.getStockNameByStockCode(stock.getStockCode()));
+                    stock.setGain((Double) map.getOrDefault("gain", 0d));
                     result.add(stock);
                 }
                 return Result.ok(result);

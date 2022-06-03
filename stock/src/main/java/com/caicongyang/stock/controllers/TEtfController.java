@@ -5,7 +5,7 @@ import com.caicongyang.core.basic.Result;
 import com.caicongyang.stock.domain.TEtfHigherDTO;
 import com.caicongyang.stock.domain.TTransactionEtf;
 import com.caicongyang.stock.domain.TTransactionEtfDTO;
-import com.caicongyang.stock.services.ITEtfService;
+import com.caicongyang.stock.service.ITEtfService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.text.ParseException;

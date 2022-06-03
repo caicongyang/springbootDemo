@@ -1,6 +1,8 @@
-package com.caicongyang.stock.services;
+package com.caicongyang.stock.service;
 
 import com.caicongyang.stock.domain.TTransactionStockDTO;
+
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +14,10 @@ public interface StockService {
      * @return
      */
     Boolean TradeFlag();
+
+
+
+    public double getCurrentGain(String currentDate, String preTradingDate, String stockCode) throws ParseException;
 
 
     /**

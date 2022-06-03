@@ -41,7 +41,11 @@ public class TTransactionStockDTO implements Serializable {
     @ApiModelProperty(value = "聚宽行业")
     private String jqL2;
 
+    @ApiModelProperty(value = "证监会行业")
     private String zjw;
+
+    @ApiModelProperty(value = "当日涨幅")
+    private Double gain;
 
 
 }

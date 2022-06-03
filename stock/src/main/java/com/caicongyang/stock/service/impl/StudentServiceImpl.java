@@ -1,9 +1,9 @@
-package com.caicongyang.stock.services.impl;
+package com.caicongyang.stock.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caicongyang.stock.domain.Student;
 import com.caicongyang.stock.mapper.StudentMapper;
-import com.caicongyang.stock.services.StudentService;
+import com.caicongyang.stock.service.StudentService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

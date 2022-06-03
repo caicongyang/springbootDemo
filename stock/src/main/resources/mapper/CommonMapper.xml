@@ -78,7 +78,8 @@
 	s.stock_code,
 	s.sw_l3,
 	s.jq_l2,
-	s.zjw
+	s.zjw,
+    s.gain
 FROM
 	 ( SELECT count(*) AS counter, stock_code FROM T_transaction_stock where  trading_day BETWEEN #{startDate}  AND #{endDate}  GROUP BY stock_code HAVING counter > 1  ) as t  left join  T_transaction_stock s on t.stock_code =  s.stock_code
 WHERE
@@ -104,7 +105,8 @@ ORDER BY
 	ts.jq_l2,
 	ts.zjw,
 	ts.sw_l3,
-	ts.trading_day
+	ts.trading_day,
+	ts.gain
 FROM
 	T_transaction_stock ts
 	INNER JOIN T_Stock_Higher sh ON sh.stock_code = ts.stock_code
