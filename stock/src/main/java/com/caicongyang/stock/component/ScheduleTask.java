@@ -1,19 +1,17 @@
 package com.caicongyang.stock.component;
 
 import com.caicongyang.stock.domain.TStockMain;
-import com.caicongyang.stock.service.ITStockMainService;
-import com.caicongyang.stock.service.ITEtfService;
-import com.caicongyang.stock.service.ITStockService;
-import com.caicongyang.stock.service.StockService;
+import com.caicongyang.stock.service.*;
 import com.caicongyang.stock.utils.TomDateUtils;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class ScheduleTask {
@@ -36,7 +34,8 @@ public class ScheduleTask {
     @Autowired
     ITStockMainService stockMainService;
 
-
+    @Autowired
+    ITStockLimitService limitService;
 
 
     /**
@@ -52,17 +51,16 @@ public class ScheduleTask {
 
             itEtfService.catchTransactionStockData(currentDate);
 
-        }else{
-            logger.info(TomDateUtils.getDayPatternCurrentDay()+"：未获取到交易数据");
+        } else {
+            logger.info(TomDateUtils.getDayPatternCurrentDay() + "：未获取到交易数据");
 
         }
         logger.info("执行任务结束....");
     }
 
 
-
     /**
-     * 每天19点执行一次
+     * 每天18点 30执行一次
      */
     @Scheduled(cron = "0 30 18 * * ?")
     public void task2() throws Exception {
@@ -73,8 +71,11 @@ public class ScheduleTask {
             itStockService.calculateHigherStock(currentDate);
 
 
-        }else{
-            logger.info(TomDateUtils.getDayPatternCurrentDay()+"：未获取到交易数据");
+            itEtfService.calculateHigherStock(currentDate);
+
+
+        } else {
+            logger.info(TomDateUtils.getDayPatternCurrentDay() + "：未获取到交易数据");
 
         }
         logger.info("执行任务结束....");
@@ -82,17 +83,17 @@ public class ScheduleTask {
 
 
     /**
-     * 每天19点执行一次
+     * 每天19点 30分执行一次
      */
-    @Scheduled(cron = "0 0 19 * * ?")
+    @Scheduled(cron = "0 30 19 * * ?")
     public void task3() throws Exception {
         logger.info("执行任务开始....");
         if (stockService.TradeFlag()) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             String currentDate = format.format(new Date());
-            itEtfService.calculateHigherStock(currentDate);
-        }else{
-            logger.info(TomDateUtils.getDayPatternCurrentDay()+"：未获取到交易数据");
+            limitService.catchAllDaliyLimitStock(currentDate);
+        } else {
+            logger.info(TomDateUtils.getDayPatternCurrentDay() + "：未获取到交易数据");
         }
         logger.info("执行任务结束....");
     }
@@ -100,7 +101,7 @@ public class ScheduleTask {
 
     /**
      * 每周六中午执行一次
-     * 0 0 12 ? * WED
+     * 0 0 19 ? * FRI
      */
     @Scheduled(cron = "0 0 19 ? * FRI")
     public void task4() throws Exception {
@@ -126,7 +127,6 @@ public class ScheduleTask {
 
         logger.info("执行任务补充主数据....");
     }
-
 
 
 }
