@@ -130,7 +130,7 @@ public class StockServiceImpl implements StockService {
         preDayStock = tStockMapper.selectOne(wrapper);
 
 
-        if (Objects.nonNull(preDayStock.getClose()) && Objects.nonNull(currentStock.getClose())) {
+        if (Objects.nonNull(currentStock)  &&  Objects.nonNull(preDayStock) &&  Objects.nonNull(preDayStock.getClose()) && Objects.nonNull(currentStock.getClose())) {
             return (currentStock.getClose() - preDayStock.getClose()) / preDayStock.getClose();
         } else {
             return 0.0d;

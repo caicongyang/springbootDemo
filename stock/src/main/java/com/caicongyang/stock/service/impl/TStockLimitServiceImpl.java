@@ -8,16 +8,19 @@ import com.caicongyang.stock.domain.TStockLimitDTO;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.mapper.CommonMapper;
 import com.caicongyang.stock.mapper.TStockLimitMapper;
-import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.ITStockLimitService;
+import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.ITStockService;
 import com.caicongyang.stock.service.StockService;
 import com.caicongyang.stock.utils.TomDateUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -33,6 +36,9 @@ import java.util.stream.Collectors;
 @Service
 public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStockLimit> implements ITStockLimitService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TStockLimitServiceImpl.class);
+
+
     @Resource
     private ITStockService tStockService;
 
@@ -47,6 +53,22 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
 
 
     public void catchAllDaliyLimitStock(String tradingDay) throws Exception {
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    doCtchAllDaliyLimitStock(tradingDay);
+                }catch (Exception e){
+                    logger.error("执行失败",e);
+                }
+            }
+        }).start();
+
+
+    }
+
+    private void doCtchAllDaliyLimitStock(String tradingDay) throws ParseException {
         String preTradingDate = commonMapper.queryPreTradingDate(tradingDay);
         Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
         LocalDate localDate = TomDateUtils.date2LocalDate(date);
@@ -76,26 +98,47 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
 
         List<TStockLimit> limitList = this.list(new LambdaQueryWrapper<TStockLimit>().between(true, TStockLimit::getTradingDay, startLocalDate, endLocalDate));
 
+
+        Map<String, List<TStockLimit>> limitMap = limitList.stream().collect(Collectors.groupingBy(e -> e.getStockCode()));
+
         if (CollectionUtils.isEmpty(limitList)) {
             return null;
         }
 
 
         List<String> collect = limitList.stream().map(a -> a.getStockCode()).collect(Collectors.toList());
-        List<TStockMain> stockMainList = itStockMainService.list(new LambdaQueryWrapper<TStockMain>().in(true, TStockMain::getStockCode, collect));
-        Map<String, List<TStockMain>> stockCodeMap = stockMainList.stream().collect(Collectors.groupingBy(e -> e.getStockCode()));
+//        List<TStockMain> stockMainList = itStockMainService.list(new LambdaQueryWrapper<TStockMain>().in(true, TStockMain::getStockCode, collect));
+//        Map<String, List<TStockMain>> stockCodeMap = stockMainList.stream().collect(Collectors.groupingBy(e -> e.getStockCode()));
         List<TStockLimitDTO> reList = new LinkedList<>();
 
 
         for (TStockLimit item : limitList) {
             TStockLimitDTO dto = new TStockLimitDTO();
-            List<TStockMain> tStockMains = stockCodeMap.get(item.getStockCode());
-            TStockMain tStockMain = tStockMains.get(0);
+
+            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
+
             BeanUtils.copyProperties(tStockMain, dto);
             BeanUtils.copyProperties(item, dto);
+            dto.setCounter(limitMap.get(item.getStockCode()).size());
             reList.add(dto);
         }
 
-        return reList;
+
+        //java8 联合排序
+
+
+        Comparator<TStockLimitDTO> counter = Comparator.nullsLast(Comparator
+                .comparing(TStockLimitDTO::getCounter, Comparator.nullsLast(Comparator.reverseOrder())));
+
+        Comparator<TStockLimitDTO> tradingDay = Comparator.nullsLast(Comparator
+                .comparing(TStockLimitDTO::getTradingDay, Comparator.nullsLast(Comparator.reverseOrder())));
+
+
+        // 联合排序
+        Comparator<TStockLimitDTO> finalComparator = Comparator
+                .nullsLast(counter.thenComparing(tradingDay));
+
+        return reList.stream().sorted(finalComparator)
+                .collect(Collectors.toList());
     }
 }

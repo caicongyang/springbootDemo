@@ -95,7 +95,7 @@
         var endDate = day.getFullYear() + "-" + monStr + "-" + dayStr;
         var startDate = getBeforeDate(30)
 
-        $("#titleData").text(startDate + "~" + endDate + "异动股票");
+        $("#titleData").text(startDate + "~" + endDate + "涨停股票");
 
         $.get("/t-stock-limit/getIntervalLimitStockData",
             {

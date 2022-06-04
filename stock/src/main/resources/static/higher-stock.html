@@ -46,6 +46,13 @@
       }
       return null;
     }
+
+    function toPercent(point){
+      var str=Number(point*100).toFixed(1);
+      str+="%";
+      return str;
+    }
+
   </script>
 </head>
 <body>
@@ -64,6 +71,7 @@
       <th>名称</th>
       <th>intervalDays</th>
       <th>previousHighsDate</th>
+      <th>gain</th>
       <th>swL3</th>
       <th>jqL2</th>
       <th>zjw</th>
@@ -111,6 +119,7 @@
                 html += "<td>" + optionJson[i].stockName + "</td>";
                 html += "<td>" + optionJson[i].intervalDays + "</td>";
                 html += "<td>" + optionJson[i].previousHighsDate + "</td>";
+                html += "<td>" + toPercent(optionJson[i].gain) + "</td>";
                 html += "<td>" + optionJson[i].swL3 + "</td>";
                 html += "<td>" + optionJson[i].jqL2 + "</td>";
                 html += "<td>" + optionJson[i].zjw + "</td>";

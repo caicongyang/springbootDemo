@@ -1,6 +1,8 @@
 package com.caicongyang.stock.component;
 
-import com.caicongyang.stock.domain.TStockMain;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.caicongyang.stock.domain.TStock;
+import com.caicongyang.stock.mapper.CommonMapper;
 import com.caicongyang.stock.service.*;
 import com.caicongyang.stock.utils.TomDateUtils;
 import org.slf4j.Logger;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +40,9 @@ public class ScheduleTask {
     @Autowired
     ITStockLimitService limitService;
 
+    @Resource
+    CommonMapper commonMapper;
+
 
     /**
      * 每天18点执行一次
@@ -48,7 +54,6 @@ public class ScheduleTask {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             String currentDate = format.format(new Date());
             stockService.catchTransactionStockData(currentDate);
-
             itEtfService.catchTransactionStockData(currentDate);
 
         } else {
@@ -119,10 +124,10 @@ public class ScheduleTask {
     @Scheduled(cron = "0 0 23 * * ?")
     public void makeUpMainData() throws Exception {
         logger.info("执行任务补充主数据开始....");
-
-        List<TStockMain> list = stockMainService.list();
-        for (TStockMain stockMain : list) {
-            stockMainService.getIndustryByStockCode(stockMain.getStockCode());
+        String lastTradingDate = commonMapper.queryLastTradingDate();
+        List<TStock> list = itStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradingDay, TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate))));
+        for (TStock stock : list) {
+            stockMainService.getIndustryByStockCode(stock.getStockCode());
         }
 
         logger.info("执行任务补充主数据....");
