@@ -47,4 +47,14 @@ public class TStockLimitController {
     }
 
 
+    @GetMapping("/getLimitAndTransactionStockStock")
+    @ApiOperation(value = "获取当天的涨停&异动的股票数据", notes = "获取当天的涨停&异动的股票数据")
+    public @ResponseBody
+    Result<List<TStockLimitDTO>> getLimitAndTransactionStockStock(@RequestParam(value = "currentDate") String currentDate)
+            throws Exception {
+        return Result.ok(limitService.getLimitAndTransactionStockStock(currentDate));
+
+    }
+
+
 }

@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.caicongyang.mapper.TStockLimitMapper">
+<mapper namespace="com.caicongyang.stock.mapper.TStockLimitMapper">
 
+
+    <select id="getIntervalLimitStockData"  parameterType="java.util.HashMap" resultType="com.caicongyang.stock.domain.TStockLimitDTO">
+        SELECT
+            stock_code  as stockCode,
+            max( trading_day )  as tradingDay,
+            count( * ) as counter
+        FROM
+            T_Stock_Limit
+        where  trading_day between  #{startDate}
+        and #{endDate}
+        GROUP BY
+            stock_code
+        HAVING
+            counter > 1
+        ORDER BY
+            counter DESC,
+            max( trading_day ) desc
+    </select>
+
+
+    <select id="getLimitAndTransactionStockStock"  parameterType="java.util.HashMap"   resultType="com.caicongyang.stock.domain.TStockLimitDTO">
+        SELECT
+            t.stock_code,
+            count(t.id) AS counter
+        FROM
+            T_Stock_Limit AS l
+                JOIN T_transaction_stock AS t ON l.stock_code = t.stock_code
+        WHERE
+            l.trading_day = #{currentDate}
+          AND t.trading_day BETWEEN #{startDate}
+            AND #{endDate}
+        GROUP BY
+            t.stock_code
+        ORDER BY counter desc
+    </select>
 </mapper>

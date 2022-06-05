@@ -19,4 +19,6 @@ public interface ITStockLimitService extends IService<TStockLimit> {
     public void catchAllDaliyLimitStock(String tradingDay) throws Exception;
 
     public List<TStockLimitDTO> getIntervalLimitStockData(String startDate, String endDate) throws Exception;
+
+    public List<TStockLimitDTO> getLimitAndTransactionStockStock(String currentDate) throws Exception;
 }

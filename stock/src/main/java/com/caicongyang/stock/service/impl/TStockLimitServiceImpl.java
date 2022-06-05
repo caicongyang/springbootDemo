@@ -2,10 +2,7 @@ package com.caicongyang.stock.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.caicongyang.stock.domain.TStock;
-import com.caicongyang.stock.domain.TStockLimit;
-import com.caicongyang.stock.domain.TStockLimitDTO;
-import com.caicongyang.stock.domain.TStockMain;
+import com.caicongyang.stock.domain.*;
 import com.caicongyang.stock.mapper.CommonMapper;
 import com.caicongyang.stock.mapper.TStockLimitMapper;
 import com.caicongyang.stock.service.ITStockLimitService;
@@ -17,6 +14,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -51,6 +50,9 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
     @Resource
     ITStockMainService itStockMainService;
 
+    @Resource
+    TStockLimitMapper limitMapper;
+
 
     public void catchAllDaliyLimitStock(String tradingDay) throws Exception {
 
@@ -59,8 +61,8 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
             public void run() {
                 try {
                     doCtchAllDaliyLimitStock(tradingDay);
-                }catch (Exception e){
-                    logger.error("执行失败",e);
+                } catch (Exception e) {
+                    logger.error("执行失败", e);
                 }
             }
         }).start();
@@ -96,30 +98,28 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
         LocalDate startLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(startDate));
         LocalDate endLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(endDate));
 
-        List<TStockLimit> limitList = this.list(new LambdaQueryWrapper<TStockLimit>().between(true, TStockLimit::getTradingDay, startLocalDate, endLocalDate));
+//        List<TStockLimit> limitList = this.list(new LambdaQueryWrapper<TStockLimit>().between(true, TStockLimit::getTradingDay, startLocalDate, endLocalDate));
 
+        HashMap map = new HashMap();
+        map.put("startDate", startLocalDate);
+        map.put("endDate", endLocalDate);
+        List<TStockLimitDTO> limitList = limitMapper.getIntervalLimitStockData(map);
 
-        Map<String, List<TStockLimit>> limitMap = limitList.stream().collect(Collectors.groupingBy(e -> e.getStockCode()));
 
         if (CollectionUtils.isEmpty(limitList)) {
             return null;
         }
 
-
-        List<String> collect = limitList.stream().map(a -> a.getStockCode()).collect(Collectors.toList());
-//        List<TStockMain> stockMainList = itStockMainService.list(new LambdaQueryWrapper<TStockMain>().in(true, TStockMain::getStockCode, collect));
-//        Map<String, List<TStockMain>> stockCodeMap = stockMainList.stream().collect(Collectors.groupingBy(e -> e.getStockCode()));
         List<TStockLimitDTO> reList = new LinkedList<>();
 
 
-        for (TStockLimit item : limitList) {
+        for (TStockLimitDTO item : limitList) {
             TStockLimitDTO dto = new TStockLimitDTO();
 
             TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
 
-            BeanUtils.copyProperties(tStockMain, dto);
-            BeanUtils.copyProperties(item, dto);
-            dto.setCounter(limitMap.get(item.getStockCode()).size());
+            BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
+            BeanUtils.copyProperties(item, dto, getNullPropertyNames(item));
             reList.add(dto);
         }
 
@@ -141,4 +141,72 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
         return reList.stream().sorted(finalComparator)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<TStockLimitDTO> getLimitAndTransactionStockStock(String currentDate) throws Exception {
+
+        String lastTradingDate = commonMapper.queryLastTradingDate();
+
+        Calendar calc = Calendar.getInstance();
+        calc.setTime(new Date());
+        calc.add(calc.DATE, -30);
+        Date pre30Day = calc.getTime();
+        LocalDate startLocalDate = TomDateUtils.date2LocalDate(pre30Day);
+        LocalDate endLocalDate = TomDateUtils.date2LocalDate(new Date());
+
+        HashMap map = new HashMap();
+        map.put("startDate", startLocalDate);
+        map.put("endDate", endLocalDate);
+        map.put("currentDate", lastTradingDate);
+
+        List<TStockLimitDTO> limitList = limitMapper.getLimitAndTransactionStockStock(map);
+
+        List<TStockLimitDTO> reList = new LinkedList<>();
+
+
+        for (TStockLimitDTO item : limitList) {
+            TStockLimitDTO dto = new TStockLimitDTO();
+            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
+            BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
+            BeanUtils.copyProperties(item, dto, getNullPropertyNames(item));
+            reList.add(dto);
+        }
+
+
+        //java8 联合排序
+
+        Comparator<TStockLimitDTO> byJqL2 = Comparator.nullsLast(Comparator
+                .comparing(TStockLimitDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TStockLimitDTO> bySwL3 = Comparator.nullsLast(Comparator
+                .comparing(TStockLimitDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TStockLimitDTO> byZjw = Comparator.nullsLast(Comparator
+                .comparing(TStockLimitDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        // 联合排序
+        Comparator<TStockLimitDTO> finalComparator = Comparator
+                .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+
+        return reList.stream().sorted(finalComparator)
+                .collect(Collectors.toList());
+
+    }
+
+    public static String[] getNullPropertyNames(Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
+        Set emptyNames = new HashSet();
+        for (java.beans.PropertyDescriptor pd : pds) {
+            //check if value of this property is null then add it to the collection
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) {
+                emptyNames.add(pd.getName());
+            }
+        }
+        String[] result = new String[emptyNames.size()];
+        return (String[]) emptyNames.toArray(result);
+    }
+
+
 }

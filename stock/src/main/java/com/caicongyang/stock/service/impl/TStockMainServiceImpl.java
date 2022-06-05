@@ -83,8 +83,10 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
             TStockMain tStockMain = _getIndustryByStockCode(tokenMap.get("token"), stockCode);
             if (null != tStockMain) {
                 if (null != entity) {
-                    tStockMainMapper
-                            .update(tStockMain,
+                    if (StringUtils.isNotBlank(entity.getStockName())) {
+                        tStockMain.setStockName(entity.getStockName());
+                    }
+                    tStockMainMapper.update(tStockMain,
                                     new LambdaUpdateWrapper<TStockMain>().eq(TStockMain::getStockCode, stockCode));
                 } else {
                     tStockMainMapper.insert(tStockMain);
