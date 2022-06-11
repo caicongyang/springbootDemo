@@ -145,21 +145,21 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
     @Override
     public List<TStockLimitDTO> getLimitAndTransactionStockStock(String currentDate) throws Exception {
 
-        String lastTradingDate = commonMapper.queryLastTradingDate();
+        String lastTradingDate = commonMapper.queryTradingDate(currentDate);
 
-        Calendar calc = Calendar.getInstance();
-        calc.setTime(new Date());
-        calc.add(calc.DATE, -30);
-        Date pre30Day = calc.getTime();
-        LocalDate startLocalDate = TomDateUtils.date2LocalDate(pre30Day);
-        LocalDate endLocalDate = TomDateUtils.date2LocalDate(new Date());
+        Date tradingDay = TomDateUtils.formateDayPattern2Date(lastTradingDate);
+
+
+        LocalDate startLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -30));
+        LocalDate endLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -1));
+
 
         HashMap map = new HashMap();
         map.put("startDate", startLocalDate);
         map.put("endDate", endLocalDate);
         map.put("currentDate", lastTradingDate);
 
-        List<TStockLimitDTO> limitList = limitMapper.getLimitAndTransactionStockStock(map);
+        List<TStockLimitDTO> limitList = limitMapper.getLimitAndTransactionStock(map);
 
         List<TStockLimitDTO> reList = new LinkedList<>();
 
@@ -169,6 +169,7 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
             TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
             BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
             BeanUtils.copyProperties(item, dto, getNullPropertyNames(item));
+            dto.setTradingDay( TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate)));
             reList.add(dto);
         }
 
@@ -192,6 +193,53 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
                 .collect(Collectors.toList());
 
     }
+
+    @Override
+    public List<TransactionAndLimitStockDTO> getTransactionStockStockAndLimit(String currentDate) throws Exception {
+        String lastTradingDate = commonMapper.queryTradingDate(currentDate);
+
+
+        Date tradingDay = TomDateUtils.formateDayPattern2Date(lastTradingDate);
+
+
+        LocalDate startLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -30));
+        LocalDate endLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -1));
+
+        HashMap map = new HashMap();
+        map.put("startDate", startLocalDate);
+        map.put("endDate", endLocalDate);
+        map.put("currentDate", lastTradingDate);
+
+        List<TransactionAndLimitStockDTO> limitList = limitMapper.getTransactionAndLimitStock(map);
+
+
+        for (TransactionAndLimitStockDTO item : limitList) {
+            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
+            BeanUtils.copyProperties(tStockMain, item, getNullPropertyNames(tStockMain));
+            item.setTradingDay(TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate)));
+
+        }
+
+
+        //java8 联合排序
+
+        Comparator<TransactionAndLimitStockDTO> byJqL2 = Comparator.nullsLast(Comparator
+                .comparing(TransactionAndLimitStockDTO::getJqL2, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TransactionAndLimitStockDTO> bySwL3 = Comparator.nullsLast(Comparator
+                .comparing(TransactionAndLimitStockDTO::getSwL3, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        Comparator<TransactionAndLimitStockDTO> byZjw = Comparator.nullsLast(Comparator
+                .comparing(TransactionAndLimitStockDTO::getZjw, Comparator.nullsLast(Comparator.naturalOrder())));
+
+        // 联合排序
+        Comparator<TransactionAndLimitStockDTO> finalComparator = Comparator
+                .nullsLast(byJqL2.thenComparing(bySwL3).thenComparing(byZjw));
+
+        return limitList.stream().sorted(finalComparator)
+                .collect(Collectors.toList());
+    }
+
 
     public static String[] getNullPropertyNames(Object source) {
         final BeanWrapper src = new BeanWrapperImpl(source);

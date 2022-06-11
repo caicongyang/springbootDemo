@@ -3,7 +3,9 @@ package com.caicongyang.stock.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.caicongyang.stock.domain.TStockLimit;
 import com.caicongyang.stock.domain.TStockLimitDTO;
+import com.caicongyang.stock.domain.TransactionAndLimitStockDTO;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -21,4 +23,6 @@ public interface ITStockLimitService extends IService<TStockLimit> {
     public List<TStockLimitDTO> getIntervalLimitStockData(String startDate, String endDate) throws Exception;
 
     public List<TStockLimitDTO> getLimitAndTransactionStockStock(String currentDate) throws Exception;
+
+    public List<TransactionAndLimitStockDTO>  getTransactionStockStockAndLimit(String currentDate) throws Exception;
 }

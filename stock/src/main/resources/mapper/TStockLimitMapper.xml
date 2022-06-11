@@ -22,7 +22,7 @@
     </select>
 
 
-    <select id="getLimitAndTransactionStockStock"  parameterType="java.util.HashMap"   resultType="com.caicongyang.stock.domain.TStockLimitDTO">
+    <select id="getLimitAndTransactionStock"  parameterType="java.util.HashMap"   resultType="com.caicongyang.stock.domain.TStockLimitDTO">
         SELECT
             t.stock_code,
             count(t.id) AS counter
@@ -36,5 +36,26 @@
         GROUP BY
             t.stock_code
         ORDER BY counter desc
+    </select>
+
+
+    <select id="getTransactionAndLimitStock" parameterType="java.util.HashMap"   resultType="com.caicongyang.stock.domain.TransactionAndLimitStockDTO">
+        SELECT
+            t.stock_code,
+            t.mean_ratio,
+            t.last_day_compare,
+            t.gain,
+            count(l.id) AS counter
+        FROM
+            T_transaction_stock AS t
+                JOIN  T_Stock_Limit AS l ON  l.stock_code = t.stock_code
+        WHERE
+            t.trading_day = #{currentDate}
+          AND l.trading_day BETWEEN #{startDate}
+            AND #{endDate}
+        GROUP BY
+            l.stock_code
+        ORDER BY counter desc
+
     </select>
 </mapper>

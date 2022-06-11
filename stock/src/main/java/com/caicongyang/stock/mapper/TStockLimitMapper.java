@@ -3,6 +3,7 @@ package com.caicongyang.stock.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.caicongyang.stock.domain.TStockLimit;
 import com.caicongyang.stock.domain.TStockLimitDTO;
+import com.caicongyang.stock.domain.TransactionAndLimitStockDTO;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,9 @@ public interface TStockLimitMapper extends BaseMapper<TStockLimit> {
    List<TStockLimitDTO> getIntervalLimitStockData(HashMap map);
 
 
-   List<TStockLimitDTO> getLimitAndTransactionStockStock(HashMap map);
+   List<TStockLimitDTO> getLimitAndTransactionStock(HashMap map);
+
+
+   List<TransactionAndLimitStockDTO> getTransactionAndLimitStock(HashMap map);
 
 }

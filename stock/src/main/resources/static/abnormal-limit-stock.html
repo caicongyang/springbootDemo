@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>tom.cai选择助手之涨停&30天内异动股票</title>
+    <title>tom.cai选择助手之当日异动&30天内涨停股票</title>
     <!-- meta使用viewport以确保页面可自由缩放 -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -70,10 +70,13 @@
         <tr>
             <th data-priority="1">股票</th>
             <th data-priority="2">名称</th>
-            <th data-priority="5">次数</th>
+            <th data-priority="3">lastDayCompare</th>
+            <th data-priority="4">meanRatio</th>
+            <th data-priority="5">涨幅</th>
 
-            <th data-priority="6">swL3</th>
-            <th data-priority="7">jqL2</th>
+            <th data-priority="6">涨停次数</th>
+            <th data-priority="7">swL3</th>
+            <th data-priority="8">jqL2</th>
             <th data-priority="9">zjw</th>
         </tr>
         </thead>
@@ -97,7 +100,7 @@
             day.setTime(day.getTime());
             dayStr = day.getFullYear() + "-" + (day.getMonth() + 1) + "-" + day.getDate();
         }
-        $.get("/t-stock-limit/getLimitAndTransactionStockStock",
+        $.get("/t-stock-limit/getTransactionStockStockAndLimit",
             {
                 currentDate: dayStr
             },
@@ -116,13 +119,16 @@
                                 + optionJson[i].stockCode.split(".")[0]
                                 + "</a></td>";
                             html += "<td>" + optionJson[i].stockName + "</td>";
+                            html += "<td>" + optionJson[i].lastDayCompare + "</td>";
+                            html += "<td>" + optionJson[i].meanRatio + "</td>";
+                            html += "<td>" + toPercent(optionJson[i].gain) + "</td>";
                             html += "<td>" + optionJson[i].counter + "</td>";
                             html += "<td>" + optionJson[i].swL3 + "</td>";
                             html += "<td>" + optionJson[i].jqL2 + "</td>";
                             html += "<td>" + optionJson[i].zjw + "</td>";
                             html += "</tr>";
                         }
-                        $("#titleData").append(optionJson[0].tradingDay + "涨停&异动股票");
+                        $("#titleData").append(optionJson[0].tradingDay + "异动&30天内涨停股票");
                     }
                     $("#tbodydata").html(html);
                 } else {

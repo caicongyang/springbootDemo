@@ -55,6 +55,12 @@
       SELECT trading_day FROM ( SELECT trading_day FROM T_Stock WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>   #{currentDate} ORDER BY trading_day DESC limit  1,1 ) AS t
     </select>
 
+    <!--获取倒数第二个交易日-->
+    <select id="queryTradingDate" resultType="java.lang.String" parameterType="java.lang.String">
+        SELECT trading_day FROM ( SELECT trading_day FROM T_Stock WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>   #{currentDate} ORDER BY trading_day DESC limit  1 ) AS t
+    </select>
+
+
 
     <!--获取倒数第一个交易日-->
     <select id="queryLastTradingDate" resultType="java.lang.String">

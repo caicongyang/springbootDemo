@@ -72,6 +72,8 @@ public class StockServiceImpl implements StockService {
     @Override
     public List<Map<String, Object>> catchTransactionStockData(String currentDate) throws Exception {
 
+        currentDate = commonMapper.queryTradingDate(currentDate);
+
         String preTradingDate = commonMapper.queryPreTradingDate(currentDate);
 
         HashMap map = new HashMap();

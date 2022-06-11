@@ -3,6 +3,7 @@ package com.caicongyang.stock.controllers;
 
 import com.caicongyang.core.basic.Result;
 import com.caicongyang.stock.domain.TStockLimitDTO;
+import com.caicongyang.stock.domain.TransactionAndLimitStockDTO;
 import com.caicongyang.stock.service.ITStockLimitService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -55,6 +56,17 @@ public class TStockLimitController {
         return Result.ok(limitService.getLimitAndTransactionStockStock(currentDate));
 
     }
+
+
+    @GetMapping("/getTransactionStockStockAndLimit")
+    @ApiOperation(value = "获取当天的异动股票&30日内涨停的股票数据", notes = "获取当天的异动股票&30日内涨停的股票数据")
+    public @ResponseBody
+    Result<List<TransactionAndLimitStockDTO>> getTransactionStockStockAndLimit(@RequestParam(value = "currentDate") String currentDate)
+            throws Exception {
+        return Result.ok(limitService.getTransactionStockStockAndLimit(currentDate));
+
+    }
+
 
 
 }
