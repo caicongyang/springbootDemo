@@ -136,7 +136,7 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
 
         // 联合排序
         Comparator<TStockLimitDTO> finalComparator = Comparator
-                .nullsLast(counter.thenComparing(tradingDay));
+                .nullsLast(tradingDay.thenComparing(counter));
 
         return reList.stream().sorted(finalComparator)
                 .collect(Collectors.toList());

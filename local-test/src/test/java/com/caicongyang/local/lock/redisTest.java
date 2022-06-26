@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.caicongyang.local.BaseApplicationTest;
 import com.caicongyang.lock.RedissionDistributedLock;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import javax.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
@@ -83,6 +86,12 @@ public class redisTest extends BaseApplicationTest {
         backLockTest(true, 1000 * 11);
 
 
+    }
+
+
+    public static void main(String[] args) {
+        String test= "ser";
+        System.out.println(Arrays.asList(test.split(",")));
     }
 
 
