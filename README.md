@@ -13,18 +13,19 @@
 3. dubbo-mocker-starter:  基于dubbo的mock 功能
 4. dynamic-datasource-starter： 多数据源实现
 5. encrypt-starter: 数据字段加解密
-6. file-expand-starter： 文件功能增强 (doing)
-7. git-tools： git批量操作
-8. httpclient-expand-starter： 基于hystrix对httpclient的增强  (done)
-9. local-test： 测试工程，所有的docker-compose文件都放在此处 （done）
-10. lock-starter: 基于redission和mysql 的分布式锁的简单封装  (done)
-11. logger-starter: 日志关键字脱敏 &  日志发送到kafka，从而进到elastic
-12. rest-mock-starter:基于rest 的mock功能,方便测试&本地联调
-13. seq-starter： 基于数据库、雪花算法、redis的自增序列号简单封装
-14. sklywalking-expand-starter： sklywalking功能增强,把sklywalking的traceId 和sklying地址放到http header 中 ；上报sql 执行时间 
-15. stock: demo 练习工程  (done)
-16. tcc-starter： tcc分布式封装
-17. upload-starter : 云上传组件 （doing）
+6. feign-expand-starter:  feign拓展，自动生成feignClient 等
+7. file-expand-starter： 文件功能增强 (doing)
+8. git-tools： git批量操作
+9. httpclient-expand-starter： 基于hystrix对httpclient的增强  (done)
+10. local-test： 测试工程，所有的docker-compose文件都放在此处 （done）
+11. lock-starter: 基于redission和mysql 的分布式锁的简单封装  (done)
+12. logger-starter: 日志关键字脱敏 &  日志发送到kafka，从而进到elastic
+13. rest-mock-starter:基于rest 的mock功能,方便测试&本地联调
+14. seq-starter： 基于数据库、雪花算法、redis的自增序列号简单封装
+15. sklywalking-expand-starter： sklywalking功能增强,把sklywalking的traceId 和sklying地址放到http header 中 ；上报sql 执行时间 
+16. stock: demo 练习工程  (done)
+17. tcc-starter： tcc分布式封装
+18. upload-starter : 云上传组件 （doing）
 
 
 

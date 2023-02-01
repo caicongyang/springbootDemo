@@ -24,6 +24,7 @@
         <module>logger-starter</module>
         <module>encrypt-starter</module>
         <module>rest-mock-starter</module>
+        <module>feign-expand-starter</module>
     </modules>
     <name>springBoot Maven Webapp</name>
     <url>http://maven.apache.org</url>
