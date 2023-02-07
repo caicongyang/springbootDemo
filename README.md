@@ -8,7 +8,7 @@
 
 #### module 说明
 
-1. cache-starter ： 基于redis的缓存增强，想实现自动为key 加上工程名称，大key报错等安全防范功能
+1. cache-starter ： 基于redis的缓存增强，想实现自动为key 加上工程名称，大key报错等安全防范功能 (done)
 2. core-starter ： 统一异常等核心功能 （done）
 3. dubbo-mocker-starter:  基于dubbo的mock 功能
 4. dynamic-datasource-starter： 多数据源实现
@@ -22,7 +22,7 @@
 12. logger-starter: 日志关键字脱敏 &  日志发送到kafka，从而进到elastic-search
 13. rest-mock-starter:基于rest 的mock功能,方便测试&本地联调
 14. seq-starter： 基于数据库、雪花算法、redis的自增序列号简单封装
-15. sklywalking-expand-starter： sklywalking功能增强,把sklywalking的traceId 和sklying地址放到http header 中 ；上报sql 执行时间 
+15. sklywalking-expand-starter： sklywalking功能增强,把sklywalking的traceId 和sklying地址放到http header 中 ；上报sql 执行时间  (done)
 16. stock: demo 练习工程  (done)
 17. tcc-starter： tcc分布式封装
 18. upload-starter : 云上传组件 （doing）
