@@ -14,6 +14,7 @@ public class RedisCache implements Cache {
 
     public RedisCache(RedisTemplate<Object, Object> redisTemplate,Environment environment) {
         this.template = redisTemplate;
+        // 需要在配置文件配置
         this.prefix = environment.getProperty("spring.application.name")+":";
     }
 
