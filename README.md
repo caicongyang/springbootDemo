@@ -19,7 +19,7 @@
 9. httpclient-expand-starter： 基于hystrix对httpclient的增强  (done)
 10. local-test： 测试工程，所有的docker-compose文件都放在此处 （done）
 11. lock-starter: 基于redission和mysql 的分布式锁的简单封装  (done)
-12. logger-starter: 日志关键字脱敏 &  日志发送到kafka，从而进到elastic-search
+12. logger-starter: 日志关键字脱敏 &  日志发送到kafka，从而进到elastic-search  (done)
 13. rest-mock-starter:基于rest 的mock功能,方便测试&本地联调
 14. seq-starter： 基于数据库、雪花算法、redis的自增序列号简单封装
 15. sklywalking-expand-starter： sklywalking功能增强,把sklywalking的traceId 和sklying地址放到http header 中 ；上报sql 执行时间  (done)

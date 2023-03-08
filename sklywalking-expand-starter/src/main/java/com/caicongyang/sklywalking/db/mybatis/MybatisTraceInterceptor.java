@@ -5,7 +5,6 @@ import com.caicongyang.sklywalking.common.SpanConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.mapping.BoundSql;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.plugin.Invocation;
@@ -14,9 +13,10 @@ import org.apache.skywalking.apm.toolkit.trace.ActiveSpan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-
-import static com.caicongyang.sklywalking.db.mybatis.SqlTraceUtil.dealPlaceholder;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 
 public class MybatisTraceInterceptor implements Interceptor {
@@ -42,22 +42,7 @@ public class MybatisTraceInterceptor implements Interceptor {
         Object result = null;
         String sql = null;
         String id = null;
-
-        try {
-
-            final Object[] args = invocation.getArgs();
-            final MappedStatement ms = (MappedStatement) args[MAPPED_STATEMENT_INDEX];
-            final Object parameter = args[PARAMETER_INDEX];
-            id = ms.getId();
-
-            BoundSql boundSql = ms.getBoundSql(parameter);
-            sql = boundSql.getSql();
-
-            List<String> params = MyBatisSqlUtil.getAllParams(ms, boundSql);
-            sql = dealPlaceholder(sql, params);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
+ 
         try {
             result = invocation.proceed();
         } catch (Exception e) {

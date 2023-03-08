@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <property name="LOG_HOME" value="/log"/>
+    <conversionRule conversionWord="ipandhostname" converterClass="com.caicongyang.logger.IpConvert"/>
+
+    <!--
+        1. 文件的命名和加载顺序
+           logback.xml早于application.yml加载，logback-spring.xml晚于application.yml加载
+           如果logback配置需要使用application.yml中的属性，需要命名为logback-spring.xml
+        2. logback使用application.yml中的属性
+           使用springProperty才可使用application.yml中的值 可以设置默认值
+    -->
+    <springProperty scope="context" name="appName" source="spring.application.name" defaultValue="{{spring.application.name}}"/>
+    <springProperty scope="context" name="appDev" source="spring.profiles.active" defaultValue="DEV"/>
+    <springProperty scope="context" name="kafkaTopic" source="logback.kafka.topic" defaultValue="logger-topic-{{spring.application.name}}"/>
+    <springProperty scope="context" name="kafkaServers" source="logback.kafka.servers"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <!-- 时间|环境 |项目名称 |应用名称|错误级别|ip|hostname|[%thread]| %logger{50}| %msg%n -->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss SSS}|${appDev}|${appName}|%-5level|%ipandhostname|[%thread]|%logger{50}|%tid|%msg%n
+                </pattern>
+            </layout>
+        </encoder>
+    </appender>
+
+    <appender name="kafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+        <encoder class="com.github.danielwegener.logback.kafka.encoding.LayoutKafkaMessageEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <!-- 时间|环境 |项目名称 |应用名称|错误级别|ip|hostname|[%thread]| %logger{50}| %msg%n -->
+                <pattern>%d{yyyy-MM-dd HH:mm:ss SSS}|${appDev}|${appName}|%-5level|%ipandhostname|[%thread]|%logger{50}|%tid|%msg%n
+                </pattern>
+            </layout>
+        </encoder>
+        <topic>${kafkaTopic}</topic>
+        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.RoundRobinKeyingStrategy"/>
+        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy"/>
+        <producerConfig>bootstrap.servers=${kafkaServers}</producerConfig>
+        <producerConfig>max.block.ms=60000</producerConfig>
+        <appender-ref ref="STDOUT"/>
+    </appender>
+
+    <!-- 异步输出 -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="kafkaAppender"/>
+    </appender>
+
+    <logger name="org.apache.kafka.clients.NetworkClient" level="error"/>
+    <logger name="c.c.f.apollo.internals.RemoteConfigLongPollService" level="error"/>
+
+    <springProfile name="DEV">
+        <root level="info">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="SIT">
+        <root level="info">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="UAT">
+        <root level="info">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="PRO">
+        <root level="info">
+            <appender-ref ref="ASYNC"/>
+        </root>
+    </springProfile>
+
+</configuration>

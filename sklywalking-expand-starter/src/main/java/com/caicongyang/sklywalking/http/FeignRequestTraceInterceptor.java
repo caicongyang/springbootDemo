@@ -19,7 +19,7 @@ public class FeignRequestTraceInterceptor implements RequestInterceptor {
         HttpServletRequest httpServletRequest = getHttpServletRequest();
         Map<String, String[]> parameterMap = httpServletRequest.getParameterMap();
         ActiveSpan.tag("url",httpServletRequest.getRequestURI());
-        ActiveSpan.tag("server.response", JacksonUtils.jsonFromObject(parameterMap));
+        ActiveSpan.tag("server.request", JacksonUtils.jsonFromObject(parameterMap));
 
     }
 
