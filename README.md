@@ -25,7 +25,7 @@
 15. sklywalking-expand-starter： sklywalking功能增强,把sklywalking的traceId 和sklying地址放到http header 中 ；上报sql 执行时间  (done)
 16. stock: demo 练习工程  (done)
 17. tcc-starter： tcc分布式封装
-18. upload-starter : 云上传组件 （doing）
+18. upload-starter : 云上传组件 （done）
 
 
 

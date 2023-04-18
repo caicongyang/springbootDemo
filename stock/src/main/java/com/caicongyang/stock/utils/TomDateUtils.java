@@ -111,6 +111,17 @@ public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
 
 
     /**
+     * 返回字符串
+     *
+     * @return
+     */
+    public static String getDateTimePattern(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat(DAY_TIME_PATTERN);
+        return sdf.format(date);
+    }
+
+
+    /**
      * Date 转 localDate
      */
     public static LocalDate date2LocalDate(Date date) {

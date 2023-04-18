@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>springBoot</artifactId>
         <groupId>com.caicongyang</groupId>
@@ -37,16 +37,21 @@
 
         <dependency>
             <groupId>com.caicongyang</groupId>
+            <artifactId>cache-starter</artifactId>
+            <version>${app.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.caicongyang</groupId>
             <artifactId>httpclient-expand-starter</artifactId>
             <version>${app.version}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>com.caicongyang</groupId>-->
-<!--            <artifactId>lock-starter</artifactId>-->
-<!--            <version>${app.version}</version>-->
-<!--        </dependency>-->
-
+        <!--        <dependency>-->
+        <!--            <groupId>com.caicongyang</groupId>-->
+        <!--            <artifactId>lock-starter</artifactId>-->
+        <!--            <version>${app.version}</version>-->
+        <!--        </dependency>-->
 
 
         <!-- spring boot web -->
@@ -72,16 +77,15 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
             <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>org.junit.vintage</groupId>-->
-                    <!--<artifactId>junit-vintage-engine</artifactId>-->
-                <!--</exclusion>-->
+            <!--<exclusion>-->
+            <!--<groupId>org.junit.vintage</groupId>-->
+            <!--<artifactId>junit-vintage-engine</artifactId>-->
+            <!--</exclusion>-->
             <!--</exclusions>-->
         </dependency>
         <!-- spring boot freemarker -->
@@ -132,7 +136,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-
 
 
         <dependency>
@@ -189,6 +192,13 @@
             <groupId>org.apache.skywalking</groupId>
             <artifactId>apm-toolkit-logback-1.x</artifactId>
             <version>8.3.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.github.binance</groupId>
+            <artifactId>binance-connector-java</artifactId>
+            <version>2.0.0rc2</version>
         </dependency>
 
 

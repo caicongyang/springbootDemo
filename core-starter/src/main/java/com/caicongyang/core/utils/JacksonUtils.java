@@ -26,7 +26,7 @@ public class JacksonUtils {
 
 
     static {
-        mapper.configure(MapperFeature.USE_ANNOTATIONS, false);
+        mapper.configure(MapperFeature.USE_ANNOTATIONS, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         // 此项必须配置，否则会报java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to XXX

@@ -121,6 +121,58 @@ public class HttpClientProvider {
         }
     }
 
+    @HystrixCommand(fallbackMethod = "fallback",
+            commandProperties = {
+                    @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "10000")},
+            threadPoolKey = "studentServiceThreadPool",
+            threadPoolProperties = {
+                    @HystrixProperty(name = "coreSize", value = "10"),
+                    @HystrixProperty(name = "maxQueueSize", value = "10")
+            }
+    )
+    public String doPost(String url, Object ob)
+            throws IOException {
+        Gson gson = new Gson();
+        logger.info("doPostWithApplicationJson; url ={}, args = {}", url,
+                gson.toJson(ob));
+
+        CloseableHttpResponse closeableHttpResponse = null;
+        try {
+            HttpPost httpPost = new HttpPost(url);
+            //关闭长连接
+            httpPost.setHeader(HTTP.CONN_DIRECTIVE, HTTP.CONN_CLOSE);
+            httpPost.addHeader(HTTP.CONTENT_TYPE, APPLICATION_JSON);
+
+            //解决中文乱码问题
+
+            StringEntity entity = new StringEntity(gson.toJson(ob), "UTF-8");
+            entity.setContentEncoding("UTF-8");
+            entity.setContentType(APPLICATION_JSON);
+            httpPost.setEntity(entity);
+            closeableHttpResponse = doRequest(httpPost);
+
+            if (200 != closeableHttpResponse.getStatusLine().getStatusCode()) {
+                throw new HttpResponseException(
+                        closeableHttpResponse.getStatusLine().getStatusCode(), url);
+            }
+            String result = EntityUtils.toString(closeableHttpResponse.getEntity());
+            logger.info("doPostWithApplicationJson; url ={}, result = {}", url,
+                    JacksonUtils.jsonFromObject(result));
+            return result;
+
+        } finally {
+            if (null != closeableHttpResponse) {
+                try {
+                    closeableHttpResponse.close();
+                } catch (IOException ex) {
+                    logger.error("close httpclient response ex", ex);
+                }
+            }
+        }
+    }
+
+
+
 
     @HystrixCommand(fallbackMethod = "fallback",
         commandProperties = {
