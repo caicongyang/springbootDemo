@@ -21,7 +21,7 @@ public class AsyncConfig implements AsyncConfigurer {
     public ThreadPoolTaskExecutor asyncTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         int coreSize = Runtime.getRuntime().availableProcessors() * 2;
-        int maxPoolSize = Runtime.getRuntime().availableProcessors() * 16 * 2;
+        int maxPoolSize = Runtime.getRuntime().availableProcessors() * 16 ;
 
         executor.setCorePoolSize(env.getProperty("stock.task.corePoolSize", int.class, coreSize));
         executor.setMaxPoolSize(env.getProperty("stock.task.maxPoolSize", int.class, maxPoolSize));

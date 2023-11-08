@@ -1,10 +1,12 @@
 package com.caicongyang.stock.service;
 
 
+import com.binance.connector.client.enums.DefaultUrls;
 import com.binance.connector.client.impl.WebsocketStreamClientImpl;
 import com.caicongyang.core.utils.GsonUtils;
 import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.domain.OneHourTicker;
+import com.caicongyang.stock.domain.QyWeixinMsg;
 import com.caicongyang.stock.domain.QyWeixinTextMsg;
 import com.caicongyang.stock.utils.TomDateUtils;
 import com.google.gson.reflect.TypeToken;
@@ -36,6 +38,10 @@ public class BNService {
 
     @PostConstruct
     public void init() {
+        listen();
+    }
+
+    private void listen() {
         WebsocketStreamClientImpl client = new WebsocketStreamClientImpl();
         client.allRollingWindowTicker("1h", ((event) -> {
             List<OneHourTicker> oneHourTickers = GsonUtils.toJavaObject(event, new TypeToken<ArrayList<OneHourTicker>>() {
@@ -48,6 +54,10 @@ public class BNService {
                     alert(oneHourTickers);
                 }
             });
+        }), ((event) -> {
+            listen();
+        }), ((event) -> {
+            listen();
         }));
     }
 
@@ -70,7 +80,6 @@ public class BNService {
 
     }
 
-
     /**
      * 1.异常事件通知
      *
@@ -83,18 +92,23 @@ public class BNService {
                 a -> {
                     try {
                         String key = "1hTicker" + "_" + a.getSymbol() + "_" + TomDateUtils.getDayPatternCurrentDay();
+                        if(!a.getSymbol().endsWith("USDT")){
+                            return;
+                        }
                         Map entries = redisTemplate.opsForHash().entries(key);
                         Collection values = entries.values();
                         String max = (String) values.stream().max(Comparator.reverseOrder()).orElse(null);
                         if (null == max) {
                             return;
                         }
-                        long radio = Long.valueOf(a.getBaseAssetVolume()) / Long.valueOf(max);
-                        if (radio > 2) {
+                        Double radio = Double.valueOf(a.getBaseAssetVolume()) / Double.valueOf(max);
+                        if (radio > 10 && Double.valueOf(a.getBaseAssetVolume()) > 108000 && Math.abs(Double.valueOf(a.getPriceChangePercent())) > 3) {
                             QyWeixinTextMsg.QyWeixinTextMsgContext context = new QyWeixinTextMsg.QyWeixinTextMsgContext();
-                            context.setContent("触发异动事件：" + a.getSymbol() + "---> 比率：" + radio);
+                            context.setContent("触发异动事件：" + a.getSymbol() + "---> 比率：" + radio +"---> 价格浮动："+Double.valueOf(a.getPriceChangePercent()) );
                             QyWeixinTextMsg msg = new QyWeixinTextMsg();
+                            msg.setMsgtype("text");
                             msg.setText(context);
+
                             httpClientProvider.doPost(url, msg);
                         }
                     } catch (Exception e) {
