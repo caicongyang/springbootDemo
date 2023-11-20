@@ -8,7 +8,7 @@ import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.ITStockWeekHigherService;
 import com.caicongyang.stock.service.ITStockService;
 import com.caicongyang.stock.service.StockService;
-import com.caicongyang.stock.utils.TomDateUtils;
+import com.caicongyang.stock.utils.TomDateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -65,8 +65,8 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     public List<TStock> calculateHigherStock(String tradingDay) throws ParseException {
 
         TStock stock = new TStock();
-        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
-        stock.setTradingDay(TomDateUtils.date2LocalDate(date));
+        Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
+        stock.setTradingDay(TomDateUtil.date2LocalDate(date));
         QueryWrapper<TStock> groupByWrapper = new QueryWrapper<>();
         groupByWrapper.setEntity(stock);
         groupByWrapper.groupBy("stock_code");
@@ -90,7 +90,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
                 TStockHigher entity = new TStockHigher();
                 entity.setIntervalDays(result.getIntervalDays());
                 entity.setPreviousHighsDate(
-                        TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
+                        TomDateUtil.date2LocalDate(result.getPreviousHighsDate()));
                 entity.setStockCode(result.getStockCode());
                 entity.setTradingDay(stock.getTradingDay());
 
@@ -111,15 +111,15 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             throws ParseException, IOException {
         QueryWrapper<TStockHigher> queryWrapper = new QueryWrapper<>();
         TStockHigher entity = new TStockHigher();
-        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
-        entity.setTradingDay(TomDateUtils.date2LocalDate(date));
+        Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
+        entity.setTradingDay(TomDateUtil.date2LocalDate(date));
         queryWrapper.setEntity(entity);
         queryWrapper.orderByAsc("interval_days");
         List<TStockHigher> result = higherMapper.selectList(queryWrapper);
         if (CollectionUtils.isEmpty(result)) {
             String lastTradingDate = mapper.queryLastTradingDate();
-            date = TomDateUtils.formateDayPattern2Date(lastTradingDate);
-            entity.setTradingDay(TomDateUtils.date2LocalDate(date));
+            date = TomDateUtil.formateDayPattern2Date(lastTradingDate);
+            entity.setTradingDay(TomDateUtil.date2LocalDate(date));
             queryWrapper.setEntity(entity);
             result = higherMapper.selectList(queryWrapper);
         }
@@ -166,7 +166,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
         HashMap<String, String> queryMap = new HashMap<>();
         queryMap.put("currentDate", StringUtils.isNotBlank(currentDate) ? currentDate
-                : TomDateUtils.getDayPatternCurrentDay());
+                : TomDateUtil.getDayPatternCurrentDay());
 
         List<Map<String, Object>> queryResultList = mapper.getBreakthroughPlatform(queryMap);
         if (CollectionUtils.isEmpty(queryResultList)) {
@@ -189,7 +189,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             stock.setZjw((String) map.getOrDefault("zjw", ""));
             stock.setGain((Double) map.getOrDefault("gain",0d));
 
-            stock.setTradingDay(TomDateUtils.formateDayPattern2Date((String) map.getOrDefault("trading_day", "")));
+            stock.setTradingDay(TomDateUtil.formateDayPattern2Date((String) map.getOrDefault("trading_day", "")));
             stock.setStockName(mainService.getStockNameByStockCode(stock.getStockCode()));
 
             result.add(stock);
@@ -271,8 +271,8 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
     public void calculateHigherWeekStock(String tradingDay) throws ParseException {
 
         TStockWeek stock = new TStockWeek();
-        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
-        stock.setTradingDay(TomDateUtils.date2LocalDate(date));
+        Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
+        stock.setTradingDay(TomDateUtil.date2LocalDate(date));
         QueryWrapper<TStockWeek> groupByWrapper = new QueryWrapper<>();
         groupByWrapper.setEntity(stock);
         groupByWrapper.groupBy("stock_code");
@@ -293,7 +293,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
                 TStockWeekHigher entity = new TStockWeekHigher();
                 entity.setIntervalDays(result.getIntervalDays());
                 entity.setPreviousHighsDate(
-                        TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
+                        TomDateUtil.date2LocalDate(result.getPreviousHighsDate()));
                 entity.setStockCode(result.getStockCode());
                 entity.setTradingDay(stock.getTradingDay());
                 weekHigherMapper.insert(entity);
@@ -307,15 +307,15 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             throws ParseException, IOException {
         QueryWrapper<TStockWeekHigher> queryWrapper = new QueryWrapper<>();
         TStockWeekHigher entity = new TStockWeekHigher();
-        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
-        entity.setTradingDay(TomDateUtils.date2LocalDate(date));
+        Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
+        entity.setTradingDay(TomDateUtil.date2LocalDate(date));
         queryWrapper.setEntity(entity);
         queryWrapper.orderByAsc("interval_days");
         List<TStockWeekHigher> result = weekHigherMapper.selectList(queryWrapper);
         if (CollectionUtils.isEmpty(result)) {
             String lastTradingDate = mapper.queryLastWeekTradingDate();
-            date = TomDateUtils.formateDayPattern2Date(lastTradingDate);
-            entity.setTradingDay(TomDateUtils.date2LocalDate(date));
+            date = TomDateUtil.formateDayPattern2Date(lastTradingDate);
+            entity.setTradingDay(TomDateUtil.date2LocalDate(date));
             queryWrapper.setEntity(entity);
             result = weekHigherMapper.selectList(queryWrapper);
         }
@@ -432,7 +432,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             if (currentStockData.getHigh() >= list.get(i).getHigh()) {
                 intervalDays++;
             } else {
-                previousHighsDate = TomDateUtils.LocalDate2date(list.get(i).getTradingDay());
+                previousHighsDate = TomDateUtil.LocalDate2date(list.get(i).getTradingDay());
                 //找到大于当前股权的日期跳出循环
                 break;
             }
@@ -466,7 +466,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             if (currentStockData.getHigh() >= list.get(i).getHigh()) {
                 intervalDays++;
             } else {
-                previousHighsDate = TomDateUtils.LocalDate2date(list.get(i).getTradingDay());
+                previousHighsDate = TomDateUtil.LocalDate2date(list.get(i).getTradingDay());
                 //找到大于当前股权的日期跳出循环
                 break;
             }

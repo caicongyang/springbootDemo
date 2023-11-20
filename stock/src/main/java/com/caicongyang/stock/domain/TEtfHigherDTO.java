@@ -1,13 +1,12 @@
 package com.caicongyang.stock.domain;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.io.Serializable;
-import java.time.LocalDate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.time.LocalDate;
 
 /**
  * <p>
@@ -40,3 +39,6 @@ public class TEtfHigherDTO implements Serializable {
 
 
 }
+
+
+

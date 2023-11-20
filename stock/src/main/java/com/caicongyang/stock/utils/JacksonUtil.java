@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
  * @author caicongyang
  * @version $Id: JsonUtils.java, v 0.1 2015年7月17日 上午11:19:30 caicongyang Exp $
  */
-public class jacksonUtils {
+public class JacksonUtil {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(jacksonUtils.class);
+    public static final Logger LOGGER = LoggerFactory.getLogger(JacksonUtil.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
     /**

@@ -2,16 +2,15 @@ package com.caicongyang.stock.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
  * @author caicongyang
  * @version $Id: JsonUtils.java, v 0.1 2015年7月17日 上午11:19:30 caicongyang Exp $
  */
-public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
+public class TomDateUtil extends org.apache.commons.lang3.time.DateUtils {
 
 
     private static final String DAY_PATTERN = "yyyy-MM-dd";
@@ -88,7 +87,7 @@ public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     /**
-     * 返回字符串
+     * 返回当前日期的字符串，格式：yyyy-MM-dd
      *
      * @return
      */
@@ -97,6 +96,16 @@ public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
         return sdf.format(new Date());
     }
 
+
+    /**
+     * 返回前一天日期的字符串 格式：yyyy-MM-dd
+     *
+     * @return
+     */
+    public static String getBeforeDayPatternCurrentDay() {
+        SimpleDateFormat sdf = new SimpleDateFormat(DAY_PATTERN);
+        return sdf.format(new Date());
+    }
 
 
     /**
@@ -122,15 +131,36 @@ public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
 
 
     /**
+     * 返回字符串
+     *
+     * @return
+     */
+    public static String getDatePattern(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DAY_PATTERN);
+        return date.format(formatter);
+    }
+
+
+    /**
+     * 返回字符串
+     *
+     * @return
+     */
+    public static String getDateTimePattern(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DAY_TIME_PATTERN);
+        return date.format(formatter);
+    }
+
+
+    /**
      * Date 转 localDate
      */
     public static LocalDate date2LocalDate(Date date) {
-        if(null == date) {
+        if (null == date) {
             return null;
         }
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
-
 
     public static Date LocalDate2date(LocalDate localDate) {
         ZoneId zone = ZoneId.systemDefault();
@@ -138,6 +168,24 @@ public class TomDateUtils extends org.apache.commons.lang3.time.DateUtils {
         return Date.from(instant);
     }
 
+
+    /**
+     * Date 转 localDate
+     */
+    public static LocalDateTime timestamp2LocalDateTime(Long timestamp) {
+        if (null == timestamp) {
+            return null;
+        }
+        // 将时间戳转换为 LocalDateTime
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneId.systemDefault());
+    }
+
+
+
+    public static LocalDateTime getTimeBefore15Minutes(LocalDateTime dateTime) {
+        // 计算15分钟之前的时间
+        return dateTime.minus(Duration.ofMinutes(15));
+    }
 
 
 }

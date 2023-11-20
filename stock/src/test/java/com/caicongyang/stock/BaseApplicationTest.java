@@ -2,7 +2,7 @@ package com.caicongyang.stock;
 
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.service.impl.TStockMainServiceImpl;
-import com.caicongyang.stock.utils.jacksonUtils;
+import com.caicongyang.stock.utils.JacksonUtil;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class BaseApplicationTest {
 
         List<String> resultList = jKIndustryStockList.subList(1, jKIndustryStockList.size());
         TStockMain stockMain = tStockMainService.parseStockMain("605500.XSHG", resultList);
-        System.out.println(jacksonUtils.jsonFromObject(stockMain));
+        System.out.println(JacksonUtil.jsonFromObject(stockMain));
     }
 
 

@@ -13,7 +13,7 @@ import com.caicongyang.stock.mapper.TStockMapper;
 import com.caicongyang.stock.mapper.TTransactionStockMapper;
 import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.StockService;
-import com.caicongyang.stock.utils.TomDateUtils;
+import com.caicongyang.stock.utils.TomDateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -118,7 +118,7 @@ public class StockServiceImpl implements StockService {
     public double getCurrentGain(String currentDate, String preTradingDate, String stockCode) throws ParseException {
         // 查询今日股价信息
         TStock currentStock = new TStock();
-        currentStock.setTradingDay(TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(currentDate)));
+        currentStock.setTradingDay(TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(currentDate)));
         currentStock.setStockCode(stockCode);
         Wrapper<TStock> currentWrapper = new QueryWrapper<>(currentStock);
         currentStock = tStockMapper.selectOne(currentWrapper);
@@ -126,7 +126,7 @@ public class StockServiceImpl implements StockService {
 
         // 查询上一个交易日股价信息
         TStock preDayStock = new TStock();
-        preDayStock.setTradingDay(TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(preTradingDate)));
+        preDayStock.setTradingDay(TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(preTradingDate)));
         preDayStock.setStockCode(stockCode);
         Wrapper<TStock> wrapper = new QueryWrapper<>(preDayStock);
         preDayStock = tStockMapper.selectOne(wrapper);

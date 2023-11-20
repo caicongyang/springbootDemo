@@ -9,7 +9,7 @@ import com.caicongyang.stock.service.ITStockLimitService;
 import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.ITStockService;
 import com.caicongyang.stock.service.StockService;
-import com.caicongyang.stock.utils.TomDateUtils;
+import com.caicongyang.stock.utils.TomDateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,8 +72,8 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
 
     private void doCtchAllDaliyLimitStock(String tradingDay) throws ParseException {
         String preTradingDate = commonMapper.queryPreTradingDate(tradingDay);
-        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
-        LocalDate localDate = TomDateUtils.date2LocalDate(date);
+        Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
+        LocalDate localDate = TomDateUtil.date2LocalDate(date);
 
         List<TStock> list = tStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradingDay, localDate));
         List<TStockLimit> insertList = new ArrayList<>();
@@ -95,8 +95,8 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
     public List<TStockLimitDTO> getIntervalLimitStockData(String startDate, String endDate) throws Exception {
 
 
-        LocalDate startLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(startDate));
-        LocalDate endLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(endDate));
+        LocalDate startLocalDate = TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(startDate));
+        LocalDate endLocalDate = TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(endDate));
 
 //        List<TStockLimit> limitList = this.list(new LambdaQueryWrapper<TStockLimit>().between(true, TStockLimit::getTradingDay, startLocalDate, endLocalDate));
 
@@ -147,11 +147,11 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
 
         String lastTradingDate = commonMapper.queryTradingDate(currentDate);
 
-        Date tradingDay = TomDateUtils.formateDayPattern2Date(lastTradingDate);
+        Date tradingDay = TomDateUtil.formateDayPattern2Date(lastTradingDate);
 
 
-        LocalDate startLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -30));
-        LocalDate endLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -1));
+        LocalDate startLocalDate = TomDateUtil.date2LocalDate(TomDateUtil.addDays(tradingDay, -30));
+        LocalDate endLocalDate = TomDateUtil.date2LocalDate(TomDateUtil.addDays(tradingDay, -1));
 
 
         HashMap map = new HashMap();
@@ -169,7 +169,7 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
             TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
             BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
             BeanUtils.copyProperties(item, dto, getNullPropertyNames(item));
-            dto.setTradingDay( TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate)));
+            dto.setTradingDay( TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate)));
             reList.add(dto);
         }
 
@@ -199,11 +199,11 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
         String lastTradingDate = commonMapper.queryTradingDate(currentDate);
 
 
-        Date tradingDay = TomDateUtils.formateDayPattern2Date(lastTradingDate);
+        Date tradingDay = TomDateUtil.formateDayPattern2Date(lastTradingDate);
 
 
-        LocalDate startLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -30));
-        LocalDate endLocalDate = TomDateUtils.date2LocalDate(TomDateUtils.addDays(tradingDay, -1));
+        LocalDate startLocalDate = TomDateUtil.date2LocalDate(TomDateUtil.addDays(tradingDay, -30));
+        LocalDate endLocalDate = TomDateUtil.date2LocalDate(TomDateUtil.addDays(tradingDay, -1));
 
         HashMap map = new HashMap();
         map.put("startDate", startLocalDate);
@@ -216,7 +216,7 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
         for (TransactionAndLimitStockDTO item : limitList) {
             TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
             BeanUtils.copyProperties(tStockMain, item, getNullPropertyNames(tStockMain));
-            item.setTradingDay(TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate)));
+            item.setTradingDay(TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate)));
 
         }
 

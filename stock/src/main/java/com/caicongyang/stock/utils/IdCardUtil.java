@@ -15,8 +15,8 @@ import java.util.Map;
  * @author caicongyang
  * @version $Id: JsonUtils.java, v 0.1 2015年7月17日 上午11:19:30 caicongyang Exp $
  */
-public class IdCardUtils {
-    public static final Logger           LOGGER              = LoggerFactory.getLogger(IdCardUtils.class);
+public class IdCardUtil {
+    public static final Logger           LOGGER              = LoggerFactory.getLogger(IdCardUtil.class);
 
     /** 中国公民身份证号码最小长度。 */
     private static final int              CHINA_ID_MIN_LENGTH = 15;

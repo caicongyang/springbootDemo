@@ -4,11 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.caicongyang.stock.domain.TStock;
 import com.caicongyang.stock.mapper.CommonMapper;
 import com.caicongyang.stock.service.*;
-import com.caicongyang.stock.utils.TomDateUtils;
+import com.caicongyang.stock.utils.TomDateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -55,10 +54,8 @@ public class ScheduleTask {
             String currentDate = format.format(new Date());
             stockService.catchTransactionStockData(currentDate);
             itEtfService.catchTransactionStockData(currentDate);
-
         } else {
-            logger.info(TomDateUtils.getDayPatternCurrentDay() + "：未获取到交易数据");
-
+            logger.info(TomDateUtil.getDayPatternCurrentDay() + "：未获取到交易数据");
         }
         logger.info("执行任务结束....");
     }
@@ -80,7 +77,7 @@ public class ScheduleTask {
 
 
         } else {
-            logger.info(TomDateUtils.getDayPatternCurrentDay() + "：未获取到交易数据");
+            logger.info(TomDateUtil.getDayPatternCurrentDay() + "：未获取到交易数据");
 
         }
         logger.info("执行任务结束....");
@@ -98,7 +95,7 @@ public class ScheduleTask {
             String currentDate = format.format(new Date());
             limitService.catchAllDaliyLimitStock(currentDate);
         } else {
-            logger.info(TomDateUtils.getDayPatternCurrentDay() + "：未获取到交易数据");
+            logger.info(TomDateUtil.getDayPatternCurrentDay() + "：未获取到交易数据");
         }
         logger.info("执行任务结束....");
     }
@@ -125,7 +122,7 @@ public class ScheduleTask {
     public void makeUpMainData() throws Exception {
         logger.info("执行任务补充主数据开始....");
         String lastTradingDate = commonMapper.queryLastTradingDate();
-        List<TStock> list = itStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradingDay, TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate))));
+        List<TStock> list = itStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradingDay, TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate))));
         for (TStock stock : list) {
             stockMainService.getIndustryByStockCode(stock.getStockCode());
         }

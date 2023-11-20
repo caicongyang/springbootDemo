@@ -7,7 +7,7 @@ import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.mapper.TStockMainMapper;
 import com.caicongyang.stock.service.ITStockMainService;
-import com.caicongyang.stock.utils.TomDateUtils;
+import com.caicongyang.stock.utils.TomDateUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -139,7 +139,7 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
         params.put("method", "get_industry");
         params.put("token", token);
         params.put("code", code);
-        params.put("date", TomDateUtils.getDayPatternCurrentDay());
+        params.put("date", TomDateUtil.getDayPatternCurrentDay());
 
         return provider.doPostWithApplicationJson(apiUrl, params);
     }
@@ -153,7 +153,7 @@ public class TStockMainServiceImpl extends ServiceImpl<TStockMainMapper, TStockM
         params.put("method", "get_security_info");
         params.put("token", token);
         params.put("code", code);
-        params.put("date", TomDateUtils.getDayPatternCurrentDay());
+        params.put("date", TomDateUtil.getDayPatternCurrentDay());
 
         return provider.doPostWithApplicationJson(apiUrl, params);
     }

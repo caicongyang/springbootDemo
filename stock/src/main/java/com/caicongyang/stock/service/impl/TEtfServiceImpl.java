@@ -16,7 +16,7 @@ import com.caicongyang.stock.mapper.TTransactionEtfMapper;
 import com.caicongyang.stock.service.ITEtfHigherService;
 import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.ITEtfService;
-import com.caicongyang.stock.utils.TomDateUtils;
+import com.caicongyang.stock.utils.TomDateUtil;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -143,8 +143,8 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
     @Override
     public void calculateHigherStock(String tradingDay) throws ParseException {
         TEtf etf = new TEtf();
-        Date date = TomDateUtils.formateDayPattern2Date(tradingDay);
-        etf.setTradingDay(TomDateUtils.date2LocalDate(date));
+        Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
+        etf.setTradingDay(TomDateUtil.date2LocalDate(date));
         QueryWrapper<TEtf> groupByWrapper = new QueryWrapper<>();
         groupByWrapper.setEntity(etf);
         groupByWrapper.groupBy("stock_code");
@@ -165,7 +165,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
                 TEtfHigher entity = new TEtfHigher();
                 entity.setIntervalDays(result.getIntervalDays());
                 entity.setPreviousHighsDate(
-                    TomDateUtils.date2LocalDate(result.getPreviousHighsDate()));
+                    TomDateUtil.date2LocalDate(result.getPreviousHighsDate()));
                 entity.setStockCode(result.getStockCode());
                 entity.setTradingDay(etf.getTradingDay());
                 itEtfHigherService.save(entity);
@@ -179,7 +179,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
     public List<TEtfHigherDTO> getHigherEtf(String currentDate) throws ParseException, IOException {
         TEtfHigher queryItem = new TEtfHigher();
         queryItem.setTradingDay(
-            TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(currentDate)));
+            TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(currentDate)));
         Wrapper<TEtfHigher> wrapper = new QueryWrapper<>(queryItem).orderByAsc("interval_days");
         List<TEtfHigher> result = etfHigherMapper.selectList(wrapper);
 
@@ -187,7 +187,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
             //如果当天没有，则获取最近一个交易日
             String lastTradingDate = mapper.queryLastTradingDate();
             queryItem.setTradingDay(
-                TomDateUtils.date2LocalDate(TomDateUtils.formateDayPattern2Date(lastTradingDate)));
+                TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate)));
             ((QueryWrapper<TEtfHigher>) wrapper).setEntity(queryItem);
             result = etfHigherMapper.selectList(wrapper);
         }
@@ -223,7 +223,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
             if (currentStockData.getHigh() >= list.get(i).getHigh()) {
                 intervalDays++;
             } else {
-                previousHighsDate = TomDateUtils.LocalDate2date(list.get(i).getTradingDay());
+                previousHighsDate = TomDateUtil.LocalDate2date(list.get(i).getTradingDay());
                 //找到大于当前股权的日期跳出循环
                 break;
             }

@@ -4,7 +4,7 @@ import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.BaseApplicationTest;
 import com.caicongyang.stock.domain.TStockMain;
 import com.caicongyang.stock.service.ITStockMainService;
-import com.caicongyang.stock.utils.jacksonUtils;
+import com.caicongyang.stock.utils.JacksonUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +31,7 @@ public class HttpClientProviderTest extends BaseApplicationTest {
     @Test
     public void test123() throws IOException {
         TStockMain industryByStockCode = itStockMainService.getIndustryByStockCode("001267.XSHE");
-        System.out.println(jacksonUtils.jsonFromObject(industryByStockCode));
+        System.out.println(JacksonUtil.jsonFromObject(industryByStockCode));
 
     }
 
@@ -66,7 +66,7 @@ public class HttpClientProviderTest extends BaseApplicationTest {
         params.put("code", "000011.XSHE");
         params.put("date", "2020-06-12");
 
-        String s = jacksonUtils.jsonFromObject(params);
+        String s = JacksonUtil.jsonFromObject(params);
         System.out.println(s);
 
         String result = provider.doPostWithApplicationJson(apiUrl, params);
@@ -100,7 +100,7 @@ public class HttpClientProviderTest extends BaseApplicationTest {
         params.put("code", "etf");
         params.put("date", "2020-12-02");
 
-        String s = jacksonUtils.jsonFromObject(params);
+        String s = JacksonUtil.jsonFromObject(params);
         System.out.println(s);
 
         String result = provider.doPostWithApplicationJson(apiUrl, params);
