@@ -5,12 +5,12 @@ import com.binance.connector.client.enums.DefaultUrls;
 import com.binance.connector.client.impl.SpotClientImpl;
 import com.binance.connector.client.impl.WebsocketStreamClientImpl;
 import com.binance.connector.client.impl.spot.Market;
+import com.binance.connector.client.utils.WebSocketCallback;
 import com.caicongyang.core.utils.GsonUtils;
 import com.caicongyang.httper.HttpClientProvider;
 import com.caicongyang.stock.domain.*;
 import com.caicongyang.stock.utils.JacksonUtil;
 import com.caicongyang.stock.utils.TomDateUtil;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +25,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
-public class BNService {
+public class FifteenMinBNService {
 
-    private static final Logger logger = LoggerFactory.getLogger(BNService.class);
+    private static final Logger logger = LoggerFactory.getLogger(FifteenMinBNService.class);
 
 
     @Autowired
@@ -38,6 +38,10 @@ public class BNService {
 
     @Autowired
     HttpClientProvider httpClientProvider;
+
+
+    private final WebSocketCallback noopCallback = msg -> {
+    };
 
     @PostConstruct
     public void init() {
@@ -52,21 +56,18 @@ public class BNService {
     private void initMarketInfo() {
 
 
-        Long size = redisTemplate.opsForList().size("bn_exchangeInfo_list");
-        if (null == size || size <= 0) {
-            SpotClientImpl client = new SpotClientImpl();
-            Market market = client.createMarket();
-            LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
-            ArrayList<String> permissions = new ArrayList<>();
-            permissions.add("SPOT");
-            permissions.add("MARGIN");
-            parameters.put("permissions", permissions);
-            String result = market.exchangeInfo(parameters);
-            ExchangeInfo exchangeInfo = JacksonUtil.objectFromJson(result, ExchangeInfo.class);
-            List<String> allTradingSymbolList = exchangeInfo.getSymbols().stream().filter(a -> a.getStatus().equalsIgnoreCase("TRADING")).map(a -> a.getSymbol()).filter(a -> a.endsWith("USDT")).collect(Collectors.toList());
-            logger.info("交易中的交易对：" + allTradingSymbolList.size() + "----> " + String.join(",", allTradingSymbolList));
-            redisTemplate.opsForList().leftPushAll("bn_exchangeInfo_list", allTradingSymbolList);
-        }
+        SpotClientImpl client = new SpotClientImpl();
+        Market market = client.createMarket();
+        LinkedHashMap<String, Object> parameters = new LinkedHashMap<>();
+        ArrayList<String> permissions = new ArrayList<>();
+        permissions.add("SPOT");
+        permissions.add("MARGIN");
+        parameters.put("permissions", permissions);
+        String result = market.exchangeInfo(parameters);
+        ExchangeInfo exchangeInfo = JacksonUtil.objectFromJson(result, ExchangeInfo.class);
+        List<String> allTradingSymbolList = exchangeInfo.getSymbols().stream().filter(a -> a.getStatus().equalsIgnoreCase("TRADING")).map(a -> a.getSymbol()).filter(a -> a.endsWith("USDT")).collect(Collectors.toList());
+        logger.info("交易中的交易对：" + allTradingSymbolList.size() + "----> " + String.join(",", allTradingSymbolList));
+        redisTemplate.opsForList().leftPushAll("bn_exchangeInfo_list", allTradingSymbolList);
 
 
     }
@@ -74,60 +75,78 @@ public class BNService {
 
     private void kline() {
         List<String> bn_exchangeInfo = (List<String>) redisTemplate.opsForList().range("bn_exchangeInfo_list", 0, -1);
-        ;
         for (String key : bn_exchangeInfo) {
-            WebsocketStreamClientImpl client = new WebsocketStreamClientImpl(DefaultUrls.WS_URL);
-            client.klineStream(key, "15m", ((event) -> {
-                KlineTickerEvent klineTickerEvent = GsonUtils.toJavaObject(event, KlineTickerEvent.class);
-
-                logger.info(JacksonUtil.jsonFromObject(klineTickerEvent));
-                KlineTicker klineTicker = klineTickerEvent.getKlineTickers();
-
-                if (!klineTicker.getIsklineClosed().equalsIgnoreCase("true")) {
-                    return;
-                }
-                //redis数据存储格式
-
-                String date = TomDateUtil.getDateTimePattern(new Date(Long.valueOf(klineTicker.getStartTime())));
-                String redisKey = "15min" + "_" + klineTicker.getSymbol() + "_" + TomDateUtil.getDayPatternCurrentDay();
-
-                String before15MinutesKey = TomDateUtil.getDateTimePattern(TomDateUtil.getTimeBefore15Minutes(TomDateUtil.timestamp2LocalDateTime(Long.valueOf(klineTicker.getStartTime()))));
-
-                Object before15Minutes = redisTemplate.opsForHash().get(redisKey, before15MinutesKey);
-                if (before15Minutes != null) {
-                    String before15mBaseAssetVolume = (String) before15Minutes;
-                    compare(redisKey, date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume());
-
-                } else {
-                    Set<String> keys = redisTemplate.opsForHash().keys(redisKey);
-
-                    Optional<String> first = keys.stream().sorted(Comparator.reverseOrder()).findFirst();
-                    if (first.isPresent()) {
-                        String before15mBaseAssetVolume = (String) redisTemplate.opsForHash().get(redisKey, before15MinutesKey);
-                        compare(redisKey, date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume());
-                    }
-                }
-                // 当前的成交量放进去
-                redisTemplate.opsForHash().put(redisKey, date, klineTicker.getBaseAssetVolume());
-                redisTemplate.expire(redisKey, 48, TimeUnit.HOURS);
-
-
-            }));
+            klineStream(key);
         }
     }
 
 
-    public void compare(String redisKey, String date, String before15mBaseAssetVolume, String baseAssetVolume) {
+    private void klineStream(String key) {
+        WebsocketStreamClientImpl client = new WebsocketStreamClientImpl(DefaultUrls.WS_URL);
+        client.klineStream(key, "15m", noopCallback, ((event) -> {
+                    KlineTickerEvent klineTickerEvent = GsonUtils.toJavaObject(event, KlineTickerEvent.class);
+                    // 打印k线数据
+                    logger.info(JacksonUtil.jsonFromObject(klineTickerEvent));
+                    KlineTicker klineTicker = klineTickerEvent.getKlineTickers();
+
+                    if (!klineTicker.getIsklineClosed().equalsIgnoreCase("true")) {
+                        return;
+                    }
+                    //redis数据存储格式
+
+                    // 当前的收盘时间
+                    String date = TomDateUtil.getDateTimePattern(new Date(Long.valueOf(klineTicker.getCloseTime()) + 1));
+
+                    String redisKey = "15min" + "_" + klineTicker.getSymbol() + "_" + TomDateUtil.getDayPatternCurrentDay();
+
+                    String before15MinutesKey = TomDateUtil.getDateTimePattern(TomDateUtil.getTimeBefore15Minutes(TomDateUtil.timestamp2LocalDateTime(Long.valueOf(klineTicker.getCloseTime()) + 1)));
+
+                    Object before15Minutes = redisTemplate.opsForHash().get(redisKey, before15MinutesKey);
+                    if (before15Minutes != null) {
+                        String before15mBaseAssetVolume = (String) before15Minutes;
+                        compare(redisKey,klineTicker.getSymbol() , date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume(), klineTicker.getQuoteAssetVolume());
+
+                    } else {
+                        Set<String> keys = redisTemplate.opsForHash().keys(redisKey);
+
+                        Optional<String> first = keys.stream().sorted(Comparator.reverseOrder()).findFirst();
+                        if (first.isPresent()) {
+                            String before15mBaseAssetVolume = (String) redisTemplate.opsForHash().get(redisKey, before15MinutesKey);
+                            compare(redisKey,klineTicker.getSymbol() , date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume(), klineTicker.getQuoteAssetVolume());
+                        }
+                    }
+                    // 当前的成交量放进去
+                    redisTemplate.opsForHash().put(redisKey, date, klineTicker.getBaseAssetVolume());
+                    redisTemplate.expire(redisKey, 48, TimeUnit.HOURS);
+                }),
+                ((event) -> {
+                    klineStream(key);
+                }),
+                ((event) -> {
+                    klineStream(key);
+                })
+        );
+    }
+
+
+    public void compare(String redisKey, String symbol ,String date, String before15mBaseAssetVolume, String baseAssetVolume, String quoteAssetVolume) {
         String alertKey = redisKey + "_alert";
+        String preDayKey = "15min" + "_" + symbol + "_" +TomDateUtil.getBeforeDayPatternCurrentDay()+"_alert";
         Double radio = Double.valueOf(baseAssetVolume) / Double.valueOf(before15mBaseAssetVolume);
-        if (radio > 3) {
+
+
+        if (radio >3 & Double.valueOf(quoteAssetVolume) >= 200000) {
             // 当前的成交量放进去
             redisTemplate.opsForHash().put(alertKey, date, String.valueOf(radio));
             redisTemplate.expire(redisKey, 48, TimeUnit.HOURS);
         }
 
+
         Map entries = redisTemplate.opsForHash().entries(alertKey);
-        if (entries.size() > 2) {
+        Map preEntries = redisTemplate.opsForHash().entries(preDayKey);
+        entries.putAll(preEntries);
+
+        if (entries.size() > 3) {
             alert(alertKey, entries);
         }
     }
@@ -232,7 +251,6 @@ public class BNService {
                 }
         );
     }
-
 
 
 }
