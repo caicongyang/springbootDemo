@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -24,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-@Service
+//@Service
 public class OneHourBNService {
 
     private static final Logger logger = LoggerFactory.getLogger(OneHourBNService.class);
@@ -105,7 +104,7 @@ public class OneHourBNService {
                     Object before15Minutes = redisTemplate.opsForHash().get(redisKey, before15MinutesKey);
                     if (before15Minutes != null) {
                         String before15mBaseAssetVolume = (String) before15Minutes;
-                        compare(redisKey,klineTicker.getSymbol() , date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume(), klineTicker.getQuoteAssetVolume());
+                        compare(redisKey, klineTicker.getSymbol(), date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume(), klineTicker.getQuoteAssetVolume());
 
                     } else {
                         Set<String> keys = redisTemplate.opsForHash().keys(redisKey);
@@ -113,7 +112,7 @@ public class OneHourBNService {
                         Optional<String> first = keys.stream().sorted(Comparator.reverseOrder()).findFirst();
                         if (first.isPresent()) {
                             String before15mBaseAssetVolume = (String) redisTemplate.opsForHash().get(redisKey, before15MinutesKey);
-                            compare(redisKey,klineTicker.getSymbol() , date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume(), klineTicker.getQuoteAssetVolume());
+                            compare(redisKey, klineTicker.getSymbol(), date, before15mBaseAssetVolume, klineTicker.getBaseAssetVolume(), klineTicker.getQuoteAssetVolume());
                         }
                     }
                     // 当前的成交量放进去
@@ -130,26 +129,35 @@ public class OneHourBNService {
     }
 
 
-    public void compare(String redisKey, String symbol ,String date, String before15mBaseAssetVolume, String baseAssetVolume, String quoteAssetVolume) {
+    public void compare(String redisKey, String symbol, String date, String before15mBaseAssetVolume, String baseAssetVolume, String quoteAssetVolume) {
         String alertKey = redisKey + "_alert";
-        String preDayKey = "1h" + "_" + symbol + "_" +TomDateUtil.getBeforeDayPatternCurrentDay()+"_alert";
+        String preDayKey = "1h" + "_" + symbol + "_" + TomDateUtil.getBeforeDayPatternCurrentDay() + "_alert";
         Double radio = Double.valueOf(baseAssetVolume) / Double.valueOf(before15mBaseAssetVolume);
 
 
-        if (radio >3 & Double.valueOf(quoteAssetVolume) >= 1000000) {
+        if (radio > 3 & Double.valueOf(quoteAssetVolume) >= 1000000) {
             // 当前的成交量放进去
             redisTemplate.opsForHash().put(alertKey, date, String.valueOf(radio));
             redisTemplate.expire(redisKey, 48, TimeUnit.HOURS);
+
+
+            Map entries = redisTemplate.opsForHash().entries(alertKey);
+            Map preEntries = redisTemplate.opsForHash().entries(preDayKey);
+            entries.putAll(preEntries);
+
+
+            Map<String, String> map = new HashMap<>();
+            map.put(date , String.valueOf(radio));
+            alert(symbol+"("+entries.size()+")", map);
         }
 
 
-        Map entries = redisTemplate.opsForHash().entries(alertKey);
-        Map preEntries = redisTemplate.opsForHash().entries(preDayKey);
-        entries.putAll(preEntries);
+        //
+//        if (entries.size() > 3) {
+//            alert(alertKey, entries);
+//        }
 
-        if (entries.size() > 3) {
-            alert(alertKey, entries);
-        }
+
     }
 
 
