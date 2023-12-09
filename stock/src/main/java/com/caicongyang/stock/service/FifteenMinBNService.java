@@ -148,7 +148,7 @@ public class FifteenMinBNService {
 
             Map<String, String> map = new HashMap<>();
             map.put(date, String.valueOf(radio));
-            alert(symbol + "(" + entries.size() + ")", map);
+            alert(symbol + "[" + entries.size() + "]", map);
         }
     }
 
