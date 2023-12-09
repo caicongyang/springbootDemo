@@ -129,25 +129,26 @@ public class FifteenMinBNService {
     }
 
 
-    public void compare(String redisKey, String symbol ,String date, String before15mBaseAssetVolume, String baseAssetVolume, String quoteAssetVolume) {
+    public void compare(String redisKey, String symbol, String date, String before15mBaseAssetVolume, String baseAssetVolume, String quoteAssetVolume) {
         String alertKey = redisKey + "_alert";
-        String preDayKey = "15min" + "_" + symbol + "_" +TomDateUtil.getBeforeDayPatternCurrentDay()+"_alert";
+        String preDayKey = "1h" + "_" + symbol + "_" + TomDateUtil.getBeforeDayPatternCurrentDay() + "_alert";
         Double radio = Double.valueOf(baseAssetVolume) / Double.valueOf(before15mBaseAssetVolume);
 
 
-        if (radio >3 & Double.valueOf(quoteAssetVolume) >= 200000) {
+        if (radio > 3 & Double.valueOf(quoteAssetVolume) >= 1000000) {
             // 当前的成交量放进去
             redisTemplate.opsForHash().put(alertKey, date, String.valueOf(radio));
             redisTemplate.expire(redisKey, 48, TimeUnit.HOURS);
-        }
 
 
-        Map entries = redisTemplate.opsForHash().entries(alertKey);
-        Map preEntries = redisTemplate.opsForHash().entries(preDayKey);
-        entries.putAll(preEntries);
+            Map entries = redisTemplate.opsForHash().entries(alertKey);
+            Map preEntries = redisTemplate.opsForHash().entries(preDayKey);
+            entries.putAll(preEntries);
 
-        if (entries.size() > 3) {
-            alert(alertKey, entries);
+
+            Map<String, String> map = new HashMap<>();
+            map.put(date, String.valueOf(radio));
+            alert(symbol + "(" + entries.size() + ")", map);
         }
     }
 
