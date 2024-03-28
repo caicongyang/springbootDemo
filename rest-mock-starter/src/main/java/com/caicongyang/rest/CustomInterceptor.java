@@ -40,8 +40,8 @@ public class CustomInterceptor implements ClientHttpRequestInterceptor {
         String originalUrl = request.getURI().toString();
         String domainUrl = extractDomain(originalUrl);
 
-        Set<String> originalUrlSet = properties.getUrlMap().keySet();
-        if (!originalUrlSet.contains(domainUrl)) {
+        Set<String> configUrlMap = properties.getUrlMap().keySet();
+        if (!configUrlMap.contains(domainUrl)) {
             return execution.execute(request, body);
         }
 
