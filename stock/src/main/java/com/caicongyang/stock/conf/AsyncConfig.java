@@ -7,11 +7,11 @@ import org.springframework.scheduling.annotation.AsyncConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
-@EnableAsync
 @Configuration
 public class AsyncConfig implements AsyncConfigurer {
     @Resource
@@ -20,7 +20,7 @@ public class AsyncConfig implements AsyncConfigurer {
     @Bean
     public ThreadPoolTaskExecutor asyncTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        int coreSize = Runtime.getRuntime().availableProcessors() * 2;
+        int coreSize = Runtime.getRuntime().availableProcessors() * 16;
         int maxPoolSize = Runtime.getRuntime().availableProcessors() * 16 ;
 
         executor.setCorePoolSize(env.getProperty("stock.task.corePoolSize", int.class, coreSize));
@@ -37,5 +37,9 @@ public class AsyncConfig implements AsyncConfigurer {
     public Executor getAsyncExecutor() {
         return asyncTaskExecutor();
     }
+
+
+
+
 
 }

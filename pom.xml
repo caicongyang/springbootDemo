@@ -25,6 +25,8 @@
         <module>encrypt-starter</module>
         <module>rest-mock-starter</module>
         <module>feign-expand-starter</module>
+        <module>apollo-config-starter</module>
+        <module>shutdown-graceful-nacos-starter</module>
     </modules>
     <name>springBoot Maven Webapp</name>
     <url>http://maven.apache.org</url>
