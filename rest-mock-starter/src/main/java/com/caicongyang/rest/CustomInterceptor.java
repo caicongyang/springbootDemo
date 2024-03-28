@@ -1,7 +1,8 @@
 package com.caicongyang.rest;
 
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -17,11 +18,10 @@ import java.util.Set;
 
 public class CustomInterceptor implements ClientHttpRequestInterceptor {
 
-    private static Logger logger = LoggerFactory.getLogger(CustomInterceptor.class);
+    private Logger logger = LoggerFactory.getLogger(CustomInterceptor.class);
 
 
     private RestInterceptorProperties properties;
-
 
     public CustomInterceptor(RestInterceptorProperties properties) {
         this.properties = properties;
@@ -53,7 +53,7 @@ public class CustomInterceptor implements ClientHttpRequestInterceptor {
         return execution.execute(modifiedRequest, body);
     }
 
-    public static String extractDomain(String urlString) {
+    public String extractDomain(String urlString) {
         try {
             URL url = new URL(urlString);
             return url.getHost();
