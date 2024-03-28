@@ -2,9 +2,10 @@
 
 ### 软件说明
 
-1.基于springBoot的简单封装和测试
-2.来自日常工作总结和测试使用
+1.基于springBoot的各类starter简单封装和测试
+2.来自日常工作学习总结和测试使用
 3.测试用例覆盖不够全面，不可直接用于生产环境
+4.每个module中还有README.md方便查看用法& 以及其他更优开源组件推荐 （待补充）
 
 #### module 说明
 1. apollo-config-starter: 基于apolo配置中的动态更新配置&loggerback日志级别修改  (done)
@@ -20,7 +21,7 @@
 11. local-test： 测试工程，所有的docker-compose文件都放在此处 （done）
 12. lock-starter: 基于redission和mysql 的分布式锁的简单封装  (done)
 13. logger-starter: 日志关键字脱敏 &  日志发送到kafka，从而进到elastic-search  (done)
-14. rest-mock-starter:基于rest 的mock功能,方便测试&本地联调  
+14. rest-mock-starter:基于rest 的mock功能,方便测试&本地联调   (done)
 15. seq-starter： 基于数据库、雪花算法、redis的自增序列号简单封装
 16. shutdown-gracefule-nacos-starter: 基于nacos 服务实现的微服务优雅上下线 (done)
 17. sklywalking-expand-starter： sklywalking功能增强,把sklywalking的traceId 和sklying地址放到http header 中 ；上报sql 执行时间  (done)
