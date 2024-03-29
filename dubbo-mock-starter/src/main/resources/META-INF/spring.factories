@@ -1,2 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.caicongyang.rest.RestMockConfiguration
+  com.caicongyang.dubbo.DubboMockConfiguration
+
+
+

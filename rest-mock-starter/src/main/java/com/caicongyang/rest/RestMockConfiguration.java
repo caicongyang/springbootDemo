@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Import;
 
 @Import(RestTemplateInterceptorBeanPostProcessor.class)
 @EnableConfigurationProperties(RestInterceptorProperties.class)
-public class RestMockConfig {
+public class RestMockConfiguration {
 
 
 }

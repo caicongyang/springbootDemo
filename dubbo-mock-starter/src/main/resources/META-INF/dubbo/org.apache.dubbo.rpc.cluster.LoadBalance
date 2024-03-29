@@ -1,0 +1,1 @@
+mockLoadBalance=com.caicongyang.dubbo.UrlReplaceLoadBalance
