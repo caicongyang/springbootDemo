@@ -12,9 +12,8 @@
 2. cache-starter ： 基于redis的缓存增强，想实现自动为key 加上工程名称，大key报错等安全防范功能 (done)
 3. core-starter ： 统一异常等核心功能 （done）
 4. dubbo-mocker-starter:  基于dubbo 2.7.x的mock 功能，将某个接口指向配置的测试人员搭建的某个地址 (done)
-5. dynamic-datasource-starter： 多数据源实现
+5. dynamic-datasource-starter： 多数据源实现  (done)
 6. encrypt-starter: 数据字段加解密，字段脱敏等等
- 
 7. feign-expand-starter:  feign拓展，自动生成feignClient 等
 8. file-expand-starter： 文件功能增强 (doing)
 9. git-tools： git批量操作
