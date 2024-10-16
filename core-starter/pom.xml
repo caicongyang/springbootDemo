@@ -63,10 +63,10 @@
         </dependency>
 
 
-        <dependency>
-            <groupId>com.caicongyang</groupId>
-            <artifactId>lock-starter</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.caicongyang</groupId>-->
+<!--            <artifactId>lock-starter</artifactId>-->
+<!--        </dependency>-->
 
     </dependencies>
     <build>

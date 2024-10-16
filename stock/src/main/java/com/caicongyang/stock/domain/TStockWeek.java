@@ -51,7 +51,7 @@ public class TStockWeek implements Serializable {
     private Long volume;
 
     @ApiModelProperty(value = "成交金额")
-    private Double money;
+    private Double amount;
 
 
 }

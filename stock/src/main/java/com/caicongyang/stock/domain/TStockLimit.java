@@ -9,6 +9,7 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * <p>
@@ -29,7 +30,7 @@ public class TStockLimit implements Serializable {
 
     private String stockCode;
 
-    private LocalDate tradingDay;
+    private Date tradingDay;
 
     @ApiModelProperty(value = "涨幅")
     private Double gain;

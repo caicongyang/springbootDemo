@@ -71,19 +71,17 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
     }
 
     private void doCtchAllDaliyLimitStock(String tradingDay) throws ParseException {
-        String preTradingDate = commonMapper.queryPreTradingDate(tradingDay);
         Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
-        LocalDate localDate = TomDateUtil.date2LocalDate(date);
 
-        List<TStock> list = tStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradingDay, localDate));
+        List<TStock> list = tStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradeDate, date));
         List<TStockLimit> insertList = new ArrayList<>();
         for (TStock stock : list) {
-            double currentGain = stockService.getCurrentGain(tradingDay, preTradingDate, stock.getStockCode());
-            if (currentGain >= 0.095) {
+            double currentGain =stock.getPctChg();
+            if (currentGain >= 9.5) {
                 TStockLimit limit = new TStockLimit();
                 limit.setStockCode(stock.getStockCode());
                 limit.setGain(currentGain);
-                limit.setTradingDay(localDate);
+                limit.setTradingDay(date);
                 insertList.add(limit);
             }
         }
@@ -116,9 +114,9 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
         for (TStockLimitDTO item : limitList) {
             TStockLimitDTO dto = new TStockLimitDTO();
 
-            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
-
-            BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
+//            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
+//
+//            BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
             BeanUtils.copyProperties(item, dto, getNullPropertyNames(item));
             reList.add(dto);
         }
@@ -166,10 +164,10 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
 
         for (TStockLimitDTO item : limitList) {
             TStockLimitDTO dto = new TStockLimitDTO();
-            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
-            BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
+//            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
+//            BeanUtils.copyProperties(tStockMain, dto, getNullPropertyNames(tStockMain));
             BeanUtils.copyProperties(item, dto, getNullPropertyNames(item));
-            dto.setTradingDay( TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate)));
+            dto.setTradingDay( TomDateUtil.formateDayPattern2Date(lastTradingDate));
             reList.add(dto);
         }
 
@@ -214,8 +212,8 @@ public class TStockLimitServiceImpl extends ServiceImpl<TStockLimitMapper, TStoc
 
 
         for (TransactionAndLimitStockDTO item : limitList) {
-            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
-            BeanUtils.copyProperties(tStockMain, item, getNullPropertyNames(tStockMain));
+//            TStockMain tStockMain = itStockMainService.getIndustryByStockCode(item.getStockCode());
+//            BeanUtils.copyProperties(tStockMain, item, getNullPropertyNames(tStockMain));
             item.setTradingDay(TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate)));
 
         }

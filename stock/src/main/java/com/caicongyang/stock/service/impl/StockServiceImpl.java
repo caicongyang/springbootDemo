@@ -64,7 +64,7 @@ public class StockServiceImpl implements StockService {
     @Override
     public Boolean TradeFlag() {
         TStock stock = new TStock();
-        stock.setTradingDay(LocalDate.now());
+        stock.setTradeDate(new Date());
         Wrapper<TStock> wrapper = new QueryWrapper<>(stock);
         return CollectionUtils.isEmpty(tStockMapper.selectList(wrapper)) ? false : true;
     }
@@ -85,20 +85,21 @@ public class StockServiceImpl implements StockService {
         for (Map<String, Object> item : maps) {
             String stockCode = (String) item.get("stock_code");
             TTransactionStock stock = new TTransactionStock();
-            stock.setStockCode(stockCode);
+            stock.setStockCode(stockCode.substring(0,6));
             stock.setLastDayCompare(((BigDecimal) item.get("last_day_compare")).doubleValue());
             stock.setMeanRatio(((BigDecimal) item.get("mean_ratio")).doubleValue());
             stock.setTradingDay(currentDate);
-            TStockMain main = itStockMainService
-                    .getIndustryByStockCode(stockCode);
-            if (null != main) {
-                stock.setJqL2(main.getJqL2());
-                stock.setSwL3(main.getSwL3());
-                stock.setZjw(main.getZjw());
-            }
-
-            double v = getCurrentGain(currentDate, preTradingDate, stockCode);
-            stock.setGain(v);
+            stock.setGain(((Double) item.get("pct_chg")).doubleValue());
+//            TStockMain main = itStockMainService
+//                    .getIndustryByStockCode(stockCode);
+//            if (null != main) {
+//                stock.setJqL2(main.getJqL2());
+//                stock.setSwL3(main.getSwL3());
+//                stock.setZjw(main.getZjw());
+//            }
+//
+//            double v = getCurrentGain(currentDate, preTradingDate, stockCode);
+//            stock.setGain(v);
             try {
                 tTransactionStockMapper.insert(stock);
             } catch (Exception e) {
@@ -115,10 +116,11 @@ public class StockServiceImpl implements StockService {
         return maps;
     }
 
+    @Deprecated
     public double getCurrentGain(String currentDate, String preTradingDate, String stockCode) throws ParseException {
         // 查询今日股价信息
         TStock currentStock = new TStock();
-        currentStock.setTradingDay(TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(currentDate)));
+        currentStock.setTradeDate(TomDateUtil.formateDayPattern2Date(currentDate));
         currentStock.setStockCode(stockCode);
         Wrapper<TStock> currentWrapper = new QueryWrapper<>(currentStock);
         currentStock = tStockMapper.selectOne(currentWrapper);
@@ -126,7 +128,7 @@ public class StockServiceImpl implements StockService {
 
         // 查询上一个交易日股价信息
         TStock preDayStock = new TStock();
-        preDayStock.setTradingDay(TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(preTradingDate)));
+        preDayStock.setTradeDate(TomDateUtil.formateDayPattern2Date(preTradingDate));
         preDayStock.setStockCode(stockCode);
         Wrapper<TStock> wrapper = new QueryWrapper<>(preDayStock);
         preDayStock = tStockMapper.selectOne(wrapper);
@@ -152,7 +154,6 @@ public class StockServiceImpl implements StockService {
             String lastTradingDate = commonMapper.queryLastTradingDate();
             stock.setTradingDay(lastTradingDate);
             ((QueryWrapper<TTransactionStock>) wrapper).setEntity(stock).orderByDesc("jq_l2", "sw_l3", "zjw");
-            ;
             reuslt = tTransactionStockMapper.selectList(wrapper);
         }
 
@@ -161,7 +162,7 @@ public class StockServiceImpl implements StockService {
             for (TTransactionStock item : reuslt) {
                 TTransactionStockDTO dto = new TTransactionStockDTO();
                 BeanUtils.copyProperties(item, dto);
-                dto.setStockName(itStockMainService.getStockNameByStockCode(item.getStockCode()));
+//                dto.setStockName(itStockMainService.getStockNameByStockCode(item.getStockCode()));
                 returnList.add(dto);
             }
         }

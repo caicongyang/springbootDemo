@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.caicongyang.db.routing.config.ReadWriteSplitAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.caicongyang.dynamic.db.DynamicDataSourceAutoConfiguration

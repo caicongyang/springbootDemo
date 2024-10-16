@@ -12,7 +12,7 @@
         <module>cache-starter</module>
         <module>seq-starter</module>
         <module>git-tools</module>
-        <module>dynamic-datasource-starter</module>
+        <module>readwrite-datasource-starter</module>
         <module>core-starter</module>
         <module>file-expand-starter</module>
         <module>tcc-starter</module>
@@ -27,6 +27,7 @@
         <module>feign-expand-starter</module>
         <module>apollo-config-starter</module>
         <module>shutdown-graceful-nacos-starter</module>
+        <module>dynamic-datasource-starter</module>
     </modules>
     <name>springBoot Maven Webapp</name>
     <url>http://maven.apache.org</url>

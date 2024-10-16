@@ -8,15 +8,17 @@
         SELECT
         s0.stock_code,
         s0.lastDayCompare AS last_day_compare,
-        s1.mean_ratio AS mean_ratio
+        s1.mean_ratio AS mean_ratio,
+        s0.pct_chg
         FROM
         (
         SELECT
         t0.stock_code,
-        t0.volume / t1.volume AS lastDayCompare
+        t0.volume / t1.volume AS lastDayCompare,
+        t0.pct_chg
         FROM
-        ( SELECT stock_code, volume, `close`, `open`, `high`, `low` FROM T_Stock WHERE trading_day = #{currentDate} ) AS t0 -- 最后一个交易日
-        LEFT JOIN ( SELECT stock_code, volume,`close` FROM T_Stock WHERE trading_day = #{preDate} ) AS t1 ON t0.stock_code = t1.stock_code  -- 倒数第二个交易
+        ( SELECT stock_code, volume, `close`, `open`, `high`, `low`,pct_chg FROM T_Stock WHERE trade_date = #{currentDate} ) AS t0 -- 最后一个交易日
+        LEFT JOIN ( SELECT stock_code, volume,`close` FROM T_Stock WHERE trade_date = #{preDate} ) AS t1 ON t0.stock_code = t1.stock_code  -- 倒数第二个交易
         WHERE
         t0.volume / t1.volume > 2   -- 成交量是前一天的2倍
         AND t0.`close` >= t0.`open`  --  收盘价 大于开盘价
@@ -36,14 +38,14 @@
         FROM
         T_Stock
         WHERE
-        trading_day IN ( SELECT trading_day FROM ( SELECT trading_day FROM T_Stock WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>  #{currentDate}  ORDER BY trading_day DESC LIMIT 6 ) AS t )
-        and  trading_day != #{currentDate}
+        trade_date IN ( SELECT trade_date FROM ( SELECT trade_date FROM T_Stock WHERE stock_code = '000001.SZ' and trade_date <![CDATA[ <= ]]>  #{currentDate}  ORDER BY trade_date DESC LIMIT 6 ) AS t )
+        and  trade_date != #{currentDate}
         -- 获取最近4个交易日的交易时间
         GROUP BY
         stock_code
         ) t1 ON t0.stock_code = t1.stock_code
         WHERE
-        t0.trading_day = #{currentDate}
+        t0.trade_date = #{currentDate}
         AND t1.mean != 0  and t1.mean is not null
         AND t0.volume / t1.mean > 2  -- 当日的成交量是前4个平均数
         ) s1 ON s0.stock_code = s1.stock_code;
@@ -52,28 +54,28 @@
 
     <!--获取倒数第二个交易日-->
     <select id="queryPreTradingDate" resultType="java.lang.String" parameterType="java.lang.String">
-      SELECT trading_day FROM ( SELECT trading_day FROM T_Stock WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>   #{currentDate} ORDER BY trading_day DESC limit  1,1 ) AS t
+      SELECT trade_date FROM ( SELECT trade_date FROM T_Stock WHERE stock_code = '000001.SZ' and trade_date <![CDATA[ <= ]]>   #{currentDate} ORDER BY trade_date DESC limit  1,1 ) AS t
     </select>
 
     <!--获取倒数第二个交易日-->
     <select id="queryTradingDate" resultType="java.lang.String" parameterType="java.lang.String">
-        SELECT trading_day FROM ( SELECT trading_day FROM T_Stock WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>   #{currentDate} ORDER BY trading_day DESC limit  1 ) AS t
+        SELECT trade_date FROM ( SELECT trade_date FROM T_Stock WHERE stock_code = '000001.SZ' and trade_date <![CDATA[ <= ]]>   #{currentDate} ORDER BY trade_date DESC limit  1 ) AS t
     </select>
 
 
 
     <!--获取倒数第一个交易日-->
     <select id="queryLastTradingDate" resultType="java.lang.String">
-      SELECT trading_day FROM ( SELECT trading_day FROM T_Stock ORDER BY trading_day DESC limit  1,1 ) AS t
+      SELECT trade_date FROM ( SELECT trade_date FROM T_Stock ORDER BY trade_date DESC limit  1,1 ) AS t
     </select>
 
 
     <select id="queryLastWeekTradingDate" resultType="java.lang.String">
-      SELECT trading_day FROM ( SELECT trading_day FROM T_Stock_Week ORDER BY trading_day DESC limit  1,1 ) AS t
+      SELECT trade_date FROM ( SELECT trade_date FROM T_Stock_Week ORDER BY trade_date DESC limit  1,1 ) AS t
     </select>
 
     <select id="queryPreWeekTradingDate" resultType="java.lang.String">
-       SELECT trading_day FROM ( SELECT trading_day FROM T_Stock_Week WHERE stock_code = '000001.XSHE' and trading_day <![CDATA[ <= ]]>   #{currentDate} ORDER BY trading_day DESC limit  1,1 ) AS t
+       SELECT trade_date FROM ( SELECT trade_date FROM T_Stock_Week WHERE stock_code = '000001.SZ' and trade_date <![CDATA[ <= ]]>   #{currentDate} ORDER BY trade_date DESC limit  1,1 ) AS t
     </select>
 
 
@@ -87,10 +89,11 @@
 	s.zjw,
     s.gain
 FROM
-	 ( SELECT count(*) AS counter, stock_code FROM T_transaction_stock where  trading_day BETWEEN #{startDate}  AND #{endDate}  GROUP BY stock_code HAVING counter > 1  ) as t  left join  T_transaction_stock s on t.stock_code =  s.stock_code
+	 ( SELECT count(*) AS counter, stock_code FROM t_transaction_stock where  trading_day BETWEEN #{startDate}  AND #{endDate}  GROUP BY stock_code HAVING counter > 1  ) as t  left join  t_transaction_stock s on t.stock_code =  s.stock_code
 WHERE
 	s.trading_day BETWEEN #{startDate}
-	AND #{endDate}  and s.jq_l2 is not null  and s.sw_l3 is not null and s.zjw is not null
+	AND #{endDate}
+<!--        and s.jq_l2 is not null  and s.sw_l3 is not null and s.zjw is not null-->
 ORDER BY
 	s.trading_day desc,
     t.counter desc,
@@ -114,13 +117,15 @@ ORDER BY
 	ts.trading_day,
 	ts.gain
 FROM
-	T_transaction_stock ts
-	INNER JOIN T_Stock_Higher sh ON sh.stock_code = ts.stock_code
+	t_transaction_stock ts
+	INNER JOIN t_Stock_Higher sh ON sh.stock_code = ts.stock_code
 	AND sh.trading_day = ts.trading_day
 WHERE
-	ts.trading_day = #{currentDate}
-	ORDER BY  ts.sw_l3 asc ,
-	sh.interval_days desc
+	ts.trade_date = #{currentDate}
+	ORDER BY
+<!--        ts.sw_l3 asc ,-->
+        sh.interval_days desc
+
 
     </select>
 
@@ -135,9 +140,9 @@ WHERE
     tf.stock_code
     FROM
     T_Stock_Half_Day tf
-    LEFT JOIN (select stock_code, volume from T_Stock where  trading_day = #{preDate}) as ts  ON tf.stock_code = ts.stock_code
+    LEFT JOIN (select stock_code, volume from T_Stock where  trade_date = #{preDate}) as ts  ON tf.stock_code = ts.stock_code
     WHERE
-    tf.trading_day = #{currentDate}
+    tf.trade_date = #{currentDate}
     AND tf.volume / ts.volume > 1
     ORDER BY
     tf.volume / ts.volume DESC;

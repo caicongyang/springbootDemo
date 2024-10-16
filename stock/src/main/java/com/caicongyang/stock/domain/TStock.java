@@ -3,6 +3,8 @@ package com.caicongyang.stock.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDate;
 import java.io.Serializable;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,7 +22,7 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("T_Stock")
+@TableName("t_stock")
 @ApiModel(value="TStock对象", description="")
 public class TStock implements Serializable {
 
@@ -33,7 +35,7 @@ public class TStock implements Serializable {
     private String stockName;
 
     @ApiModelProperty(value = "交易日期")
-    private LocalDate tradingDay;
+    private Date tradeDate;
 
     @ApiModelProperty(value = "开盘价")
     private Double open;
@@ -51,7 +53,16 @@ public class TStock implements Serializable {
     private Long volume;
 
     @ApiModelProperty(value = "成交金额")
-    private Double money;
+    private Double amount;
+
+    @ApiModelProperty(value = "昨日收盘点")
+    private Double preClose;
+
+    @ApiModelProperty(value = "涨跌点")
+    private Double change;
+
+    @ApiModelProperty(value = "涨跌幅（%）")
+    private Double pctChg;
 
 
 }

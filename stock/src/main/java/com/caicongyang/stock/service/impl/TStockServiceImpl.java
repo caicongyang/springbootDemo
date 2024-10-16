@@ -66,7 +66,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
 
         TStock stock = new TStock();
         Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
-        stock.setTradingDay(TomDateUtil.date2LocalDate(date));
+        stock.setTradeDate(date);
         QueryWrapper<TStock> groupByWrapper = new QueryWrapper<>();
         groupByWrapper.setEntity(stock);
         groupByWrapper.groupBy("stock_code");
@@ -79,25 +79,20 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             QueryWrapper<TStock> queryByWrapper = new QueryWrapper<>();
             queryItem.setStockCode(stockCode);
             queryByWrapper.setEntity(queryItem);
-            queryByWrapper.orderByDesc("trading_day");
+            queryByWrapper.orderByDesc("trade_date");
 
             List<TStock> itemList = stockMapper.selectList(queryByWrapper);
-
-            String preTradingDate = mapper.queryPreTradingDate(tradingDay);
-
             HighestInPeriodResult result = getHighestInPeriodResult(itemList);
             if (null != result && result.getIntervalDays() > 30) {
                 TStockHigher entity = new TStockHigher();
                 entity.setIntervalDays(result.getIntervalDays());
-                entity.setPreviousHighsDate(
-                        TomDateUtil.date2LocalDate(result.getPreviousHighsDate()));
+                entity.setPreviousHighsDate(result.getPreviousHighsDate());
                 entity.setStockCode(result.getStockCode());
-                entity.setTradingDay(stock.getTradingDay());
+                entity.setTradingDay(stock.getTradeDate());
 
+//                double currentGain = stockService.getCurrentGain(tradingDay, preTradingDate, result.getStockCode());
 
-                double currentGain = stockService.getCurrentGain(tradingDay, preTradingDate, result.getStockCode());
-
-                entity.setGain(currentGain);
+                entity.setGain(itemList.get(0).getPctChg());
                 higherMapper.insert(entity);
             }
 
@@ -112,14 +107,14 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
         QueryWrapper<TStockHigher> queryWrapper = new QueryWrapper<>();
         TStockHigher entity = new TStockHigher();
         Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
-        entity.setTradingDay(TomDateUtil.date2LocalDate(date));
+        entity.setTradingDay(date);
         queryWrapper.setEntity(entity);
         queryWrapper.orderByAsc("interval_days");
         List<TStockHigher> result = higherMapper.selectList(queryWrapper);
         if (CollectionUtils.isEmpty(result)) {
             String lastTradingDate = mapper.queryLastTradingDate();
             date = TomDateUtil.formateDayPattern2Date(lastTradingDate);
-            entity.setTradingDay(TomDateUtil.date2LocalDate(date));
+            entity.setTradingDay(date);
             queryWrapper.setEntity(entity);
             result = higherMapper.selectList(queryWrapper);
         }
@@ -187,7 +182,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             stock.setJqL2((String) map.getOrDefault("jq_l2", ""));
             stock.setSwL3((String) map.getOrDefault("sw_l3", ""));
             stock.setZjw((String) map.getOrDefault("zjw", ""));
-            stock.setGain((Double) map.getOrDefault("gain",0d));
+            stock.setGain((Double) map.getOrDefault("gain", 0d));
 
             stock.setTradingDay(TomDateUtil.formateDayPattern2Date((String) map.getOrDefault("trading_day", "")));
             stock.setStockName(mainService.getStockNameByStockCode(stock.getStockCode()));
@@ -432,7 +427,7 @@ public class TStockServiceImpl extends ServiceImpl<TStockMapper, TStock> impleme
             if (currentStockData.getHigh() >= list.get(i).getHigh()) {
                 intervalDays++;
             } else {
-                previousHighsDate = TomDateUtil.LocalDate2date(list.get(i).getTradingDay());
+                previousHighsDate = list.get(i).getTradeDate();
                 //找到大于当前股权的日期跳出循环
                 break;
             }

@@ -1,6 +1,7 @@
 package com.caicongyang.stock.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.caicongyang.stock.domain.HighestInPeriodResult;
@@ -85,7 +86,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
             item.setStockCode((String) map.getOrDefault("stock_code", ""));
             item.setLastDayCompare(((BigDecimal) map.getOrDefault("last_day_compare", "")).doubleValue());
             item.setTradingDay(currentDate);
-            item.setStockName(itStockMainService.getStockNameByStockCode(item.getStockCode()));
+            //item.setStockName(itStockMainService.getStockNameByStockCode(item.getStockCode()));
             resultList.add(item);
         }
         return resultList;
@@ -117,23 +118,23 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
     public List<TTransactionEtfDTO> getTransactionEtfData(String currentDate) throws IOException {
         TTransactionEtf queryItem = new TTransactionEtf();
         queryItem.setTradingDay(currentDate);
-        Wrapper<TTransactionEtf> wrapper = new QueryWrapper<>(queryItem);
-        List<TTransactionEtf> result = tTransactionEtfMapper.selectList(wrapper);
+
+        LambdaQueryWrapper lambdaQueryWrapper = new LambdaQueryWrapper<TTransactionEtf>().eq(true,TTransactionEtf::getTradingDay,currentDate).orderByDesc(true,TTransactionEtf::getLastDayCompare);
+        List<TTransactionEtf> result = tTransactionEtfMapper.selectList(lambdaQueryWrapper);
         List<TTransactionEtfDTO> returnList = new ArrayList<>();
 
         if (CollectionUtils.isEmpty(result)) {
             //如果当天没有，则获取最近一个交易日
             String lastTradingDate = mapper.queryLastTradingDate();
-            queryItem.setTradingDay(lastTradingDate);
-            ((QueryWrapper<TTransactionEtf>) wrapper).setEntity(queryItem);
-            result = tTransactionEtfMapper.selectList(wrapper);
+            lambdaQueryWrapper =  new LambdaQueryWrapper<TTransactionEtf>().eq(true,TTransactionEtf::getTradingDay,lastTradingDate).orderByDesc(true,TTransactionEtf::getLastDayCompare);
+            result = tTransactionEtfMapper.selectList(lambdaQueryWrapper);
         }
 
         if (CollectionUtils.isNotEmpty(result)) {
             for (TTransactionEtf etf : result) {
                 TTransactionEtfDTO dto = new TTransactionEtfDTO();
                 BeanUtils.copyProperties(etf, dto);
-                dto.setStockName(itStockMainService.getStockNameByStockCode(etf.getStockCode()));
+//                dto.setStockName(itStockMainService.getStockNameByStockCode(etf.getStockCode()));
                 returnList.add(dto);
             }
         }
@@ -144,7 +145,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
     public void calculateHigherStock(String tradingDay) throws ParseException {
         TEtf etf = new TEtf();
         Date date = TomDateUtil.formateDayPattern2Date(tradingDay);
-        etf.setTradingDay(TomDateUtil.date2LocalDate(date));
+        etf.setTradeDate(TomDateUtil.date2LocalDate(date));
         QueryWrapper<TEtf> groupByWrapper = new QueryWrapper<>();
         groupByWrapper.setEntity(etf);
         groupByWrapper.groupBy("stock_code");
@@ -157,7 +158,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
             QueryWrapper<TEtf> queryByWrapper = new QueryWrapper<>();
             queryItem.setStockCode(stockCode);
             queryByWrapper.setEntity(queryItem);
-            queryByWrapper.orderByDesc("trading_day");
+            queryByWrapper.orderByDesc("trade_date");
             List<TEtf> itemList = tEtfMapper.selectList(queryByWrapper);
 
             HighestInPeriodResult result = getHighestInPeriodResult(itemList);
@@ -167,7 +168,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
                 entity.setPreviousHighsDate(
                     TomDateUtil.date2LocalDate(result.getPreviousHighsDate()));
                 entity.setStockCode(result.getStockCode());
-                entity.setTradingDay(etf.getTradingDay());
+                entity.setTradingDay(etf.getTradeDate());
                 itEtfHigherService.save(entity);
             }
 
@@ -223,7 +224,7 @@ public class TEtfServiceImpl extends ServiceImpl<TEtfMapper, TEtf> implements IT
             if (currentStockData.getHigh() >= list.get(i).getHigh()) {
                 intervalDays++;
             } else {
-                previousHighsDate = TomDateUtil.LocalDate2date(list.get(i).getTradingDay());
+                previousHighsDate = TomDateUtil.LocalDate2date(list.get(i).getTradeDate());
                 //找到大于当前股权的日期跳出循环
                 break;
             }

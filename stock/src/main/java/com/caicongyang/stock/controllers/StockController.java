@@ -6,17 +6,20 @@ import com.caicongyang.stock.domain.TStockHigherDTO;
 import com.caicongyang.stock.domain.TTransactionCounterStockDTO;
 import com.caicongyang.stock.domain.TTransactionStockDTO;
 import com.caicongyang.stock.domain.VolumeGtYesterdayStockDTO;
+import com.caicongyang.stock.mapper.CommonMapper;
 import com.caicongyang.stock.service.ITStockMainService;
 import com.caicongyang.stock.service.ITStockService;
 import com.caicongyang.stock.service.StockService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +50,20 @@ public class StockController {
     private ITStockMainService itStockMainService;
 
 
+    @Resource
+    protected CommonMapper commonMapper;
+
+
+    @GetMapping("/queryPreTradingDate")
+    @ApiOperation(value = "获取前一个交易日", notes = "获取前一个交易日")
+    public @ResponseBody
+    Result<String> queryPreTradingDate(@RequestParam(value = "currentDate") String currentDate) throws Exception {
+        String preTradingDate = commonMapper.queryPreTradingDate(currentDate);
+        return Result.ok(preTradingDate);
+
+    }
+
+
     @GetMapping("/catchTransactionStockData")
     @ApiOperation(value = "捕获当天的股票异动数据", notes = "查询当天的股票异动数据")
     public @ResponseBody
@@ -68,8 +85,8 @@ public class StockController {
     @Cacheable(value = "getTransactionStockData", key = "#currentDate")
     public @ResponseBody
     Result<List<TTransactionStockDTO>> getTransactionStockData(
-        @RequestParam(required = false, value = "currentDate") String currentDate)
-        throws Exception {
+            @RequestParam(required = false, value = "currentDate") String currentDate)
+            throws Exception {
 
         List<TTransactionStockDTO> result = null;
         try {
@@ -88,8 +105,8 @@ public class StockController {
     @Cacheable(value = "getIntervalTransactionStockData", key = "#startDate+ '_' +#endDate")
     public @ResponseBody
     Result<List<TTransactionCounterStockDTO>> getIntervalTransactionStockData(
-        @RequestParam(required = false, value = "startDate") String startDate,
-                                                                           @RequestParam(required = false, value = "endDate") String endDate) throws Exception {
+            @RequestParam(required = false, value = "startDate") String startDate,
+            @RequestParam(required = false, value = "endDate") String endDate) throws Exception {
         List<TTransactionCounterStockDTO> result = new ArrayList<>();
         try {
             List<Map<String, Object>> queryResult = stockService.getIntervalTransactionStockData(startDate, endDate);
@@ -104,8 +121,8 @@ public class StockController {
                     stock.setSwL3((String) map.getOrDefault("sw_l3", ""));
                     stock.setZjw((String) map.getOrDefault("zjw", ""));
                     stock.setTradingDay((String) map.getOrDefault("trading_day", ""));
-                    stock.setStockName(
-                        itStockMainService.getStockNameByStockCode(stock.getStockCode()));
+//                    stock.setStockName(
+//                        itStockMainService.getStockNameByStockCode(stock.getStockCode()));
                     stock.setGain((Double) map.getOrDefault("gain", 0d));
                     result.add(stock);
                 }
@@ -122,8 +139,8 @@ public class StockController {
     @GetMapping("/calculateHigherStock")
     @ApiOperation(value = "计算当日新高的股票", notes = "查询当日新高的股票")
     public void calculateHigherStock(
-        @RequestParam(required = false, value = "tradingDay") String tradingDay)
-        throws ParseException {
+            @RequestParam(required = false, value = "tradingDay") String tradingDay)
+            throws ParseException {
         itStockService.calculateHigherStock(tradingDay);
     }
 
@@ -133,8 +150,8 @@ public class StockController {
     @Cacheable(value = "getHigherStock", key = "#tradingDay")
     public @ResponseBody
     Result<List<TStockHigherDTO>> getHigherStock(
-        @RequestParam(required = true, value = "tradingDay") String tradingDay)
-        throws ParseException, IOException {
+            @RequestParam(required = true, value = "tradingDay") String tradingDay)
+            throws ParseException, IOException {
         return Result.ok(itStockService.getHigherStock(tradingDay));
     }
 
@@ -144,43 +161,47 @@ public class StockController {
     @Cacheable(value = "getBreakthroughPlatform", key = "#currentDate")
     public @ResponseBody
     Result<List<BreakthroughPlatformStock>> getBreakthroughPlatform(
-        @RequestParam(required = true, value = "currentDate") String currentDate)
-        throws ParseException, IOException {
+            @RequestParam(required = true, value = "currentDate") String currentDate)
+            throws ParseException, IOException {
         return Result.ok(itStockService.getBreakthroughPlatform(currentDate));
     }
 
 
+    @Deprecated
     @GetMapping("/getVolumeGtYesterdayStock")
     @ApiOperation(value = "当天12点获取交易量大于昨天的股票")
     @Cacheable(value = "getVolumeGtYesterdayStock", key = "#currentDate")
     public @ResponseBody
     Result<List<VolumeGtYesterdayStockDTO>> getVolumeGtYesterdayStock(
-        @RequestParam(required = true, value = "currentDate") String currentDate)
-        throws IOException {
+            @RequestParam(required = true, value = "currentDate") String currentDate)
+            throws IOException {
         return Result.ok(itStockService.getVolumeGtYesterdayStock(currentDate));
     }
 
 
+    @Deprecated
     @GetMapping("/calculateHigherWeekStock")
     @ApiOperation(value = "计算每周新高的股票", notes = "计算每周新高的股票")
     public void calculateHigherWeekStock(
-        @RequestParam(required = false, value = "tradingDay") String tradingDay)
-        throws ParseException {
+            @RequestParam(required = false, value = "tradingDay") String tradingDay)
+            throws ParseException {
         itStockService.calculateHigherWeekStock(tradingDay);
     }
 
 
+    @Deprecated
     @GetMapping("/getHigherWeekStock")
     @ApiOperation(value = "获取每周新高的股票", notes = "获取每周新高的股票")
     @Cacheable(value = "getHigherWeekStock", key = "#tradingDay")
     public @ResponseBody
     Result<List<TStockHigherDTO>> getHigherWeekStock(
-        @RequestParam(required = true, value = "tradingDay") String tradingDay)
-        throws ParseException, IOException {
+            @RequestParam(required = true, value = "tradingDay") String tradingDay)
+            throws ParseException, IOException {
         return Result.ok(itStockService.getHigherWeekStock(tradingDay));
     }
 
 
+    @Deprecated
     @GetMapping("/querySortWeekStockData")
     @ApiOperation(value = "按周成交额与前一个成交额的比率倒序排名")
     @Cacheable(value = "querySortWeekStockData", key = "#currentDate")

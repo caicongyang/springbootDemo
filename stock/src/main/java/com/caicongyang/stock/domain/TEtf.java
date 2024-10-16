@@ -33,7 +33,7 @@ public class TEtf implements Serializable {
     private String stockName;
 
     @ApiModelProperty(value = "交易日期")
-    private LocalDate tradingDay;
+    private LocalDate tradeDate;
 
     @ApiModelProperty(value = "开盘价")
     private Double open;
@@ -51,7 +51,7 @@ public class TEtf implements Serializable {
     private Long volume;
 
     @ApiModelProperty(value = "成交金额")
-    private Double money;
+    private Double amount;
 
 
 }

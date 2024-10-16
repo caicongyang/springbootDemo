@@ -3,6 +3,8 @@ package com.caicongyang.stock.domain;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.time.LocalDate;
 import java.io.Serializable;
+import java.util.Date;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,10 +35,10 @@ public class TStockHigher implements Serializable {
     private Integer intervalDays;
 
     @ApiModelProperty(value = "交易日期")
-    private LocalDate tradingDay;
+    private Date tradingDay;
 
     @ApiModelProperty(value = "前期高点日期")
-    private LocalDate previousHighsDate;
+    private Date previousHighsDate;
 
     @ApiModelProperty(value = "当日涨幅")
     private Double gain;

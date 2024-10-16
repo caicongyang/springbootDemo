@@ -120,13 +120,13 @@
                           html += "<td>" + optionJson[i].stockName + "</td>";
                             html += "<td>" + optionJson[i].lastDayCompare + "</td>";
                             html += "<td>" + optionJson[i].meanRatio + "</td>";
-                            html += "<td>" + toPercent(optionJson[i].gain) + "</td>";
+                            html += "<td>" + optionJson[i].gain + "%</td>";
                             html += "<td>" + optionJson[i].swL3 + "</td>";
                             html += "<td>" + optionJson[i].jqL2 + "</td>";
                             html += "<td>" + optionJson[i].zjw + "</td>";
                             html += "</tr>";
                         }
-                        $("#titleData").append(optionJson[0].tradingDay + "异动股票");
+                        $("#titleData").append(optionJson[0].tradingDay );
                     }
                     $("#tbodydata").html(html);
                 } else {
@@ -135,8 +135,15 @@
             });
     });
 
-       function query() {
+    function query() {
         var queryDate = $("#queryDate").val();
+        window.location.href ="abnormal-stock.html?day="+queryDate;
+   }
+    function queryBeforeTradeDate() {
+        var queryDate = $("#queryDate").val();
+
+
+
         window.location.href ="abnormal-stock.html?day="+queryDate;
    }
 </script>

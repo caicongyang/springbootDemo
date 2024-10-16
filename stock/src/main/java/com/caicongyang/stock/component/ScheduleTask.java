@@ -8,6 +8,7 @@ import com.caicongyang.stock.utils.TomDateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -44,9 +45,10 @@ public class ScheduleTask {
 
 
     /**
+     * 异常数据
      * 每天18点执行一次
      */
-//    @Scheduled(cron = "0 0 18 * * ?")
+    @Scheduled(cron = "0 0 18 * * ?")
     public void task() throws Exception {
         logger.info("执行任务开始....");
         if (stockService.TradeFlag()) {
@@ -62,6 +64,7 @@ public class ScheduleTask {
 
 
     /**
+     * 天新高
      * 每天18点 30执行一次
      */
 //    @Scheduled(cron = "0 30 18 * * ?")
@@ -85,6 +88,7 @@ public class ScheduleTask {
 
 
     /**
+     * 涨停数据
      * 每天19点 30分执行一次
      */
 //    @Scheduled(cron = "0 30 19 * * ?")
@@ -102,6 +106,7 @@ public class ScheduleTask {
 
 
     /**
+     * 周新高
      * 每周六中午执行一次
      * 0 0 19 ? * FRI
      */
@@ -116,13 +121,14 @@ public class ScheduleTask {
 
 
     /**
+     * 补充股票的行业/行业信息等主数据
      * 每天23点执行一次
      */
 //    @Scheduled(cron = "0 0 23 * * ?")
     public void makeUpMainData() throws Exception {
         logger.info("执行任务补充主数据开始....");
         String lastTradingDate = commonMapper.queryLastTradingDate();
-        List<TStock> list = itStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradingDay, TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate))));
+        List<TStock> list = itStockService.list(new LambdaQueryWrapper<TStock>().eq(TStock::getTradeDate, TomDateUtil.date2LocalDate(TomDateUtil.formateDayPattern2Date(lastTradingDate))));
         for (TStock stock : list) {
             stockMainService.getIndustryByStockCode(stock.getStockCode());
         }

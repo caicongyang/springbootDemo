@@ -85,7 +85,7 @@ public class TEtfController {
 
 
     @GetMapping("/getHigherEtf")
-    @ApiOperation(value = "计算当日新高的etf", notes = "计算当日新高的etf")
+    @ApiOperation(value = "获取当日新高的etf", notes = "计算当日新高的etf")
     @Cacheable(value = "getHigherEtf", key = "#currentDate")
     public Result<List<TEtfHigherDTO>> getHigherEtf(
         @RequestParam(required = true, value = "currentDate") String currentDate) {

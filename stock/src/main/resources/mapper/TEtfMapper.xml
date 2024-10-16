@@ -6,10 +6,10 @@
 	t1.stock_code,
 	t1.volume / t2.volume AS last_day_compare
 FROM
-	T_etf t1
-	LEFT JOIN ( SELECT volume, stock_code FROM T_etf WHERE trading_day = #{preDate} ) t2 ON t2.stock_code = t1.stock_code
+	t_etf t1
+	LEFT JOIN ( SELECT volume, stock_code FROM t_etf WHERE trade_date = #{preDate} ) t2 ON t2.stock_code = t1.stock_code
 WHERE
-	t1.trading_day = #{currentDate}
+	t1.trade_date = #{currentDate}
 	AND t1.volume IS NOT NULL
 AND t2.volume is not null
  and t1.volume > 10000000  -- 成交金额大于一千万
@@ -22,6 +22,7 @@ ORDER BY
     <select id="catchTransactionEtf" parameterType="java.util.HashMap" resultType="java.util.HashMap">
         SELECT
         s0.stock_code,
+        s0.stock_name
         s0.lastDayCompare AS last_day_compare,
         s1.mean_ratio AS mean_ratio
         FROM
@@ -30,9 +31,9 @@ ORDER BY
         t0.stock_code,
         t0.volume / t1.volume AS lastDayCompare
         FROM
-        ( SELECT stock_code, volume, `close`, `open`, `high`, `low` FROM T_etf WHERE trading_day = #{currentDate} ) AS t0
+        ( SELECT stock_code, volume, `close`, `open`, `high`, `low` FROM t_etf WHERE trade_date = #{currentDate} ) AS t0
         -- 最后一个交易日
-        LEFT JOIN ( SELECT stock_code, volume, `close` FROM T_etf WHERE trading_day = #{preDate} ) AS t1 ON
+        LEFT JOIN ( SELECT stock_code, volume, `close` FROM t_etf WHERE trade_date = #{preDate} ) AS t1 ON
         t0.stock_code = t1.stock_code -- 倒数第二个交易
 
         WHERE
@@ -44,24 +45,24 @@ ORDER BY
         t0.volume / ( t1.mean ) AS mean_ratio,
         t0.stock_code
         FROM
-        T_etf AS t0
+        t_etf AS t0
         LEFT JOIN (
         SELECT
         SUM( volume ) / 3 AS mean,-- 获取最近3个工作日的成交量平均数
         stock_code
         FROM
-        T_etf
+        t_etf
         WHERE
         volume is not null
         and
-        trading_day IN ( SELECT trading_day FROM ( SELECT trading_day FROM T_etf WHERE stock_code = '512980.XSHG' AND
-        trading_day
-        <![CDATA[ < ]]>  #{currentDate} ORDER BY trading_day DESC LIMIT 3 ) AS t )
+        trade_date IN ( SELECT trade_date FROM ( SELECT trade_date FROM t_etf WHERE stock_code = '512980' AND
+        trade_date
+        <![CDATA[ < ]]>  #{currentDate} ORDER BY trade_date DESC LIMIT 3 ) AS t )
         GROUP BY
         stock_code
         ) t1 ON t0.stock_code = t1.stock_code
         where
-        t0.trading_day = #{currentDate}
+        t0.trade_date = #{currentDate}
         AND t1.mean != 0
         AND t1.mean IS NOT NULL
         AND t0.volume / t1.mean > 1.5
