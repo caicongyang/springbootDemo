@@ -8,7 +8,6 @@
     <version>0.0.1-SNAPSHOT</version>
     <modules>
         <module>locker-starter</module>
-        <module>stock</module>
         <module>cache-starter</module>
         <module>seq-starter</module>
         <module>git-tools</module>
