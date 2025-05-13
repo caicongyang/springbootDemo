@@ -27,6 +27,7 @@
         <module>apollo-config-starter</module>
         <module>shutdown-graceful-nacos-starter</module>
         <module>dynamic-datasource-starter</module>
+        <module>mq-branch-spring-boot-starter</module>
     </modules>
     <name>springBoot Maven Webapp</name>
     <url>http://maven.apache.org</url>
