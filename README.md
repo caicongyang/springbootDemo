@@ -2,10 +2,10 @@
 
 ### 软件说明
 
-1.基于springBoot的各类starter简单封装和测试
-2.来自日常工作学习总结和测试使用
-3.测试用例覆盖不够全面，不可直接用于生产环境
-4.每个module中还有README.md方便查看用法& 以及其他更优开源组件推荐 （待补充）
+1.基于springBoot的各类starter简单封装和测试  
+2.来自日常工作学习总结和测试使用  
+3.测试用例覆盖不够全面，不可直接用于生产环境  
+4.每个module中还有README.md方便查看用法& 以及其他更优开源组件推荐 （待补充）  
 
 #### module 说明
 1. apollo-config-starter: 基于apolo配置中的动态更新配置&loggerback日志级别修改  (done)

@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.ty.config.MqBranchRocketMqAutoConfiguration
+com.ccy.mq.branch.config.MqBranchRocketMqAutoConfiguration
 org.springframework.context.ApplicationContextInitializer=\
-com.ty.git.GitPropertiesCustomerLoader
+com.ccy.mq.branch.git.GitPropertiesCustomerLoader
