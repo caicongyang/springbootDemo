@@ -31,7 +31,7 @@ public class PreventDuplicationAspect {
 
     private static final String KEY_PREFIX = "PREVENT_DUPLICATION";
 
-    @Pointcut("@annotation(com.odianyun.project.support.aop.annotation.PreventDuplication)")
+    @Pointcut("@annotation(com.caicongyang.core.annotation.PreventDuplicationn)")
     public void preventDuplication() {
     }
 
