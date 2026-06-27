@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.caicongyang.dynamic.db.DynamicDataSourceAutoConfiguration
+com.caicongyang.dynamic.db.DynamicDataSourceAutoConfiguration

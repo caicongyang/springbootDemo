@@ -1,2 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.caicongyang.httper.config.HttpClientProviderAutoConfig
+com.caicongyang.httper.config.HttpClientProviderAutoConfig
