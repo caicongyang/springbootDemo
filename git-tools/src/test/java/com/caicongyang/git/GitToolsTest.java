@@ -85,8 +85,9 @@ class GitToolsTest {
         List<GitBatchTool.BatchResult> results = tool.batchBranch(tempDir);
         assertEquals(1, results.size());
         assertTrue(results.get(0).isSuccess());
-        assertTrue(results.get(0).getMessage().contains("master"),
-                "Expected branch list to contain 'master', got: " + results.get(0).getMessage());
+        String branchMsg = results.get(0).getMessage();
+        assertTrue(branchMsg.contains("main") || branchMsg.contains("master"),
+                "Expected branch list to contain main or master, got: " + branchMsg);
     }
 
     @Test
