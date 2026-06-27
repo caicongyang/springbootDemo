@@ -5,38 +5,29 @@ import com.caicongyang.lock.MysqlDistributedLock;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.Resource;
 import javax.sql.DataSource;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+@Disabled("需要 MySQL 环境，本地集成测试时手动启用")
 public class MysqlTest extends BaseApplicationTest {
-
 
     @Resource
     MysqlDistributedLock lock;
 
-
     @Autowired
     private DataSource dataSource;
-
 
     @Autowired()
     @Qualifier("lockerDataSource")
     private DataSource lockerDataSource;
 
-
     @Test
     public void springDataSourceTest() {
-
         System.out.println(dataSource instanceof HikariDataSource);
-
         System.out.println(lockerDataSource instanceof HikariDataSource);
-
-
-
-
     }
-
 
     @Test
     public void test1() throws InterruptedException {
@@ -45,11 +36,9 @@ public class MysqlTest extends BaseApplicationTest {
         lock.unLock("test1");
     }
 
-
     @Test
     public void test2() throws InterruptedException {
         lock.getLock("test1", "");
         lock.getLock("test1", "");
     }
-
 }

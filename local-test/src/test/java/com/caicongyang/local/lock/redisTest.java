@@ -1,23 +1,20 @@
-
 package com.caicongyang.local.lock;
-
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.caicongyang.local.BaseApplicationTest;
 import com.caicongyang.lock.RedissionDistributedLock;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.RedisTemplate;
 
-
+@Disabled("需要 Redis 环境，本地集成测试时手动启用")
 public class redisTest extends BaseApplicationTest {
-
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
@@ -25,22 +22,17 @@ public class redisTest extends BaseApplicationTest {
     @Resource
     RedissionDistributedLock distributedLock;
 
-
     @Test
     public void redisStringTest() {
         String putV = "niubi";
         String putK = "caicongyang1";
         redisTemplate.opsForValue().set(putK, putV);
-
         String value = redisTemplate.opsForValue().get(putK);
         assertEquals(putV, value);
-
     }
-
 
     public void backLockTest(Boolean isSameLock, Integer sleepMilliseconds) throws Exception {
         long time = System.currentTimeMillis();
-
         String[] lockNames = {"lock1", isSameLock ? "lock1" : "lock2"};
         final CountDownLatch endLatch = new CountDownLatch(lockNames.length);
         for (String lockName : lockNames) {
@@ -59,41 +51,28 @@ public class redisTest extends BaseApplicationTest {
                 }
             }.start();
         }
-
         endLatch.await();
         long cost = System.currentTimeMillis() - time;
         System.out.println("cost:" + cost);
-
         if (isSameLock) {
             Assertions.assertTrue(cost >= sleepMilliseconds * lockNames.length);
         } else {
             Assertions.assertTrue(cost < sleepMilliseconds * lockNames.length);
         }
-
-
     }
-
 
     @Test
     public void lockTest1() throws Exception {
-
         backLockTest(true, 1000 * 9);
     }
-
 
     @Test
     public void lockTest2() throws Exception {
         backLockTest(true, 1000 * 11);
-
-
     }
-
 
     public static void main(String[] args) {
-        String test= "ser";
+        String test = "ser";
         System.out.println(Arrays.asList(test.split(",")));
     }
-
-
 }
-
