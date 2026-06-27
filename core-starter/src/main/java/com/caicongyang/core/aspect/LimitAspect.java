@@ -8,7 +8,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

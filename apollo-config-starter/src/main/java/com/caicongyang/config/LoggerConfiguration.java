@@ -1,5 +1,7 @@
 package com.caicongyang.config;
 
+import jakarta.annotation.Resource;
+
 import com.ctrip.framework.apollo.Config;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import com.ctrip.framework.apollo.spring.annotation.ApolloConfig;
@@ -10,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.logging.LogLevel;
 import org.springframework.boot.logging.LoggingSystem;
 
-import javax.annotation.Resource;
 import java.util.Set;
 
 /**

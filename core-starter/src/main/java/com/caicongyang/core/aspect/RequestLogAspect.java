@@ -5,9 +5,8 @@ import com.caicongyang.core.domain.RequestInfo;
 import com.caicongyang.core.utils.JacksonUtils;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
-import com.google.gson.Gson;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -56,7 +55,6 @@ public class RequestLogAspect {
         requestInfo.setRequestParams(getRequestParamsByProceedingJoinPoint(proceedingJoinPoint));
         requestInfo.setResult(result);
         requestInfo.setTimeCost(System.currentTimeMillis() - start);
-        Gson gson = new Gson();
        // LOGGER.info("Request Info      : {}", gson.toJson(requestInfo));
 
         return result;

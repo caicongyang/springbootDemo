@@ -2,7 +2,7 @@ package com.caicongyang.core.advice;
 
 import com.caicongyang.core.basic.Result;
 import com.caicongyang.core.exception.BusinessException;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

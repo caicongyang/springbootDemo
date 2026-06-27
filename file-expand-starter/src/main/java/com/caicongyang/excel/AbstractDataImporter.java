@@ -124,7 +124,7 @@ public abstract class AbstractDataImporter {
                     Cell cell = row.getCell(k);
                     Object value = null;
                     if (cell != null) {
-                        if (!(cell.getCellTypeEnum() == CellType.NUMERIC && DateUtil
+                        if (!(cell.getCellType() == CellType.NUMERIC && DateUtil
                             .isCellDateFormatted(cell))) {
                             // 不是日期就全转换成字符串类型
                             cell.setCellType(CellType.STRING);
@@ -254,7 +254,7 @@ public abstract class AbstractDataImporter {
         if (cell == null) {
             return null;
         }
-        switch (cell.getCellTypeEnum()) {
+        switch (cell.getCellType()) {
             case STRING:
                 return cell.getRichStringCellValue().getString();
             case NUMERIC:

@@ -3,7 +3,7 @@ package com.caicongyang.local.lock;
 import com.caicongyang.local.BaseApplicationTest;
 import com.caicongyang.lock.MysqlDistributedLock;
 import com.zaxxer.hikari.HikariDataSource;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

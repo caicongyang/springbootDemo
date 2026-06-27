@@ -1,6 +1,5 @@
 package com.caicongyang.cache.config;
 
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -17,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
@@ -29,9 +28,7 @@ public class RedisTemplateConfig {
         RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         StringRedisSerializer keySerializer = new StringRedisSerializer();
-        Jackson2JsonRedisSerializer valueSerializer = new Jackson2JsonRedisSerializer(Object.class);
-        ObjectMapper objectMapper = getRedisSerializeObjectMapper();
-        valueSerializer.setObjectMapper(objectMapper);
+        GenericJackson2JsonRedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer(buildObjectMapper());
         redisTemplate.setKeySerializer(keySerializer);
         redisTemplate.setHashKeySerializer(valueSerializer);
         redisTemplate.setValueSerializer(valueSerializer);
@@ -39,7 +36,7 @@ public class RedisTemplateConfig {
         return redisTemplate;
     }
 
-    private ObjectMapper getRedisSerializeObjectMapper() {
+    private ObjectMapper buildObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new ParameterNamesModule());
         objectMapper.registerModule(new Jdk8Module());
@@ -51,6 +48,4 @@ public class RedisTemplateConfig {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return objectMapper;
     }
-
-
 }
